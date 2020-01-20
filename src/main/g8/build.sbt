@@ -32,8 +32,6 @@ val BetterMonadicForVersion = "0.3.1"
 
 /** For parsing git tags for determining version number. */
 val ReleaseTag = """^v(\d+\.\d+(?:\.\d+(?:[-.]\w+)?)?)\$""".r
-/** For discriminating settings based on Scala version. */
-def scalaPartV = Def setting (CrossVersion partialVersion scalaVersion.value)
 
 /**
  * For specifying the project's repository ID.
@@ -177,12 +175,6 @@ lazy val sharedSettings = Seq(
     "-sourcepath", file(".").getAbsolutePath.replaceAll("[.]\$", "")
   ),
 
-    // Exclude internal Java sources from ScalaDoc
-  sources in doc ~= (_ filterNot { file =>
-    // Exclude all internal Java files from documentation
-    file.getCanonicalPath matches "^.*?internal.*?\\\\.java\$"
-  }),
-
   scalacOptions in doc +=
     "-Xfatal-warnings",
   scalacOptions in doc --=
@@ -286,7 +278,7 @@ lazy val sharedSettings = Seq(
   }
 )
 
-lazy val $name;format="lower-camel"$ = crossProject(JSPlatform, JVMPlatform, NativePlatform)
+lazy val $name;format="lower-camel"$ = crossProject(JSPlatform, JVMPlatform)
   .crossType(CrossType.Full)
   .in(file("$artifact_id$"))
   .configure(profile)
