@@ -3,14 +3,14 @@ import scala.xml.Elem
 import scala.xml.transform.{RewriteRule, RuleTransformer}
 
 /** [[https://typelevel.org/cats/]] */
-val CatsVersion = "2.1.0"
+val CatsVersion = "$cats_version$"
 /** [[https://typelevel.org/cats-effect/]] */
-val CatsEffectVersion = "2.0.0"
+val CatsEffectVersion = "$cats_effect_version$"
 /** [[http://www.scalatest.org/]] */
-val ScalaTestVersion = "3.1.0"
+val ScalaTestVersion = "$scala_test_version$"
 
 /** For parsing git tags for determining version number. */
-val ReleaseTag = """^v(\d+\.\d+(?:\.\d+(?:[-.]\w+)?)?)$""".r
+val ReleaseTag = """^v(\d+\.\d+(?:\.\d+(?:[-.]\w+)?)?)$$""".r
 
 /**
  * For specifying the project's repository ID.
