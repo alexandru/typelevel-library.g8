@@ -2,12 +2,31 @@
 import scala.xml.Elem
 import scala.xml.transform.{RewriteRule, RuleTransformer}
 
-/** [[https://typelevel.org/cats/]] */
+/**
+  * Standard FP library for Scala:
+  * [[https://typelevel.org/cats/]]
+  */
 val CatsVersion = "$cats_version$"
-/** [[https://typelevel.org/cats-effect/]] */
+/**
+  * FP library for describing side-effects:
+  * [[https://typelevel.org/cats-effect/]]
+  */
 val CatsEffectVersion = "$cats_effect_version$"
-/** [[http://www.scalatest.org/]] */
+/**
+  * Library for unit-testing:
+  * [[http://www.scalatest.org/]]
+  */
 val ScalaTestVersion = "$scala_test_version$"
+/**
+  * Compiler plugin for working with partially applied types:
+  * [[https://github.com/typelevel/kind-projector]]
+  */
+val KindProjectorVersion = "0.11.0"
+/**
+  * Compiler plugin for fixing "for comprehensions" to do desugaring w/o `withFilter`:
+  * [[https://github.com/typelevel/kind-projector]]
+  */
+val BetterMonadicForVersion = "0.3.1"
 
 /** For parsing git tags for determining version number. */
 val ReleaseTag = """^v(\d+\.\d+(?:\.\d+(?:[-.]\w+)?)?)\$""".r
@@ -112,8 +131,8 @@ lazy val sharedSettings = Seq(
       )
   }),
 
-  // For working with partially-applied types
-  addCompilerPlugin("org.typelevel" % "kind-projector" % "0.11.0" cross CrossVersion.full),
+  addCompilerPlugin("org.typelevel" % "kind-projector" % KindProjectorVersion cross CrossVersion.full),
+  addCompilerPlugin("com.olegpy" %% "better-monadic-for" % BetterMonadicForVersion),
 
   licenses := Seq("APL2" -> url("http://www.apache.org/licenses/LICENSE-2.0.txt")),
   homepage := Some(url(s"https://github.com/\${gitHubRepositoryID.value}/")),
