@@ -274,9 +274,9 @@ lazy val sharedSettings = Seq(
   }
 )
 
-lazy val $name;format="lower-camel"$ = crossProject(JSPlatform, JVMPlatform)
+lazy val $sub_project_id$ = crossProject(JSPlatform, JVMPlatform)
   .crossType(CrossType.Full)
-  .in(file("$artifact_id$"))
+  .in(file("$sub_project_id$"))
   .configure(profile)
   .settings(sharedSettings)
   .settings(crossVersionSharedSources)
@@ -291,8 +291,8 @@ lazy val $name;format="lower-camel"$ = crossProject(JSPlatform, JVMPlatform)
     ),
   )
 
-lazy val $name;format="lower-camel"$JVM = $name;format="lower-camel"$.jvm
-lazy val $name;format="lower-camel"$JS  = $name;format="lower-camel"$.js
+lazy val $sub_project_id$JVM = $sub_project_id$.jvm
+lazy val $sub_project_id$JS  = $sub_project_id$.js
 
 // Reloads build.sbt changes whenever detected
 Global / onChangedBuildSource := ReloadOnSourceChanges
