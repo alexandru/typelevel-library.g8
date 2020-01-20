@@ -1,5 +1,5 @@
 /*
- * Copyright (c) 2020 the Cats Transformers contributors.
+ * Copyright (c) 2020 the $name$ contributors.
  * See the project homepage at: https://github.com/alexandru/cats-transformers/
  *
  * Licensed under the Apache License, Version 2.0 (the "License");

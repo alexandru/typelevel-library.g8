@@ -118,7 +118,7 @@ lazy val sharedSettings = Seq(
   licenses := Seq("APL2" -> url("http://www.apache.org/licenses/LICENSE-2.0.txt")),
   homepage := Some(url(s"https://github.com/\${gitHubRepositoryID.value}/")),
   headerLicense := Some(HeaderLicense.Custom(
-    """|Copyright (c) 2020 the Cats Transformers contributors.
+    """|Copyright (c) 2020 the $name$ contributors.
        |See the project homepage at: https://github.com/alexandru/cats-transformers/
        |
        |Licensed under the Apache License, Version 2.0 (the "License");
