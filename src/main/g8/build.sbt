@@ -65,8 +65,8 @@ lazy val sharedJSSettings = Seq(
 )
 
 lazy val sharedSettings = Seq(
-  gitHubRepositoryID := "alexandru/cats-transformers",
-  organization := "org.typelevel",
+  gitHubRepositoryID := "$github_user_id$/$github_repository_name$",
+  organization := "$organization$",
   scalaVersion := "2.13.1",
   crossScalaVersions := Seq("2.12.10", "2.13.1"),
 
@@ -119,7 +119,7 @@ lazy val sharedSettings = Seq(
   homepage := Some(url(s"https://github.com/\${gitHubRepositoryID.value}/")),
   headerLicense := Some(HeaderLicense.Custom(
     """|Copyright (c) 2020 the $name$ contributors.
-       |See the project homepage at: https://github.com/alexandru/cats-transformers/
+       |See the project homepage at: https://github.com/$github_user_id$/$github_repository_name$/
        |
        |Licensed under the Apache License, Version 2.0 (the "License");
        |you may not use this file except in compliance with the License.
@@ -136,16 +136,16 @@ lazy val sharedSettings = Seq(
 
   scmInfo := Some(
     ScmInfo(
-      url("https://github.com/alexandru/cats-transformers"),
-      "scm:git@github.com:alexandru/cats-transformers.git"
+      url(s"https://github.com/\${gitHubRepositoryID.value}"),
+      s"scm:git@github.com:\${gitHubRepositoryID.value}.git"
     )),
 
   developers := List(
     Developer(
-      id="alexelcu",
-      name="Alexandru Nedelcu",
-      email="noreply@alexn.org",
-      url=url("https://alexn.org")
+      id="$sonatype_developer_id$",
+      name="$developer_name$",
+      email="$developer_email$",
+      url=url("$developer_website$")
     )),
 
   logBuffered in Test := false,
