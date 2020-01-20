@@ -10,7 +10,7 @@ val CatsEffectVersion = "$cats_effect_version$"
 val ScalaTestVersion = "$scala_test_version$"
 
 /** For parsing git tags for determining version number. */
-val ReleaseTag = """^v(\d+\.\d+(?:\.\d+(?:[-.]\w+)?)?)$$""".r
+val ReleaseTag = """^v(\d+\.\d+(?:\.\d+(?:[-.]\w+)?)?)\$""".r
 
 /**
  * For specifying the project's repository ID.
@@ -57,10 +57,10 @@ lazy val sharedJSSettings = Seq(
   scalacOptions += {
     val tagOrHash =
       if (isSnapshot.value) git.gitHeadCommit.value.get
-      else s"v${git.baseVersion.value}"
+      else s"v\${git.baseVersion.value}"
     val l = (baseDirectory in LocalRootProject).value.toURI.toString
-    val g = s"https://raw.githubusercontent.com/${gitHubRepositoryID.value}/$tagOrHash/"
-    s"-P:scalajs:mapSourceURI:$l->$g"
+    val g = s"https://raw.githubusercontent.com/\${gitHubRepositoryID.value}/\$tagOrHash/"
+    s"-P:scalajs:mapSourceURI:\$l->\$g"
   }
 )
 
@@ -116,7 +116,7 @@ lazy val sharedSettings = Seq(
   addCompilerPlugin("org.typelevel" % "kind-projector" % "0.11.0" cross CrossVersion.full),
 
   licenses := Seq("APL2" -> url("http://www.apache.org/licenses/LICENSE-2.0.txt")),
-  homepage := Some(url(s"https://github.com/${gitHubRepositoryID.value}/")),
+  homepage := Some(url(s"https://github.com/\${gitHubRepositoryID.value}/")),
   headerLicense := Some(HeaderLicense.Custom(
     """|Copyright (c) 2020 the Cats Transformers contributors.
        |See the project homepage at: https://github.com/alexandru/cats-transformers/
