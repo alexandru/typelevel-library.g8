@@ -180,7 +180,7 @@ lazy val sharedSettings = Seq(
     // Exclude internal Java sources from ScalaDoc
   sources in doc ~= (_ filterNot { file =>
     // Exclude all internal Java files from documentation
-    file.getCanonicalPath matches "^.*?internal.*?\\.java\$"
+    file.getCanonicalPath matches "^.*?internal.*?\\\\.java\$"
   }),
 
   scalacOptions in doc +=
