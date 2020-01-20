@@ -15,13 +15,14 @@
  * limitations under the License.
  */
 
-package example
+package $package$
 
 import cats.implicits._
+import org.scalatest.funsuite.AnyFunSuite
 
-object Hello {
-  /** App's main entry point. */
-  def main(args: Array[String]): Unit = {
-    println("Hello world!")
+class ExampleSuite extends AnyFunSuite {
+  test("sample test") {
+    val sum = Example.sumAll(List(1, 2, 3, 4))
+    assert(sum == 1 + 2 + 3 + 4)
   }
 }

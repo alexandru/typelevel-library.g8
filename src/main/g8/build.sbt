@@ -192,7 +192,7 @@ lazy val sharedSettings = Seq(
 lazy val root = (project in file("."))
   .configure(profile)
   .settings(
-    name := "cats-transformers",
+    name := "$name;format="normalize"$",
     libraryDependencies ++= Seq(
       "org.typelevel" %%% "cats-core" % CatsVersion,
       "org.typelevel" %%% "cats-effect" % CatsEffectVersion,
