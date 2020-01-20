@@ -1,3 +1,5 @@
+// shadow sbt-scalajs' crossProject and CrossType from Scala.js 0.6.x
+import sbtcrossproject.CrossPlugin.autoImport.{crossProject, CrossType}
 // For getting Scoverage out of the generated POM
 import scala.xml.Elem
 import scala.xml.transform.{RewriteRule, RuleTransformer}
@@ -57,6 +59,7 @@ def profile: Project ⇒ Project = pr => {
     .settings(sharedSettings)
     .settings(crossVersionSharedSources)
     .settings(coverageSettings)
+    .jsSettings(sharedJSSettings)
 }
 
 def scalaPartV = Def setting (CrossVersion partialVersion scalaVersion.value)
@@ -174,6 +177,25 @@ lazy val sharedSettings = Seq(
     "-sourcepath", file(".").getAbsolutePath.replaceAll("[.]\$", "")
   ),
 
+    // Exclude internal Java sources from ScalaDoc
+  sources in doc ~= (_ filterNot { file =>
+    // Exclude all internal Java files from documentation
+    file.getCanonicalPath matches "^.*?internal.*?\\.java\$"
+  }),
+
+  scalacOptions in doc +=
+    "-Xfatal-warnings",
+  scalacOptions in doc --=
+    Seq("-Ywarn-unused-import", "-Ywarn-unused:imports"),
+  scalacOptions in doc ++=
+    Opts.doc.title("$name$"),
+  scalacOptions in doc ++=
+    Opts.doc.sourceUrl(s"https://github.com/$github_user_id$/$github_repository_name$/tree/v\${version.value}€{FILE_PATH}.scala"),
+  scalacOptions in doc ++=
+    Seq("-doc-root-content", file("rootdoc.txt").getAbsolutePath),
+  scalacOptions in doc ++=
+    Opts.doc.version(s"\${version.value}"),
+
   // https://github.com/sbt/sbt/issues/2654
   incOptions := incOptions.value.withLogRecompileOnMacro(false),
 
@@ -264,16 +286,21 @@ lazy val sharedSettings = Seq(
   }
 )
 
-lazy val root = (project in file("."))
+lazy val $name;format="lower-camel"$ = crossProject(JSPlatform, JVMPlatform, NativePlatform)
+  .crossType(CrossType.Full)
+  .in(file("$artifact_id$"))
   .configure(profile)
   .settings(
-    name := "$name;format="normalize"$",
+    name := "$artifact_id$",
     libraryDependencies ++= Seq(
       "org.typelevel" %%% "cats-core" % CatsVersion,
       "org.typelevel" %%% "cats-effect" % CatsEffectVersion,
       "org.scalatest" %%% "scalatest" % ScalaTestVersion % Test
     ),
   )
+
+lazy val $name;format="lower-camel"$JVM = $name;format="lower-camel"$.jvm
+lazy val $name;format="lower-camel"$JS  = $name;format="lower-camel"$.js
 
 // Reloads build.sbt changes whenever detected
 Global / onChangedBuildSource := ReloadOnSourceChanges
