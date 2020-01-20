@@ -96,6 +96,13 @@ lazy val coverageSettings = Seq(
   },
 )
 
+lazy val doNotPublishArtifact = Seq(
+  publishArtifact := false,
+  publishArtifact in (Compile, packageDoc) := false,
+  publishArtifact in (Compile, packageSrc) := false,
+  publishArtifact in (Compile, packageBin) := false
+)
+
 lazy val sharedJSSettings = Seq(
   coverageExcludedFiles := ".*",
   // Use globally accessible (rather than local) source paths in JS source maps
@@ -107,6 +114,24 @@ lazy val sharedJSSettings = Seq(
     val g = s"https://raw.githubusercontent.com/\${gitHubRepositoryID.value}/\$tagOrHash/"
     s"-P:scalajs:mapSourceURI:\$l->\$g"
   }
+)
+
+lazy val unidocSettings = Seq(
+  unidocProjectFilter in (ScalaUnidoc, unidoc) :=
+    inProjects($sub_project_id$JVM, $sub_project_id$JS),
+
+  scalacOptions in (ScalaUnidoc, unidoc) +=
+    "-Xfatal-warnings",
+  scalacOptions in (ScalaUnidoc, unidoc) --=
+    Seq("-Ywarn-unused-import", "-Ywarn-unused:imports"),
+  scalacOptions in (ScalaUnidoc, unidoc) ++=
+    Opts.doc.title(s"Monix"),
+  scalacOptions in (ScalaUnidoc, unidoc) ++=
+    Opts.doc.sourceUrl(s"https://github.com/monix/monix/tree/v\${version.value}€{FILE_PATH}.scala"),
+  scalacOptions in (ScalaUnidoc, unidoc) ++=
+    Seq("-doc-root-content", file("rootdoc.txt").getAbsolutePath),
+  scalacOptions in (ScalaUnidoc, unidoc) ++=
+    Opts.doc.version(s"\${version.value}")
 )
 
 lazy val sharedSettings = Seq(
@@ -170,19 +195,6 @@ lazy val sharedSettings = Seq(
     // definitely not what we want.
     "-sourcepath", file(".").getAbsolutePath.replaceAll("[.]\$", "")
   ),
-
-  scalacOptions in doc +=
-    "-Xfatal-warnings",
-  scalacOptions in doc --=
-    Seq("-Ywarn-unused-import", "-Ywarn-unused:imports"),
-  scalacOptions in doc ++=
-    Opts.doc.title("$name$"),
-  scalacOptions in doc ++=
-    Opts.doc.sourceUrl(s"https://github.com/$github_user_id$/$github_repository_name$/tree/v\${version.value}€{FILE_PATH}.scala"),
-  scalacOptions in doc ++=
-    Seq("-doc-root-content", file("rootdoc.txt").getAbsolutePath),
-  scalacOptions in doc ++=
-    Opts.doc.version(s"\${version.value}"),
 
   // https://github.com/sbt/sbt/issues/2654
   incOptions := incOptions.value.withLogRecompileOnMacro(false),
@@ -273,6 +285,14 @@ lazy val sharedSettings = Seq(
     }
   }
 )
+
+lazy val root = project.in(file("."))
+  .enablePlugins(ScalaUnidocPlugin)
+  .aggregate($sub_project_id$JVM, $sub_project_id$JS)
+  .configure(profile)
+  .settings(sharedSettings)
+  .settings(doNotPublishArtifact)
+  .settings(unidocSettings)
 
 lazy val $sub_project_id$ = crossProject(JSPlatform, JVMPlatform)
   .crossType(CrossType.Full)
