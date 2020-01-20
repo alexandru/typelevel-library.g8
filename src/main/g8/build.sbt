@@ -138,7 +138,7 @@ lazy val sharedSettings = Seq(
   homepage := Some(url(s"$homepage$")),
   headerLicense := Some(HeaderLicense.Custom(
     """|Copyright (c) 2020 the $name$ contributors.
-       |See the project homepage at: https://github.com/$github_user_id$/$github_repository_name$/
+       |See the project homepage at: $homepage$
        |
        |Licensed under the Apache License, Version 2.0 (the "License");
        |you may not use this file except in compliance with the License.
