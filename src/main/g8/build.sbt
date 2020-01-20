@@ -30,6 +30,8 @@ val BetterMonadicForVersion = "0.3.1"
 
 /** For parsing git tags for determining version number. */
 val ReleaseTag = """^v(\d+\.\d+(?:\.\d+(?:[-.]\w+)?)?)\$""".r
+/** For discriminating settings based on Scala version. */
+def scalaPartV = Def setting (CrossVersion partialVersion scalaVersion.value)
 
 /**
  * For specifying the project's repository ID.
@@ -53,8 +55,35 @@ def profile: Project ⇒ Project = pr => {
     .enablePlugins(AutomateHeaderPlugin)
     .enablePlugins(GitVersioning)
     .settings(sharedSettings)
+    .settings(crossVersionSharedSources)
     .settings(coverageSettings)
 }
+
+def scalaPartV = Def setting (CrossVersion partialVersion scalaVersion.value)
+lazy val crossVersionSharedSources: Seq[Setting[_]] =
+  Seq(Compile, Test).map { sc =>
+    (unmanagedSourceDirectories in sc) ++= {
+      (unmanagedSourceDirectories in sc).value.flatMap { dir =>
+        Seq(
+          scalaPartV.value match {
+            case Some((2, y)) if y == 11 => new File(dir.getPath + "_2.11")
+            case Some((2, y)) if y == 12 => new File(dir.getPath + "_2.12")
+            case Some((2, y)) if y >= 13 => new File(dir.getPath + "_2.13")
+          },
+
+          scalaPartV.value match {
+            case Some((2, n)) if n >= 12 => new File(dir.getPath + "_2.12+")
+            case _                       => new File(dir.getPath + "_2.12-")
+          },
+
+          scalaPartV.value match {
+            case Some((2, n)) if n >= 13 => new File(dir.getPath + "_2.13+")
+            case _                       => new File(dir.getPath + "_2.13-")
+          },
+        )
+      }
+    }
+  }
 
 lazy val coverageSettings = Seq(
   // For evicting Scoverage out of the generated POM
@@ -134,6 +163,52 @@ lazy val sharedSettings = Seq(
   addCompilerPlugin("org.typelevel" % "kind-projector" % KindProjectorVersion cross CrossVersion.full),
   addCompilerPlugin("com.olegpy" %% "better-monadic-for" % BetterMonadicForVersion),
 
+  // ScalaDoc settings
+  autoAPIMappings := true,
+  scalacOptions in ThisBuild ++= Seq(
+    // Note, this is used by the doc-source-url feature to determine the
+    // relative path of a given source file. If it's not a prefix of a the
+    // absolute path of the source file, the absolute path of that file
+    // will be put into the FILE_SOURCE variable, which is
+    // definitely not what we want.
+    "-sourcepath", file(".").getAbsolutePath.replaceAll("[.]\$", "")
+  ),
+
+  // https://github.com/sbt/sbt/issues/2654
+  incOptions := incOptions.value.withLogRecompileOnMacro(false),
+
+  // ---------------------------------------------------------------------------
+  // Source directories (also see `crossVersionSharedSources`)
+
+  unmanagedSourceDirectories in Compile += {
+    baseDirectory.value.getParentFile / "shared" / "src" / "main" / "scala"
+  },
+  unmanagedSourceDirectories in Test += {
+    baseDirectory.value.getParentFile / "shared" / "src" / "test" / "scala"
+  },
+
+  // ---------------------------------------------------------------------------
+  // Options for testing
+
+  logBuffered in Test := false,
+  logBuffered in IntegrationTest := false,
+  parallelExecution in Test := false,
+
+  // ---------------------------------------------------------------------------
+  // Options meant for publishing on Maven Central
+
+  publishMavenStyle := true,
+  publishTo := Some(
+    if (isSnapshot.value)
+      Opts.resolver.sonatypeSnapshots
+    else
+      Opts.resolver.sonatypeStaging
+  ),
+
+  isSnapshot := version.value endsWith "SNAPSHOT",
+  publishArtifact in Test := false,
+  pomIncludeRepository := { _ => false }, // removes optional dependencies
+
   licenses := Seq("APL2" -> url("http://www.apache.org/licenses/LICENSE-2.0.txt")),
   homepage := Some(url(s"$homepage$")),
   headerLicense := Some(HeaderLicense.Custom(
@@ -167,11 +242,11 @@ lazy val sharedSettings = Seq(
       url=url("$developer_website$")
     )),
 
-  logBuffered in Test := false,
-  parallelExecution in Test := false,
+  // -- Settings meant for deployment on oss.sonatype.org
+  sonatypeProfileName := organization.value,
 
-  /* --------------------------------------------------- */
-  /* Versioning settings — based on Git */
+  // ---------------------------------------------------------------------------
+  // Versioning settings — based on Git
 
   git.baseVersion := "0.1.0",
 
