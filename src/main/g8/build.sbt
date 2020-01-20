@@ -54,10 +54,6 @@ def profile: Project ⇒ Project = pr => {
   withCoverage
     .enablePlugins(AutomateHeaderPlugin)
     .enablePlugins(GitVersioning)
-    .settings(sharedSettings)
-    .settings(crossVersionSharedSources)
-    .settings(coverageSettings)
-    .jsSettings(sharedJSSettings)
 }
 
 def scalaPartV = Def setting (CrossVersion partialVersion scalaVersion.value)
@@ -282,6 +278,10 @@ lazy val $name;format="lower-camel"$ = crossProject(JSPlatform, JVMPlatform)
   .crossType(CrossType.Full)
   .in(file("$artifact_id$"))
   .configure(profile)
+  .settings(sharedSettings)
+  .settings(crossVersionSharedSources)
+  .settings(coverageSettings)
+  .jsSettings(sharedJSSettings)
   .settings(
     name := "$artifact_id$",
     libraryDependencies ++= Seq(
