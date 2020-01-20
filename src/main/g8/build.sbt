@@ -135,7 +135,7 @@ lazy val sharedSettings = Seq(
   addCompilerPlugin("com.olegpy" %% "better-monadic-for" % BetterMonadicForVersion),
 
   licenses := Seq("APL2" -> url("http://www.apache.org/licenses/LICENSE-2.0.txt")),
-  homepage := Some(url(s"https://github.com/\${gitHubRepositoryID.value}/")),
+  homepage := Some(url(s"$homepage$")),
   headerLicense := Some(HeaderLicense.Custom(
     """|Copyright (c) 2020 the $name$ contributors.
        |See the project homepage at: https://github.com/$github_user_id$/$github_repository_name$/
