@@ -117,8 +117,9 @@ lazy val sharedJSSettings = Seq(
 )
 
 lazy val unidocSettings = Seq(
+  // Only include JVM sub-projects, exclude JS or Native sub-projects
   unidocProjectFilter in (ScalaUnidoc, unidoc) :=
-    inProjects($sub_project_id$JVM, $sub_project_id$JS),
+    inProjects($sub_project_id$JVM),
 
   scalacOptions in (ScalaUnidoc, unidoc) +=
     "-Xfatal-warnings",
