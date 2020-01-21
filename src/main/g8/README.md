@@ -2,8 +2,6 @@
 
 [![Build Status](https://travis-ci.org/$github_user_id$/$github_repository_name$.svg?branch=master)](https://travis-ci.org/$github_user_id$/$github_repository_name$)
 
-$description$
-
 ## Usage
 
 The packages are published on Maven Central.
