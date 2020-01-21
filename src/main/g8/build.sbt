@@ -235,6 +235,7 @@ lazy val sharedSettings = Seq(
   // ---------------------------------------------------------------------------
   // Options for testing
 
+  testFrameworks += new TestFramework("minitest.runner.Framework"),
   logBuffered in Test := false,
   logBuffered in IntegrationTest := false,
   parallelExecution in Test := false,
@@ -329,13 +330,14 @@ lazy val $sub_project_id$ = crossProject(JSPlatform, JVMPlatform)
   .settings(
     name := "$artifact_id$",
     libraryDependencies ++= Seq(
-      "org.typelevel" %%% "cats-core" % CatsVersion,
-      "org.typelevel" %%% "cats-effect" % CatsEffectVersion,
-
+      "org.typelevel"  %%% "cats-core"        % CatsVersion,
+      "org.typelevel"  %%% "cats-effect"      % CatsEffectVersion,
       // For testing
-      "io.monix"       %%% "minitest"      % MinitestVersion % Test,
-      "io.monix"       %%% "minitest-laws" % MinitestVersion % Test,
-      "org.scalacheck" %%% "scalacheck"    % ScalaCheckVersion % Test
+      "io.monix"       %%% "minitest"         % MinitestVersion % Test,
+      "io.monix"       %%% "minitest-laws"    % MinitestVersion % Test,
+      "org.scalacheck" %%% "scalacheck"       % ScalaCheckVersion % Test,
+      "org.typelevel"  %%% "cats-laws"        % CatsVersion % Test,
+      "org.typelevel"  %%% "cats-effect-laws" % CatsEffectVersion % Test,
     ),
   )
 
