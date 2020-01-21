@@ -16,9 +16,14 @@ val CatsVersion = "$cats_version$"
 val CatsEffectVersion = "$cats_effect_version$"
 /**
   * Library for unit-testing:
-  * [[http://www.scalatest.org/]]
+  * [[https://github.com/monix/minitest/]]
   */
-val ScalaTestVersion = "$scala_test_version$"
+val MinitestVersion = "$minitest_version$"
+/**
+  * Library for property-based testing:
+  * [[https://www.scalacheck.org/]]
+  */
+val ScalaCheckVersion = "$scalacheck_version$"
 /**
   * Compiler plugin for working with partially applied types:
   * [[https://github.com/typelevel/kind-projector]]
@@ -136,7 +141,7 @@ lazy val unidocSettings = Seq(
 )
 
 lazy val doctestTestSettings = Seq(
-  doctestTestFramework := DoctestTestFramework.ScalaTest,
+  doctestTestFramework := DoctestTestFramework.Minitest,
   doctestIgnoreRegex := Some(s".*(internal).*"),
   doctestOnlyCodeBlocksMode := true
 )
@@ -146,6 +151,17 @@ lazy val sharedSettings = Seq(
   organization := "$organization$",
   scalaVersion := "2.13.1",
   crossScalaVersions := Seq("2.12.10", "2.13.1"),
+
+  scalacOptions ++= Seq(
+    // warnings
+    "-unchecked", // able additional warnings where generated code depends on assumptions
+    "-deprecation", // emit warning for usages of deprecated APIs
+    "-feature", // emit warning usages of features that should be imported explicitly
+    // Features enabled by default
+    "-language:higherKinds",
+    "-language:implicitConversions",
+    "-language:experimental.macros",
+  ),
 
   // Linter options
   scalacOptions ++= Seq(
@@ -315,7 +331,11 @@ lazy val $sub_project_id$ = crossProject(JSPlatform, JVMPlatform)
     libraryDependencies ++= Seq(
       "org.typelevel" %%% "cats-core" % CatsVersion,
       "org.typelevel" %%% "cats-effect" % CatsEffectVersion,
-      "org.scalatest" %%% "scalatest" % ScalaTestVersion % Test
+
+      // For testing
+      "io.monix"       %%% "minitest"      % MinitestVersion % Test,
+      "io.monix"       %%% "minitest-laws" % MinitestVersion % Test,
+      "org.scalacheck" %%% "scalacheck"    % ScalaCheckVersion % Test
     ),
   )
 
