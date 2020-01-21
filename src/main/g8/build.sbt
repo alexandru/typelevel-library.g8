@@ -126,13 +126,19 @@ lazy val unidocSettings = Seq(
   scalacOptions in (ScalaUnidoc, unidoc) --=
     Seq("-Ywarn-unused-import", "-Ywarn-unused:imports"),
   scalacOptions in (ScalaUnidoc, unidoc) ++=
-    Opts.doc.title(s"Monix"),
+    Opts.doc.title(s"$name$"),
   scalacOptions in (ScalaUnidoc, unidoc) ++=
-    Opts.doc.sourceUrl(s"https://github.com/monix/monix/tree/v\${version.value}€{FILE_PATH}.scala"),
+    Opts.doc.sourceUrl(s"https://github.com/$github_user_id$/$github_repository_name$/tree/v\${version.value}€{FILE_PATH}.scala"),
   scalacOptions in (ScalaUnidoc, unidoc) ++=
     Seq("-doc-root-content", file("rootdoc.txt").getAbsolutePath),
   scalacOptions in (ScalaUnidoc, unidoc) ++=
     Opts.doc.version(s"\${version.value}")
+)
+
+lazy val doctestTestSettings = Seq(
+  doctestTestFramework := DoctestTestFramework.ScalaTest,
+  doctestIgnoreRegex := Some(s".*(internal).*"),
+  doctestOnlyCodeBlocksMode := true
 )
 
 lazy val sharedSettings = Seq(
@@ -302,6 +308,7 @@ lazy val $sub_project_id$ = crossProject(JSPlatform, JVMPlatform)
   .settings(sharedSettings)
   .settings(crossVersionSharedSources)
   .settings(coverageSettings)
+  .jvmSettings(doctestTestSettings)
   .jsSettings(sharedJSSettings)
   .settings(
     name := "$artifact_id$",
