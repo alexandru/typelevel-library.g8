@@ -39,17 +39,22 @@ val BetterMonadicForVersion = "0.3.1"
 val ReleaseTag = """^v(\d+\.\d+(?:\.\d+(?:[-.]\w+)?)?)\$""".r
 
 /**
- * For specifying the project's repository ID.
- *
- * Examples:
- *
- *  - typelevel/cats
- *  - typelevel/cats-effect
- *  - monix/monix
- */
-lazy val gitHubRepositoryID = settingKey[String](
-  "GitHub repository ID (e.g. user_id/project_name)"
-)
+  * For specifying the project's repository ID.
+  *
+  * Examples:
+  *
+  *  - typelevel/cats
+  *  - typelevel/cats-effect
+  *  - monix/monix
+  */
+lazy val gitHubRepositoryID =
+  settingKey[String]("GitHub repository ID (e.g. user_id/project_name)")
+
+/**
+  * Folder where the API docs will be uploaded when generating site.
+  */
+lazy val docsMappingsAPIDir =
+  settingKey[String]("Name of subdirectory in site target directory for api docs")
 
 def profile: Project ⇒ Project = pr => {
   val withCoverage = sys.env.getOrElse("SBT_PROFILE", "") match {
@@ -256,10 +261,10 @@ lazy val sharedSettings = Seq(
   pomIncludeRepository := { _ => false }, // removes optional dependencies
 
   licenses := Seq("APL2" -> url("http://www.apache.org/licenses/LICENSE-2.0.txt")),
-  homepage := Some(url(s"$homepage$")),
+  homepage := Some(url(s"$homepage_url$")),
   headerLicense := Some(HeaderLicense.Custom(
     """|Copyright (c) 2020 the $name$ contributors.
-       |See the project homepage at: $homepage$
+       |See the project homepage at: $homepage_url$
        |
        |Licensed under the Apache License, Version 2.0 (the "License");
        |you may not use this file except in compliance with the License.
@@ -331,10 +336,11 @@ lazy val site = project.in(file("site"))
       micrositeName := "$name$",
       micrositeDescription := "$project_description$",
       micrositeAuthor := "$developer_name$",
+      micrositeTwitterCreator := "@$developer_twitter_id$",
       micrositeGithubOwner := "$github_user_id$",
       micrositeGithubRepo := "$github_repository_name$",
-      micrositeBaseUrl := "/$github_repository_name$",
-      micrositeDocumentationUrl := "https://www.javadoc.io/doc/$organization$/$artifact_id$_2.13",
+      micrositeBaseUrl := "/$microsite_base_url$",
+      micrositeDocumentationUrl := "https://$microsite_domain$$microsite_base_url/api/",
       micrositeGitterChannelUrl := "$github_user_id$/$github_repository_name$",
       micrositeFooterText := None,
       micrositeHighlightTheme := "atom-one-light",
@@ -357,13 +363,15 @@ lazy val site = project.in(file("site"))
         "-Ywarn-unused:imports",
         "-Xlint:-missing-interpolator,_"
       ),
-      libraryDependencies += "com.47deg" %% "github4s" % "0.20.1",
+      libraryDependencies += "com.47deg" %% "github4s" % "0.21.0",
       micrositePushSiteWith := GitHub4s,
       micrositeGithubToken := sys.env.get("GITHUB_TOKEN"),
       micrositeExtraMdFiles := Map(
         file("CODE_OF_CONDUCT.md") -> ExtraMdFileConfig("CODE_OF_CONDUCT.md", "page", Map("title" -> "Code of Conduct",   "section" -> "code of conduct", "position" -> "100")),
         file("LICENSE.md") -> ExtraMdFileConfig("LICENSE.md", "page", Map("title" -> "License",   "section" -> "license",   "position" -> "101"))
-      )
+      ),
+      docsMappingsAPIDir := "api",
+      addMappingsToSiteDir(mappings in packageDoc in Compile in $sub_project_id$JVM, docsMappingsAPIDir)
     )
   }
 

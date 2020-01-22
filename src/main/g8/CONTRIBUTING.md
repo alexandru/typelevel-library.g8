@@ -40,7 +40,7 @@ All code must be licensed under the Apache 2.0 license and all files must includ
 
 ```
 Copyright (c) \$today.year the $name$ contributors.
-See the project homepage at: $homepage$
+See the project homepage at: $homepage_url$
 
 Licensed under the Apache License, Version 2.0 (the "License");
 you may not use this file except in compliance with the License.
