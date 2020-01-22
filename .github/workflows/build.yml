@@ -7,11 +7,11 @@ jobs:
 
     steps:
       - uses: actions/checkout@master
-      - name: Set up Ruby 2.6
+      - name: Set up Ruby 2.6 (for microsite)
         uses: actions/setup-ruby@v1
         with:
           ruby-version: 2.6.x
-      - name: Install site dependencies
+      - name: Install microsite dependencies
         run: |
           bundle install --system --gemfile=src/main/g8/site/Gemfile
       - name: Test
