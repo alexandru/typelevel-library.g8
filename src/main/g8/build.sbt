@@ -322,8 +322,8 @@ lazy val site = project.in(file("site"))
   .disablePlugins(MimaPlugin)
   .enablePlugins(MicrositesPlugin)
   .enablePlugins(MdocPlugin)
-  .enablePlugins(NoPublishPlugin)
-  .settings(commonSettings)
+  .settings(sharedSettings)
+  .settings(doNotPublishArtifact)
   .dependsOn($sub_project_id$JVM)
   .settings{
     import microsites._
@@ -361,8 +361,8 @@ lazy val site = project.in(file("site"))
       micrositePushSiteWith := GitHub4s,
       micrositeGithubToken := sys.env.get("GITHUB_TOKEN"),
       micrositeExtraMdFiles := Map(
-        file("CODE_OF_CONDUCT.md") -> ExtraMdFileConfig("code-of-conduct.md", "page", Map("title" -> "code of conduct",   "section" -> "code of conduct", "position" -> "100")),
-        file("LICENSE.txt") -> ExtraMdFileConfig("license", "page", Map("title" -> "license",   "section" -> "license",   "position" -> "101"))
+        file("CODE_OF_CONDUCT.md") -> ExtraMdFileConfig("CODE_OF_CONDUCT.md", "page", Map("title" -> "Code of Conduct",   "section" -> "code of conduct", "position" -> "100")),
+        file("LICENSE.md") -> ExtraMdFileConfig("LICENSE.md", "page", Map("title" -> "License",   "section" -> "license",   "position" -> "101"))
       )
     )
   }
