@@ -1,1 +1,8 @@
-This is the API documentation for the [[$homepage$ $name$]] library.
+This is the API documentation for the [[$homepage_url$ $name$]] library.
+
+$project_description$
+
+Links:
+
+- [[$homepage_url$ Homepage]]
+- [[https://github.com/$github_user_id$/$github_repository_name$ GitHub repository]]

@@ -1,6 +1,6 @@
 /*
  * Copyright (c) 2020 the $name$ contributors.
- * See the project homepage at: $homepage$
+ * See the project homepage at: $homepage_url$
  *
  * Licensed under the Apache License, Version 2.0 (the "License");
  * you may not use this file except in compliance with the License.
