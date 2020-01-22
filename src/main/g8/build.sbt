@@ -243,7 +243,12 @@ lazy val sharedSettings = Seq(
   testFrameworks += new TestFramework("minitest.runner.Framework"),
   logBuffered in Test := false,
   logBuffered in IntegrationTest := false,
+  // Disables parallel execution
   parallelExecution in Test := false,
+  parallelExecution in IntegrationTest := false,
+  testForkedParallel in Test := false,
+  testForkedParallel in IntegrationTest := false,
+  concurrentRestrictions in Global += Tags.limit(Tags.Test, 1),
 
   // ---------------------------------------------------------------------------
   // Options meant for publishing on Maven Central
@@ -322,6 +327,14 @@ lazy val root = project.in(file("."))
   .settings(sharedSettings)
   .settings(doNotPublishArtifact)
   .settings(unidocSettings)
+  .settings(
+    // Try really hard to not execute tasks in parallel ffs
+    Global / concurrentRestrictions := Tags.limitAll(1) :: Nil,
+    // Generate site as part of compilation
+    (Test / test) := ((Test / test) dependsOn (makeMicrosite in site)).value,
+    // Generate unidoc as part of testing
+    (Test / test) := ((Test / test) dependsOn (unidoc in Compile)).value,
+  )
 
 lazy val site = project.in(file("site"))
   .disablePlugins(MimaPlugin)
@@ -341,7 +354,7 @@ lazy val site = project.in(file("site"))
       micrositeGithubRepo := "$github_repository_name$",
       micrositeUrl := "https://$microsite_domain$",
       micrositeBaseUrl := "$microsite_base_url$".replaceAll("[/]+\$", ""),
-      micrositeDocumentationUrl := "https://$microsite_domain$$microsite_base_url$api/",
+      micrositeDocumentationUrl := s"https://$microsite_domain$$microsite_base_url$api/",
       micrositeGitterChannelUrl := "$github_user_id$/$github_repository_name$",
       micrositeFooterText := None,
       micrositeHighlightTheme := "atom-one-light",
@@ -356,6 +369,7 @@ lazy val site = project.in(file("site"))
         "white-color" -> "#FFFFFF"
       ),
       micrositeCompilingDocsTool := WithMdoc,
+      fork in mdoc := true,
       scalacOptions in Tut --= Seq(
         "-Xfatal-warnings",
         "-Ywarn-unused-import",
@@ -371,8 +385,8 @@ lazy val site = project.in(file("site"))
         file("CODE_OF_CONDUCT.md") -> ExtraMdFileConfig("CODE_OF_CONDUCT.md", "page", Map("title" -> "Code of Conduct",   "section" -> "code of conduct", "position" -> "100")),
         file("LICENSE.md") -> ExtraMdFileConfig("LICENSE.md", "page", Map("title" -> "License",   "section" -> "license",   "position" -> "101"))
       ),
-      docsMappingsAPIDir := "api",
-      addMappingsToSiteDir(mappings in packageDoc in Compile in $sub_project_id$JVM, docsMappingsAPIDir)
+      docsMappingsAPIDir := s"api",
+      addMappingsToSiteDir(mappings in (ScalaUnidoc, packageDoc) in Compile in $sub_project_id$JVM, docsMappingsAPIDir)
     )
   }
 
