@@ -14,3 +14,4 @@ project/target/
 TAGS
 .tags
 project/metals.sbt
+.metals
