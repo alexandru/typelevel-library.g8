@@ -10,8 +10,9 @@ sbt new alexandru/typelevel-library.g8
 
 ## Features
 
-- Continuous integration via [GitHub Actions](https://github.com/features/actions)
 - Build setup for multiple sub-projects
+- Sane Scala compiler defaults for doing FP (including [kind-projector](https://github.com/typelevel/kind-projector) and [better-monadic-for](https://github.com/oleg-py/better-monadic-for))
+- Continuous integration via [GitHub Actions](https://github.com/features/actions)
 - [Scala.js](https://www.scala-js.org/) cross-compilation
 - [sbt-crossproject](https://github.com/portable-scala/sbt-crossproject) for managing the JVM / JS configuration
 - [sbt-unidoc](https://github.com/sbt/sbt-unidoc) for unifying the API documentation of the sub-projects
