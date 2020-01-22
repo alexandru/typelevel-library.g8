@@ -7,7 +7,7 @@ import scala.xml.transform.{RewriteRule, RuleTransformer}
 // ---------------------------------------------------------------------------
 // Commands
 
-addCommandAlias("release", ";project root ;reload ;+test:compile ;unidoc ;+publish ;sonatypeBundleRelease ;microsite/publishMicrosite")
+addCommandAlias("release", ";project root ;reload ;+test:compile ;unidoc ;+publishSigned ;sonatypeBundleRelease ;microsite/publishMicrosite")
 addCommandAlias("ci", ";project root ;reload ;+clean ;+test:compile ;+test ;unidoc ;site/makeMicrosite")
 
 // ---------------------------------------------------------------------------
