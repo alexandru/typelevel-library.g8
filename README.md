@@ -13,6 +13,7 @@ sbt new alexandru/typelevel-library.g8
 - Build setup for multiple sub-projects
 - Sane Scala compiler defaults for doing FP (including [kind-projector](https://github.com/typelevel/kind-projector) and [better-monadic-for](https://github.com/oleg-py/better-monadic-for))
 - Continuous integration via [GitHub Actions](https://github.com/features/actions)
+- Usual [CONTRIBUTING](./src/main/g8/CONTRIBUTING.md), [CODE_OF_CONDUCT](./src/main/g8/CODE_OF_CONDUCT.md), [LICENSE](./src/main/g8/LICENSE.md) boilerplate
 - [Scala.js](https://www.scala-js.org/) cross-compilation
 - [sbt-crossproject](https://github.com/portable-scala/sbt-crossproject) for managing the JVM / JS configuration
 - [sbt-unidoc](https://github.com/sbt/sbt-unidoc) for unifying the API documentation of the sub-projects
@@ -20,6 +21,8 @@ sbt new alexandru/typelevel-library.g8
 - [sbt-microsites](https://github.com/47deg/sbt-microsites) for building the documentation website, type checked via [mdoc](https://github.com/scalameta/mdoc)
 - [sbt-header](https://github.com/sbt/sbt-header) for automatic copyright headers
 - [sbt-scalafmt](https://github.com/scalameta/scalafmt) default setup for auto-formatting
+- [sbt-git](https://github.com/sbt/sbt-git) setup for version management based on Git tags and SHAs
+- [sbt-sonatype](https://github.com/xerial/sbt-sonatype) for faster and easier releases
 - Sane setup for usage of [sbt-scoverage](https://github.com/scoverage/sbt-scoverage) for code coverage
 - ...
 
