@@ -8,6 +8,7 @@ import scala.xml.transform.{RewriteRule, RuleTransformer}
 // Commands
 
 addCommandAlias("release", ";project root ;reload ;+test:compile ;unidoc ;+publish ;sonatypeBundleRelease ;microsite/publishMicrosite")
+addCommandAlias("ci", ";project root ;reload ;+clean ;+test:compile ;+test ;unidoc ;site/makeMicrosite")
 
 // ---------------------------------------------------------------------------
 // Dependencies
@@ -330,18 +331,10 @@ lazy val root = project.in(file("."))
   .settings(sharedSettings)
   .settings(doNotPublishArtifact)
   .settings(unidocSettings)
-  .settings {
-    // Using reference, otherwise we have a cyclic dependency
-    val siteRef = LocalProject("site")
-    Seq(
-      // Try really hard to not execute tasks in parallel ffs
-      Global / concurrentRestrictions := Tags.limitAll(1) :: Nil,
-      // Generate site as part of compilation
-      (Test / test) := ((Test / test) dependsOn (makeMicrosite in siteRef)).value,
-      // Generate unidoc as part of testing
-      (Test / test) := ((Test / test) dependsOn (unidoc in Compile)).value,
-    )
-  }
+  .settings(
+    // Try really hard to not execute tasks in parallel ffs
+    Global / concurrentRestrictions := Tags.limitAll(1) :: Nil,
+  )
 
 lazy val site = project.in(file("site"))
   .disablePlugins(MimaPlugin)

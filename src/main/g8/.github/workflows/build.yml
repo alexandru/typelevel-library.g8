@@ -17,10 +17,6 @@ jobs:
         run: |
           bundle install --system --gemfile=site/Gemfile
 
-      - name: Compile
+      - name: Compile and test
         run: |
-          sbt +clean +compile
-
-      - name: Test
-        run: |
-          sbt +test
+          sbt ci
