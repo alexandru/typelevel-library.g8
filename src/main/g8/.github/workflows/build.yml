@@ -1,0 +1,17 @@
+name: build
+on: [push, pull_request]
+
+jobs:
+  build:
+    runs-on: ubuntu-18.04
+
+    steps:
+      - uses: actions/checkout@master
+
+      - name: Compile
+        run: |
+          sbt +clean +compile
+
+      - name: Test
+        run: |
+          sbt +test

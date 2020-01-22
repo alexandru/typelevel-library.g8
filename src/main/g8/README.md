@@ -1,6 +1,6 @@
 # $name$
 
-[![Build Status](https://travis-ci.org/$github_user_id$/$github_repository_name$.svg?branch=master)](https://travis-ci.org/$github_user_id$/$github_repository_name$)
+[![Build status](https://github.com/$github_user_id$/$github_repository_name$/workflows/build/badge.svg?branch=master)](https://github.com/$github_user_id$/$github_repository_name$/actions?query=branch%3Amaster+workflow%3Abuild)
 
 ## Usage
 
