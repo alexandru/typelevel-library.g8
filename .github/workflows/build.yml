@@ -13,7 +13,7 @@ jobs:
           ruby-version: 2.6.x
       - name: Install site dependencies
         run: |
-          bundle install --system --gemfile=site/Gemfile
+          bundle install --system --gemfile=src/main/g8/site/Gemfile
       - name: Test
         run: |
           sbt g8Test
