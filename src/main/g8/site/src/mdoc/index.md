@@ -1,5 +1,6 @@
 ---
 layout: home
+position: 1
 ---
 
 # $name$

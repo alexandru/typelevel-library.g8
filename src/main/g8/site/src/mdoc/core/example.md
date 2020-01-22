@@ -1,7 +1,7 @@
 ---
 layout: docs
 title:  "Example Document"
-position: 1
+position: 2
 ---
 
 # Example
