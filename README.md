@@ -8,6 +8,20 @@ This is a [Giter8][g8] template for creating libraries ready to be published.
 sbt new alexandru/typelevel-library.g8
 ```
 
+## Features
+
+- Continuous integration via [GitHub Actions](https://github.com/features/actions)
+- Build setup for multiple sub-projects
+- [Scala.js](https://www.scala-js.org/) cross-compilation
+- [sbt-crossproject](https://github.com/portable-scala/sbt-crossproject) for managing the JVM / JS configuration
+- [sbt-unidoc](https://github.com/sbt/sbt-unidoc) for unifying the API documentation of the sub-projects
+- [sbt-doctest](https://github.com/tkawachi/sbt-doctest) for testing the ScalaDoc
+- [sbt-microsites](https://github.com/47deg/sbt-microsites) for building the documentation website, type checked via [mdoc](https://github.com/scalameta/mdoc)
+- [sbt-header](https://github.com/sbt/sbt-header) for automatic copyright headers
+- [sbt-scalafmt](https://github.com/scalameta/scalafmt) default setup for auto-formatting
+- Sane setup for usage of [sbt-scoverage](https://github.com/scoverage/sbt-scoverage) for code coverage
+- ...
+
 Template license
 ----------------
 

@@ -4,6 +4,14 @@ import sbtcrossproject.CrossPlugin.autoImport.{crossProject, CrossType}
 import scala.xml.Elem
 import scala.xml.transform.{RewriteRule, RuleTransformer}
 
+// ---------------------------------------------------------------------------
+// Commands
+
+addCommandAlias("release", ";project root ;reload ;+test:compile ;unidoc ;+publish ;sonatypeBundleRelease ;microsite/publishMicrosite")
+
+// ---------------------------------------------------------------------------
+// Dependencies
+
 /**
   * Standard FP library for Scala:
   * [[https://typelevel.org/cats/]]
@@ -254,12 +262,7 @@ lazy val sharedSettings = Seq(
   // Options meant for publishing on Maven Central
 
   publishMavenStyle := true,
-  publishTo := Some(
-    if (isSnapshot.value)
-      Opts.resolver.sonatypeSnapshots
-    else
-      Opts.resolver.sonatypeStaging
-  ),
+  publishTo := sonatypePublishToBundle.value,
 
   isSnapshot := version.value endsWith "SNAPSHOT",
   publishArtifact in Test := false,

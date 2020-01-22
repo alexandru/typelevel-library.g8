@@ -8,6 +8,6 @@ Everyone is expected to follow the [Scala Code of Conduct] when discussing the p
 
 Any questions, concerns, or moderation requests please contact a maintainer of the project:
 
-- $developer_name$: [Website]($developer_website$) | [GitHub](https://github.com/$github_user_id$) | [Gitter](https://gitter.im/$github_user_id$) | [Twitter](https://twitter.com/$developer_twitter_id$)
+- $developer_name$: [Website]($developer_website$) / [GitHub](https://github.com/$github_user_id$) / [Gitter](https://gitter.im/$github_user_id$) / [Twitter](https://twitter.com/$developer_twitter_id$)
 
 [Scala Code of Conduct]: https://www.scala-lang.org/conduct/
