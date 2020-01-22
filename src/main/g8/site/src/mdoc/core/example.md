@@ -13,6 +13,6 @@ Just a sample document.
 ```scala mdoc:silent
 import cats.implicits._
 import $package$.Example
-pula
+
 Example.sumAll(List(1, 2, 3, 4))
 ```
