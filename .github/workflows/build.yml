@@ -7,6 +7,13 @@ jobs:
 
     steps:
       - uses: actions/checkout@master
+      - name: Set up Ruby 2.6
+        uses: actions/setup-ruby@v1
+        with:
+          ruby-version: 2.6.x
+      - name: Install site dependencies
+        run: |
+          bundle install --system --gemfile=site/Gemfile
       - name: Test
         run: |
           sbt g8Test
