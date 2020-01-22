@@ -318,6 +318,55 @@ lazy val root = project.in(file("."))
   .settings(doNotPublishArtifact)
   .settings(unidocSettings)
 
+lazy val site = project.in(file("site"))
+  .disablePlugins(MimaPlugin)
+  .enablePlugins(MicrositesPlugin)
+  .enablePlugins(MdocPlugin)
+  .enablePlugins(NoPublishPlugin)
+  .settings(commonSettings)
+  .dependsOn($sub_project_id$JVM)
+  .settings{
+    import microsites._
+    Seq(
+      micrositeName := "$name$",
+      micrositeDescription := "$project_description$",
+      micrositeAuthor := "$developer_name$",
+      micrositeGithubOwner := "$github_user_id$",
+      micrositeGithubRepo := "$github_repository_name$",
+      micrositeBaseUrl := "/$github_repository_name$",
+      micrositeDocumentationUrl := "https://www.javadoc.io/doc/$organization$/$artifact_id$_2.13",
+      micrositeGitterChannelUrl := "$github_user_id$/$github_repository_name$",
+      micrositeFooterText := None,
+      micrositeHighlightTheme := "atom-one-light",
+      micrositePalette := Map(
+        "brand-primary" -> "#3e5b95",
+        "brand-secondary" -> "#294066",
+        "brand-tertiary" -> "#2d5799",
+        "gray-dark" -> "#49494B",
+        "gray" -> "#7B7B7E",
+        "gray-light" -> "#E5E5E6",
+        "gray-lighter" -> "#F4F3F4",
+        "white-color" -> "#FFFFFF"
+      ),
+      micrositeCompilingDocsTool := WithMdoc,
+      scalacOptions in Tut --= Seq(
+        "-Xfatal-warnings",
+        "-Ywarn-unused-import",
+        "-Ywarn-numeric-widen",
+        "-Ywarn-dead-code",
+        "-Ywarn-unused:imports",
+        "-Xlint:-missing-interpolator,_"
+      ),
+      libraryDependencies += "com.47deg" %% "github4s" % "0.20.1",
+      micrositePushSiteWith := GitHub4s,
+      micrositeGithubToken := sys.env.get("GITHUB_TOKEN"),
+      micrositeExtraMdFiles := Map(
+        file("CODE_OF_CONDUCT.md") -> ExtraMdFileConfig("code-of-conduct.md", "page", Map("title" -> "code of conduct",   "section" -> "code of conduct", "position" -> "100")),
+        file("LICENSE.txt") -> ExtraMdFileConfig("license", "page", Map("title" -> "license",   "section" -> "license",   "position" -> "101"))
+      )
+    )
+  }
+
 lazy val $sub_project_id$ = crossProject(JSPlatform, JVMPlatform)
   .crossType(CrossType.Full)
   .in(file("$sub_project_id$"))
