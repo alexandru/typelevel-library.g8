@@ -327,14 +327,18 @@ lazy val root = project.in(file("."))
   .settings(sharedSettings)
   .settings(doNotPublishArtifact)
   .settings(unidocSettings)
-  .settings(
-    // Try really hard to not execute tasks in parallel ffs
-    Global / concurrentRestrictions := Tags.limitAll(1) :: Nil,
-    // Generate site as part of compilation
-    (Test / test) := ((Test / test) dependsOn (makeMicrosite in site)).value,
-    // Generate unidoc as part of testing
-    (Test / test) := ((Test / test) dependsOn (unidoc in Compile)).value,
-  )
+  .settings {
+    // Using reference, otherwise we have a cyclic dependency
+    val siteRef = LocalProject("site")
+    Seq(
+      // Try really hard to not execute tasks in parallel ffs
+      Global / concurrentRestrictions := Tags.limitAll(1) :: Nil,
+      // Generate site as part of compilation
+      (Test / test) := ((Test / test) dependsOn (makeMicrosite in siteRef)).value,
+      // Generate unidoc as part of testing
+      (Test / test) := ((Test / test) dependsOn (unidoc in Compile)).value,
+    )
+  }
 
 lazy val site = project.in(file("site"))
   .disablePlugins(MimaPlugin)
@@ -386,8 +390,7 @@ lazy val site = project.in(file("site"))
         file("LICENSE.md") -> ExtraMdFileConfig("LICENSE.md", "page", Map("title" -> "License",   "section" -> "license",   "position" -> "101"))
       ),
       docsMappingsAPIDir := s"api",
-      addMappingsToSiteDir(mappings in (ScalaUnidoc, packageDoc) in Compile in $sub_project_id$JVM, docsMappingsAPIDir),
-
+      addMappingsToSiteDir(mappings in (ScalaUnidoc, packageDoc) in root, docsMappingsAPIDir),
       sourceDirectory in Compile := baseDirectory.value / "src",
       sourceDirectory in Test := baseDirectory.value / "test",
       mdocIn := (sourceDirectory in Compile).value / "mdoc",
