@@ -13,7 +13,7 @@ sbt new alexandru/typelevel-library.g8
 - Build setup for multiple sub-projects
 - Sane Scala compiler defaults for doing FP (including [kind-projector](https://github.com/typelevel/kind-projector) and [better-monadic-for](https://github.com/oleg-py/better-monadic-for))
 - Continuous integration via [GitHub Actions](https://github.com/features/actions)
-- Usual [CONTRIBUTING](./src/main/g8/CONTRIBUTING.md), [CODE_OF_CONDUCT](./src/main/g8/CODE_OF_CONDUCT.md), [LICENSE](./src/main/g8/LICENSE.md) boilerplate
+- Usual [contributing](./src/main/g8/CONTRIBUTING.md), [code of conduct](./src/main/g8/CODE_OF_CONDUCT.md), [license](./src/main/g8/LICENSE.md) boilerplate
 - [Scala.js](https://www.scala-js.org/) cross-compilation
 - [sbt-crossproject](https://github.com/portable-scala/sbt-crossproject) for managing the JVM / JS configuration
 - [sbt-unidoc](https://github.com/sbt/sbt-unidoc) for unifying the API documentation of the sub-projects
