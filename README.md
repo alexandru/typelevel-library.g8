@@ -1,5 +1,7 @@
 # Typelevel Library Template
 
+<p><a href="https://github.com/alexandru/typelevel-library.g8/actions?query=workflow%3A+build"><img src="https://github.com/alexandru/typelevel-library.g8/workflows/build/badge.svg" alt="Build status" /></a></p>
+
 This is a [Giter8][g8] template for creating libraries ready to be published.
 
 ```
