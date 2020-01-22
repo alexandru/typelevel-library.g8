@@ -386,7 +386,11 @@ lazy val site = project.in(file("site"))
         file("LICENSE.md") -> ExtraMdFileConfig("LICENSE.md", "page", Map("title" -> "License",   "section" -> "license",   "position" -> "101"))
       ),
       docsMappingsAPIDir := s"api",
-      addMappingsToSiteDir(mappings in (ScalaUnidoc, packageDoc) in Compile in $sub_project_id$JVM, docsMappingsAPIDir)
+      addMappingsToSiteDir(mappings in (ScalaUnidoc, packageDoc) in Compile in $sub_project_id$JVM, docsMappingsAPIDir),
+
+      sourceDirectory in Compile := baseDirectory.value / "src",
+      sourceDirectory in Test := baseDirectory.value / "test",
+      mdocIn := (sourceDirectory in Compile).value / "mdoc",
     )
   }
 
