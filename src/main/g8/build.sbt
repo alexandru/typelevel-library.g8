@@ -8,7 +8,7 @@ import scala.xml.transform.{RewriteRule, RuleTransformer}
 // Commands
 
 addCommandAlias("release", ";project root ;reload ;+test:compile ;unidoc ;+publishSigned ;sonatypeBundleRelease ;microsite/publishMicrosite")
-addCommandAlias("ci", ";project root ;reload ;+clean ;+test:compile ;+test ;unidoc ;site/makeMicrosite")
+addCommandAlias("ci", ";project root ;reload ;+clean ;+test:compile ;+test ;+package ;unidoc ;site/makeMicrosite")
 
 // ---------------------------------------------------------------------------
 // Dependencies
@@ -43,6 +43,11 @@ val KindProjectorVersion = "0.11.0"
   * [[https://github.com/typelevel/kind-projector]]
   */
 val BetterMonadicForVersion = "0.3.1"
+/**
+  * Compiler plugin for silencing compiler warnings:
+  * [[https://github.com/ghik/silencer]]
+  */
+val SilencerVersion = "1.4.4"
 
 /** For parsing git tags for determining version number. */
 val ReleaseTag = """^v(\d+\.\d+(?:\.\d+(?:[-.]\w+)?)?)\$""".r
@@ -166,46 +171,6 @@ lazy val sharedSettings = Seq(
   scalaVersion := "2.13.1",
   crossScalaVersions := Seq("2.12.10", "2.13.1"),
 
-  scalacOptions ++= Seq(
-    // warnings
-    "-unchecked", // able additional warnings where generated code depends on assumptions
-    "-deprecation", // emit warning for usages of deprecated APIs
-    "-feature", // emit warning usages of features that should be imported explicitly
-    // Features enabled by default
-    "-language:higherKinds",
-    "-language:implicitConversions",
-    "-language:experimental.macros",
-  ),
-
-  // Linter options
-  scalacOptions ++= Seq(
-    "-Xfatal-warnings", // Turns all warnings into errors ;-)
-    "-Xlint:adapted-args", // warn if an argument list is modified to match the receiver
-    "-Xlint:nullary-unit", // warn when nullary methods return Unit
-    "-Xlint:nullary-override", // warn when non-nullary `def f()' overrides nullary `def f'
-    "-Xlint:infer-any", // warn when a type argument is inferred to be `Any`
-    "-Xlint:missing-interpolator", // a string literal appears to be missing an interpolator id
-    "-Xlint:doc-detached", // a ScalaDoc comment appears to be detached from its element
-    "-Xlint:private-shadow", // a private field (or class parameter) shadows a superclass field
-    "-Xlint:type-parameter-shadow", // a local type parameter shadows a type already in scope
-    "-Xlint:poly-implicit-overload", // parameterized overloaded implicit methods are not visible as view bounds
-    "-Xlint:option-implicit", // Option.apply used implicit view
-    "-Xlint:delayedinit-select", // Selecting member of DelayedInit
-    "-Xlint:package-object-classes", // Class or object defined in package object
-  ),
-  scalacOptions ++= (CrossVersion.partialVersion(scalaVersion.value) match {
-    case Some((2, majorVersion)) if majorVersion <= 12 =>
-      Seq(
-        "-Xlint:inaccessible", // warn about inaccessible types in method signatures
-        "-Xlint:by-name-right-associative", // By-name parameter of right associative operator
-        "-Xlint:unsound-match" // Pattern match may not be typesafe
-      )
-    case _ =>
-      Seq.empty
-  }),
-  // Turning off fatal warnings for ScalaDoc, otherwise we can't release.
-  scalacOptions in (Compile, doc) ~= (_ filterNot (_ == "-Xfatal-warnings")),
-
   // More version specific compiler options
   scalacOptions ++= (CrossVersion.partialVersion(scalaVersion.value) match {
     case Some((2, v)) if v <= 12 =>
@@ -219,8 +184,14 @@ lazy val sharedSettings = Seq(
       )
   }),
 
+    // Turning off fatal warnings for doc generation
+  scalacOptions.in(Compile, doc) ~= filterConsoleScalacOptions,
+  // Silence all warnings from src_managed files
+  scalacOptions += "-P:silencer:pathFilters=.*[/]src_managed[/].*",
+
   addCompilerPlugin("org.typelevel" % "kind-projector" % KindProjectorVersion cross CrossVersion.full),
   addCompilerPlugin("com.olegpy" %% "better-monadic-for" % BetterMonadicForVersion),
+  addCompilerPlugin("com.github.ghik" % "silencer-plugin" % SilencerVersion cross CrossVersion.full),
 
   // ScalaDoc settings
   autoAPIMappings := true,
@@ -235,16 +206,6 @@ lazy val sharedSettings = Seq(
 
   // https://github.com/sbt/sbt/issues/2654
   incOptions := incOptions.value.withLogRecompileOnMacro(false),
-
-  // ---------------------------------------------------------------------------
-  // Source directories (also see `crossVersionSharedSources`)
-
-  unmanagedSourceDirectories in Compile += {
-    baseDirectory.value.getParentFile / "shared" / "src" / "main" / "scala"
-  },
-  unmanagedSourceDirectories in Test += {
-    baseDirectory.value.getParentFile / "shared" / "src" / "test" / "scala"
-  },
 
   // ---------------------------------------------------------------------------
   // Options for testing
@@ -370,14 +331,7 @@ lazy val site = project.in(file("site"))
       ),
       micrositeCompilingDocsTool := WithMdoc,
       fork in mdoc := true,
-      scalacOptions in Tut --= Seq(
-        "-Xfatal-warnings",
-        "-Ywarn-unused-import",
-        "-Ywarn-numeric-widen",
-        "-Ywarn-dead-code",
-        "-Ywarn-unused:imports",
-        "-Xlint:-missing-interpolator,_"
-      ),
+      scalacOptions.in(Tut) ~= filterConsoleScalacOptions,
       libraryDependencies += "com.47deg" %% "github4s" % "0.21.0",
       micrositePushSiteWith := GitHub4s,
       micrositeGithubToken := sys.env.get("GITHUB_TOKEN"),
