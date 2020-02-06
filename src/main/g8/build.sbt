@@ -166,8 +166,18 @@ lazy val sharedSettings = Seq(
   scalaVersion := "2.13.1",
   crossScalaVersions := Seq("2.12.10", "2.13.1"),
 
-  // Turning off fatal warnings for ScalaDoc
+  // Turning off fatal warnings for doc generation
   scalacOptions.in(Compile, doc) ~= filterConsoleScalacOptions,
+
+  // Turning off unused linter warnings for test code
+  scalacOptions.in(Compile, test) ~= { options =>
+    options.filterNot(Set(
+      "-Wunused:locals", "-Ywarn-unused:locals",
+      "-Wunused:params", "-Ywarn-unused:params",
+      "-Wunused:imports", "-Ywarn-unused-import",
+      "-Wdead-code"
+    ))
+  },
 
   // More version specific compiler options
   scalacOptions ++= (CrossVersion.partialVersion(scalaVersion.value) match {
@@ -323,14 +333,7 @@ lazy val site = project.in(file("site"))
       ),
       micrositeCompilingDocsTool := WithMdoc,
       fork in mdoc := true,
-      scalacOptions in Tut --= Seq(
-        "-Xfatal-warnings",
-        "-Ywarn-unused-import",
-        "-Ywarn-numeric-widen",
-        "-Ywarn-dead-code",
-        "-Ywarn-unused:imports",
-        "-Xlint:-missing-interpolator,_"
-      ),
+      scalacOptions.in(Tut) ~= filterConsoleScalacOptions,
       libraryDependencies += "com.47deg" %% "github4s" % "0.21.0",
       micrositePushSiteWith := GitHub4s,
       micrositeGithubToken := sys.env.get("GITHUB_TOKEN"),
