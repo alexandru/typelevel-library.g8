@@ -8,7 +8,7 @@ import scala.xml.transform.{RewriteRule, RuleTransformer}
 // Commands
 
 addCommandAlias("release", ";project root ;reload ;+test:compile ;unidoc ;+publishSigned ;sonatypeBundleRelease ;microsite/publishMicrosite")
-addCommandAlias("ci", ";project root ;reload ;+clean ;+test:compile ;+test ;unidoc ;site/makeMicrosite")
+addCommandAlias("ci", ";project root ;reload ;+clean ;+test:compile ;+test ;+package ;unidoc ;site/makeMicrosite")
 
 // ---------------------------------------------------------------------------
 // Dependencies
@@ -43,6 +43,11 @@ val KindProjectorVersion = "0.11.0"
   * [[https://github.com/typelevel/kind-projector]]
   */
 val BetterMonadicForVersion = "0.3.1"
+/**
+  * Compiler plugin for silencing compiler warnings:
+  * [[https://github.com/ghik/silencer]]
+  */
+val SilencerVersion = "1.4.4"
 
 /** For parsing git tags for determining version number. */
 val ReleaseTag = """^v(\d+\.\d+(?:\.\d+(?:[-.]\w+)?)?)\$""".r
@@ -166,19 +171,6 @@ lazy val sharedSettings = Seq(
   scalaVersion := "2.13.1",
   crossScalaVersions := Seq("2.12.10", "2.13.1"),
 
-  // Turning off fatal warnings for doc generation
-  scalacOptions.in(Compile, doc) ~= filterConsoleScalacOptions,
-
-  // Turning off unused linter warnings for test code
-  scalacOptions.in(Compile, test) ~= { options =>
-    options.filterNot(Set(
-      "-Wunused:locals", "-Ywarn-unused:locals",
-      "-Wunused:params", "-Ywarn-unused:params",
-      "-Wunused:imports", "-Ywarn-unused-import",
-      "-Wdead-code"
-    ))
-  },
-
   // More version specific compiler options
   scalacOptions ++= (CrossVersion.partialVersion(scalaVersion.value) match {
     case Some((2, v)) if v <= 12 =>
@@ -192,8 +184,14 @@ lazy val sharedSettings = Seq(
       )
   }),
 
+    // Turning off fatal warnings for doc generation
+  scalacOptions.in(Compile, doc) ~= filterConsoleScalacOptions,
+  // Silence all warnings from src_managed files
+  scalacOptions += "-P:silencer:pathFilters=.*[/]src_managed[/].*",
+
   addCompilerPlugin("org.typelevel" % "kind-projector" % KindProjectorVersion cross CrossVersion.full),
   addCompilerPlugin("com.olegpy" %% "better-monadic-for" % BetterMonadicForVersion),
+  addCompilerPlugin("com.github.ghik" % "silencer-plugin" % SilencerVersion cross CrossVersion.full),
 
   // ScalaDoc settings
   autoAPIMappings := true,
