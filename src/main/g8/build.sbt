@@ -122,6 +122,10 @@ lazy val coverageSettings = Seq(
 
 lazy val doNotPublishArtifact = Seq(
   skip in publish := true,
+  publish := (()),
+  publishLocal := (()),
+  publishArtifact := false,
+  publishTo := None
 )
 
 lazy val sharedJSSettings = Seq(
@@ -264,7 +268,7 @@ lazy val sharedSettings = Seq(
   sonatypeProfileName := organization.value,
 )
 
-lazy val $name;format="camel"$ = project.in(file("."))
+ lazy val root = project.in(file("."))
   .enablePlugins(ScalaUnidocPlugin)
   .aggregate($sub_project_id$JVM, $sub_project_id$JS)
   .configure(profile)
