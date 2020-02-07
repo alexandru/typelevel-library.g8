@@ -3,6 +3,7 @@ import sbtcrossproject.CrossPlugin.autoImport.{crossProject, CrossType}
 // For getting Scoverage out of the generated POM
 import scala.xml.Elem
 import scala.xml.transform.{RewriteRule, RuleTransformer}
+import BuildKeys._
 
 // ---------------------------------------------------------------------------
 // Commands
@@ -13,62 +14,41 @@ addCommandAlias("ci", ";project root ;reload ;+clean ;+test:compile ;+test ;+pac
 // ---------------------------------------------------------------------------
 // Dependencies
 
-/**
-  * Standard FP library for Scala:
+/** Standard FP library for Scala:
   * [[https://typelevel.org/cats/]]
   */
 val CatsVersion = "$cats_version$"
-/**
-  * FP library for describing side-effects:
+
+/** FP library for describing side-effects:
   * [[https://typelevel.org/cats-effect/]]
   */
 val CatsEffectVersion = "$cats_effect_version$"
-/**
-  * Library for unit-testing:
+
+/** Library for unit-testing:
   * [[https://github.com/monix/minitest/]]
   */
 val MinitestVersion = "$minitest_version$"
-/**
-  * Library for property-based testing:
+
+/** Library for property-based testing:
   * [[https://www.scalacheck.org/]]
   */
 val ScalaCheckVersion = "$scalacheck_version$"
-/**
-  * Compiler plugin for working with partially applied types:
+
+/** Compiler plugin for working with partially applied types:
   * [[https://github.com/typelevel/kind-projector]]
   */
 val KindProjectorVersion = "0.11.0"
-/**
-  * Compiler plugin for fixing "for comprehensions" to do desugaring w/o `withFilter`:
+
+/** Compiler plugin for fixing "for comprehensions" to do desugaring w/o `withFilter`:
   * [[https://github.com/typelevel/kind-projector]]
   */
 val BetterMonadicForVersion = "0.3.1"
-/**
-  * Compiler plugin for silencing compiler warnings:
+
+/** Compiler plugin for silencing compiler warnings:
   * [[https://github.com/ghik/silencer]]
   */
 val SilencerVersion = "1.4.4"
 
-/** For parsing git tags for determining version number. */
-val ReleaseTag = """^v(\d+\.\d+(?:\.\d+(?:[-.]\w+)?)?)\$""".r
-
-/**
-  * For specifying the project's repository ID.
-  *
-  * Examples:
-  *
-  *  - typelevel/cats
-  *  - typelevel/cats-effect
-  *  - monix/monix
-  */
-lazy val gitHubRepositoryID =
-  settingKey[String]("GitHub repository ID (e.g. user_id/project_name)")
-
-/**
-  * Folder where the API docs will be uploaded when generating site.
-  */
-lazy val docsMappingsAPIDir =
-  settingKey[String]("Name of subdirectory in site target directory for api docs")
 
 def profile: Project ⇒ Project = pr => {
   val withCoverage = sys.env.getOrElse("SBT_PROFILE", "") match {
@@ -80,8 +60,8 @@ def profile: Project ⇒ Project = pr => {
     .enablePlugins(GitBranchPrompt)
 }
 
-def scalaPartV = Def setting (CrossVersion partialVersion scalaVersion.value)
-lazy val crossVersionSharedSources: Seq[Setting[_]] =
+lazy val crossVersionSharedSources: Seq[Setting[_]] = {
+  def scalaPartV = Def setting (CrossVersion partialVersion scalaVersion.value)
   Seq(Compile, Test).map { sc =>
     (unmanagedSourceDirectories in sc) ++= {
       (unmanagedSourceDirectories in sc).value.flatMap { dir =>
@@ -105,6 +85,7 @@ lazy val crossVersionSharedSources: Seq[Setting[_]] =
       }
     }
   }
+}
 
 lazy val coverageSettings = Seq(
   // For evicting Scoverage out of the generated POM
@@ -140,7 +121,7 @@ lazy val sharedJSSettings = Seq(
         ver
     }
     val l = (baseDirectory in LocalRootProject).value.toURI.toString
-    val g = s"https://raw.githubusercontent.com/\${gitHubRepositoryID.value}/\$tagOrHash/"
+    val g = s"https://raw.githubusercontent.com/\${githubFullRepositoryID.value}/\$tagOrHash/"
     s"-P:scalajs:mapSourceURI:\$l->\$g"
   }
 )
@@ -155,9 +136,9 @@ lazy val unidocSettings = Seq(
   scalacOptions in (ScalaUnidoc, unidoc) --=
     Seq("-Ywarn-unused-import", "-Ywarn-unused:imports"),
   scalacOptions in (ScalaUnidoc, unidoc) ++=
-    Opts.doc.title(s"$name$"),
+    Opts.doc.title(projectTitle.value),
   scalacOptions in (ScalaUnidoc, unidoc) ++=
-    Opts.doc.sourceUrl(s"https://github.com/$github_user_id$/$github_repository_name$/tree/v\${version.value}€{FILE_PATH}.scala"),
+    Opts.doc.sourceUrl(s"https://github.com/\${githubFullRepositoryID.value}/tree/v\${version.value}€{FILE_PATH}.scala"),
   scalacOptions in (ScalaUnidoc, unidoc) ++=
     Seq("-doc-root-content", file("rootdoc.txt").getAbsolutePath),
   scalacOptions in (ScalaUnidoc, unidoc) ++=
@@ -171,7 +152,12 @@ lazy val doctestTestSettings = Seq(
 )
 
 lazy val sharedSettings = Seq(
-  gitHubRepositoryID := "$github_user_id$/$github_repository_name$",
+  projectTitle := "$name$",
+  projectWebsiteRootURL := "https://$microsite_domain$/",
+  projectWebsiteBasePath := "$microsite_base_url$",
+  githubOwnerID := "$github_user_id$",
+  githubRelativeRepositoryID := "$github_repository_name$",
+    
   organization := "$organization$",
   scalaVersion := "2.13.1",
   crossScalaVersions := Seq("2.12.10", "2.13.1"),
@@ -232,28 +218,28 @@ lazy val sharedSettings = Seq(
   pomIncludeRepository := { _ => false }, // removes optional dependencies
 
   licenses := Seq("APL2" -> url("http://www.apache.org/licenses/LICENSE-2.0.txt")),
-  homepage := Some(url(s"$homepage_url$")),
+  homepage := Some(url(projectWebsiteFullURL.value)),
   headerLicense := Some(HeaderLicense.Custom(
-    """|Copyright (c) 2020 the $name$ contributors.
-       |See the project homepage at: $homepage_url$
-       |
-       |Licensed under the Apache License, Version 2.0 (the "License");
-       |you may not use this file except in compliance with the License.
-       |You may obtain a copy of the License at
-       |
-       |    http://www.apache.org/licenses/LICENSE-2.0
-       |
-       |Unless required by applicable law or agreed to in writing, software
-       |distributed under the License is distributed on an "AS IS" BASIS,
-       |WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
-       |See the License for the specific language governing permissions and
-       |limitations under the License."""
-    .stripMargin)),
+    s"""|Copyright (c) 2020 the \${projectTitle.value} contributors.
+        |See the project homepage at: \${projectWebsiteFullURL.value}
+        |
+        |Licensed under the Apache License, Version 2.0 (the "License");
+        |you may not use this file except in compliance with the License.
+        |You may obtain a copy of the License at
+        |
+        |    http://www.apache.org/licenses/LICENSE-2.0
+        |
+        |Unless required by applicable law or agreed to in writing, software
+        |distributed under the License is distributed on an "AS IS" BASIS,
+        |WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
+        |See the License for the specific language governing permissions and
+        |limitations under the License."""
+      .stripMargin)),
 
   scmInfo := Some(
     ScmInfo(
-      url(s"https://github.com/\${gitHubRepositoryID.value}"),
-      s"scm:git@github.com:\${gitHubRepositoryID.value}.git"
+      url(s"https://github.com/\${githubFullRepositoryID.value}"),
+      s"scm:git@github.com:\${githubFullRepositoryID.value}.git"
     )),
 
   developers := List(
@@ -290,16 +276,16 @@ lazy val site = project.in(file("site"))
   .settings{
     import microsites._
     Seq(
-      micrositeName := "$name$",
+      micrositeName := projectTitle.value,
       micrositeDescription := "$project_description$",
       micrositeAuthor := "$developer_name$",
       micrositeTwitterCreator := "@$developer_twitter_id$",
-      micrositeGithubOwner := "$github_user_id$",
-      micrositeGithubRepo := "$github_repository_name$",
-      micrositeUrl := "https://$microsite_domain$",
-      micrositeBaseUrl := "$microsite_base_url$".replaceAll("[/]+\$", ""),
-      micrositeDocumentationUrl := s"https://$microsite_domain$$microsite_base_url$api/",
-      micrositeGitterChannelUrl := "$github_user_id$/$github_repository_name$",
+      micrositeGithubOwner := githubOwnerID.value,
+      micrositeGithubRepo := githubRelativeRepositoryID.value,
+      micrositeUrl := projectWebsiteRootURL.value.replaceAll("[/]+\$", ""),
+      micrositeBaseUrl := projectWebsiteBasePath.value.replaceAll("[/]+\$", ""),
+      micrositeDocumentationUrl := s"\${projectWebsiteFullURL.value}/\${docsMappingsAPIDir.value}/",
+      micrositeGitterChannelUrl := githubFullRepositoryID.value,
       micrositeFooterText := None,
       micrositeHighlightTheme := "atom-one-light",
       micrositePalette := Map(
