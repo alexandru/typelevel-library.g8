@@ -12,7 +12,7 @@ The packages are published on Maven Central.
 libraryDependencies += "$organization$" %% "$artifact_id$" % "<version>"
 ```
 
-## Documentation
+### Documentation
 
 Links:
 
