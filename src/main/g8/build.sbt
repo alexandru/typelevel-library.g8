@@ -77,6 +77,7 @@ def profile: Project ⇒ Project = pr => {
   }
   withCoverage
     .enablePlugins(AutomateHeaderPlugin)
+    .enablePlugins(GitBranchPrompt)
 }
 
 def scalaPartV = Def setting (CrossVersion partialVersion scalaVersion.value)
