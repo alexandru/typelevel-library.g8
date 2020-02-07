@@ -7,7 +7,7 @@ import sbtcrossproject.CrossProject
 // ---------------------------------------------------------------------------
 // Commands
 
-addCommandAlias("release", ";project root ;reload ;+test:compile ;unidoc ;+publishSigned ;sonatypeBundleRelease ;microsite/publishMicrosite")
+addCommandAlias("release", ";+clean ;ci-release ;unidoc ;microsite/publishMicrosite")
 addCommandAlias("ci", ";project root ;reload ;+clean ;+test:compile ;+test ;+package ;unidoc ;site/makeMicrosite")
 
 // ---------------------------------------------------------------------------

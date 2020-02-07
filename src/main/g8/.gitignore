@@ -15,4 +15,5 @@ TAGS
 .tags
 project/metals.sbt
 .metals
+.bloop
 site/Gemfile.lock
