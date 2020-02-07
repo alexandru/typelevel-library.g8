@@ -4,6 +4,8 @@
 
 This is a [Giter8][g8] template for creating libraries ready to be published.
 
+See sample library generated out of the box: [my-typelevel-library](https://github.com/alexandru/my-typelevel-library) / [website](https://alexandru.github.io/my-typelevel-library/) / [maven central](https://search.maven.org/search?g:org.alexn%20AND%20a:my-typelevel-library-core_2.13=&core=gav).
+
 ## Usage
 
 ```
