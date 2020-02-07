@@ -1,9 +1,6 @@
-// shadow sbt-scalajs' crossProject and CrossType from Scala.js 0.6.x
-import sbtcrossproject.CrossPlugin.autoImport.{crossProject, CrossType}
-// For getting Scoverage out of the generated POM
-import scala.xml.Elem
-import scala.xml.transform.{RewriteRule, RuleTransformer}
 import BuildKeys._
+import Boilerplate._
+import sbtcrossproject.CrossPlugin.autoImport.{crossProject, CrossType}
 
 // ---------------------------------------------------------------------------
 // Commands
@@ -49,8 +46,10 @@ val BetterMonadicForVersion = "0.3.1"
   */
 val SilencerVersion = "1.4.4"
 
-
-def profile: Project ⇒ Project = pr => {
+/**
+  * Defines common plugins between all projects.
+  */
+def defaultPlugins: Project ⇒ Project = pr => {
   val withCoverage = sys.env.getOrElse("SBT_PROFILE", "") match {
     case "coverage" => pr
     case _ => pr.disablePlugins(scoverage.ScoverageSbtPlugin)
@@ -60,104 +59,13 @@ def profile: Project ⇒ Project = pr => {
     .enablePlugins(GitBranchPrompt)
 }
 
-lazy val crossVersionSharedSources: Seq[Setting[_]] = {
-  def scalaPartV = Def setting (CrossVersion partialVersion scalaVersion.value)
-  Seq(Compile, Test).map { sc =>
-    (unmanagedSourceDirectories in sc) ++= {
-      (unmanagedSourceDirectories in sc).value.flatMap { dir =>
-        Seq(
-          scalaPartV.value match {
-            case Some((2, y)) if y == 11 => new File(dir.getPath + "_2.11")
-            case Some((2, y)) if y == 12 => new File(dir.getPath + "_2.12")
-            case Some((2, y)) if y >= 13 => new File(dir.getPath + "_2.13")
-          },
-
-          scalaPartV.value match {
-            case Some((2, n)) if n >= 12 => new File(dir.getPath + "_2.12+")
-            case _                       => new File(dir.getPath + "_2.12-")
-          },
-
-          scalaPartV.value match {
-            case Some((2, n)) if n >= 13 => new File(dir.getPath + "_2.13+")
-            case _                       => new File(dir.getPath + "_2.13-")
-          },
-        )
-      }
-    }
-  }
-}
-
-lazy val coverageSettings = Seq(
-  // For evicting Scoverage out of the generated POM
-  // See: https://github.com/scoverage/sbt-scoverage/issues/153
-  pomPostProcess := { (node: xml.Node) =>
-    new RuleTransformer(new RewriteRule {
-      override def transform(node: xml.Node): Seq[xml.Node] = node match {
-        case e: Elem
-          if e.label == "dependency" && e.child.exists(child => child.label == "groupId" && child.text == "org.scoverage") => Nil
-        case _ => Seq(node)
-      }
-    }).transform(node).head
-  },
-)
-
-lazy val doNotPublishArtifact = Seq(
-  skip in publish := true,
-  publish := (()),
-  publishLocal := (()),
-  publishArtifact := false,
-  publishTo := None
-)
-
-lazy val sharedJSSettings = Seq(
-  coverageExcludedFiles := ".*",
-  // Use globally accessible (rather than local) source paths in JS source maps
-  scalacOptions += {
-    val tagOrHash = {
-      val ver = s"v\${version.value}"
-      if (isSnapshot.value)
-        git.gitHeadCommit.value.getOrElse(ver)
-      else
-        ver
-    }
-    val l = (baseDirectory in LocalRootProject).value.toURI.toString
-    val g = s"https://raw.githubusercontent.com/\${githubFullRepositoryID.value}/\$tagOrHash/"
-    s"-P:scalajs:mapSourceURI:\$l->\$g"
-  }
-)
-
-lazy val unidocSettings = Seq(
-  // Only include JVM sub-projects, exclude JS or Native sub-projects
-  unidocProjectFilter in (ScalaUnidoc, unidoc) :=
-    inProjects($sub_project_id$JVM),
-
-  scalacOptions in (ScalaUnidoc, unidoc) +=
-    "-Xfatal-warnings",
-  scalacOptions in (ScalaUnidoc, unidoc) --=
-    Seq("-Ywarn-unused-import", "-Ywarn-unused:imports"),
-  scalacOptions in (ScalaUnidoc, unidoc) ++=
-    Opts.doc.title(projectTitle.value),
-  scalacOptions in (ScalaUnidoc, unidoc) ++=
-    Opts.doc.sourceUrl(s"https://github.com/\${githubFullRepositoryID.value}/tree/v\${version.value}€{FILE_PATH}.scala"),
-  scalacOptions in (ScalaUnidoc, unidoc) ++=
-    Seq("-doc-root-content", file("rootdoc.txt").getAbsolutePath),
-  scalacOptions in (ScalaUnidoc, unidoc) ++=
-    Opts.doc.version(s"\${version.value}")
-)
-
-lazy val doctestTestSettings = Seq(
-  doctestTestFramework := DoctestTestFramework.Minitest,
-  doctestIgnoreRegex := Some(s".*(internal).*"),
-  doctestOnlyCodeBlocksMode := true
-)
-
 lazy val sharedSettings = Seq(
   projectTitle := "$name$",
   projectWebsiteRootURL := "https://$microsite_domain$/",
   projectWebsiteBasePath := "$microsite_base_url$",
   githubOwnerID := "$github_user_id$",
   githubRelativeRepositoryID := "$github_repository_name$",
-    
+
   organization := "$organization$",
   scalaVersion := "2.13.1",
   crossScalaVersions := Seq("2.12.10", "2.13.1"),
@@ -254,13 +162,30 @@ lazy val sharedSettings = Seq(
   sonatypeProfileName := organization.value,
 )
 
- lazy val root = project.in(file("."))
+lazy val sharedJSSettings = Seq(
+  coverageExcludedFiles := ".*",
+  // Use globally accessible (rather than local) source paths in JS source maps
+  scalacOptions += {
+    val tagOrHash = {
+      val ver = s"v\${version.value}"
+      if (isSnapshot.value)
+        git.gitHeadCommit.value.getOrElse(ver)
+      else
+        ver
+    }
+    val l = (baseDirectory in LocalRootProject).value.toURI.toString
+    val g = s"https://raw.githubusercontent.com/\${githubFullRepositoryID.value}/\$tagOrHash/"
+    s"-P:scalajs:mapSourceURI:\$l->\$g"
+  }
+)
+
+lazy val root = project.in(file("."))
   .enablePlugins(ScalaUnidocPlugin)
   .aggregate($sub_project_id$JVM, $sub_project_id$JS)
-  .configure(profile)
+  .configure(defaultPlugins)
   .settings(sharedSettings)
   .settings(doNotPublishArtifact)
-  .settings(unidocSettings)
+  .settings(unidocSettings($sub_project_id$JVM))
   .settings(
     // Try really hard to not execute tasks in parallel ffs
     Global / concurrentRestrictions := Tags.limitAll(1) :: Nil,
@@ -319,11 +244,11 @@ lazy val site = project.in(file("site"))
 lazy val $sub_project_id$ = crossProject(JSPlatform, JVMPlatform)
   .crossType(CrossType.Full)
   .in(file("$sub_project_id$"))
-  .configure(profile)
+  .configure(defaultPlugins)
   .settings(sharedSettings)
   .settings(crossVersionSharedSources)
   .settings(coverageSettings)
-  .jvmSettings(doctestTestSettings)
+  .jvmSettings(doctestTestSettings(DoctestTestFramework.Minitest))
   .jsSettings(sharedJSSettings)
   .settings(
     name := "$artifact_id$",
