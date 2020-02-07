@@ -4,6 +4,10 @@
 
 This is a [Giter8][g8] template for creating libraries ready to be published.
 
+See sample library generated out of the box: [my-typelevel-library](https://github.com/alexandru/my-typelevel-library) / [website](https://alexandru.github.io/my-typelevel-library/) / [maven central](https://search.maven.org/search?g:org.alexn%20AND%20a:my-typelevel-library-core_2.13=&core=gav).
+
+## Usage
+
 ```
 sbt new alexandru/typelevel-library.g8
 ```
@@ -21,10 +25,35 @@ sbt new alexandru/typelevel-library.g8
 - [sbt-microsites](https://github.com/47deg/sbt-microsites) for building the documentation website, type checked via [mdoc](https://github.com/scalameta/mdoc)
 - [sbt-header](https://github.com/sbt/sbt-header) for automatic copyright headers
 - [sbt-scalafmt](https://github.com/scalameta/scalafmt) default setup for auto-formatting
-- [sbt-git](https://github.com/sbt/sbt-git) setup for version management based on Git tags and SHAs
-- [sbt-sonatype](https://github.com/xerial/sbt-sonatype) for faster and easier releases
-- Sane setup for usage of [sbt-scoverage](https://github.com/scoverage/sbt-scoverage) for code coverage
+- [sbt-tpolecat](https://github.com/DavidGregory084/sbt-tpolecat) for sane Scalac compiler options with most linter options on
+- [sbt-ci-release](https://github.com/olafurpg/sbt-ci-release) for managing the versioning and the release to Sonatype
+  - [sbt-git](https://github.com/sbt/sbt-git) setup for version management based on Git tags and SHAs
+  - [sbt-dynver](https://github.com/dwijnand/sbt-dynver) a ready-made setup of `sbt-git` options for dynamic version management
+  - [sbt-sonatype](https://github.com/xerial/sbt-sonatype) for faster and easier releases
+- [sbt-scoverage](https://github.com/scoverage/sbt-scoverage) for code coverage with sane setup
 - ...
+
+## Configuration of Automatic Releases to Sonatype
+
+The created project already has workflows defined for building and releasing the library on Sonatype via [GitHub Actions](https://github.com/features/actions). For automated releases to work, you need to configure:
+
+- `GITHUB_TOKEN` — for automatically publishing the documentation microsite with the `repo` scope:
+  - see [GitHub's documentation](https://help.github.com/en/github/authenticating-to-github/creating-a-personal-access-token-for-the-command-line)
+  - [Quick link (click here)](https://github.com/settings/tokens/new?scopes=repo&description=sbt-microsites)
+- ...
+
+To publish the website to [GitHub Pages](https://pages.github.com/), it is recommended that you first create the `gh-pages` branch:
+
+```sh
+git checkout --orphan gh-pages
+git rm --cached -r .
+touch index.html && git add index.html
+git commit -am 'Initial commit'
+git push --set-upstream origin gh-pages
+git add .
+git reset --hard HEAD
+git checkout master
+```
 
 Template license
 ----------------

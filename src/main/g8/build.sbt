@@ -1,172 +1,73 @@
-// shadow sbt-scalajs' crossProject and CrossType from Scala.js 0.6.x
+import BuildKeys._
+import Boilerplate._
+
 import sbtcrossproject.CrossPlugin.autoImport.{crossProject, CrossType}
-// For getting Scoverage out of the generated POM
-import scala.xml.Elem
-import scala.xml.transform.{RewriteRule, RuleTransformer}
+import sbtcrossproject.CrossProject
 
 // ---------------------------------------------------------------------------
 // Commands
 
-addCommandAlias("release", ";project root ;reload ;+test:compile ;unidoc ;+publishSigned ;sonatypeBundleRelease ;microsite/publishMicrosite")
+addCommandAlias("release", ";+clean ;ci-release ;unidoc ;microsite/publishMicrosite")
 addCommandAlias("ci", ";project root ;reload ;+clean ;+test:compile ;+test ;+package ;unidoc ;site/makeMicrosite")
 
 // ---------------------------------------------------------------------------
 // Dependencies
 
-/**
-  * Standard FP library for Scala:
+/** Standard FP library for Scala:
   * [[https://typelevel.org/cats/]]
   */
 val CatsVersion = "$cats_version$"
-/**
-  * FP library for describing side-effects:
+
+/** FP library for describing side-effects:
   * [[https://typelevel.org/cats-effect/]]
   */
 val CatsEffectVersion = "$cats_effect_version$"
-/**
-  * Library for unit-testing:
+
+/** Library for unit-testing:
   * [[https://github.com/monix/minitest/]]
   */
 val MinitestVersion = "$minitest_version$"
-/**
-  * Library for property-based testing:
+
+/** Library for property-based testing:
   * [[https://www.scalacheck.org/]]
   */
 val ScalaCheckVersion = "$scalacheck_version$"
-/**
-  * Compiler plugin for working with partially applied types:
+
+/** Compiler plugin for working with partially applied types:
   * [[https://github.com/typelevel/kind-projector]]
   */
 val KindProjectorVersion = "0.11.0"
-/**
-  * Compiler plugin for fixing "for comprehensions" to do desugaring w/o `withFilter`:
+
+/** Compiler plugin for fixing "for comprehensions" to do desugaring w/o `withFilter`:
   * [[https://github.com/typelevel/kind-projector]]
   */
 val BetterMonadicForVersion = "0.3.1"
-/**
-  * Compiler plugin for silencing compiler warnings:
+
+/** Compiler plugin for silencing compiler warnings:
   * [[https://github.com/ghik/silencer]]
   */
 val SilencerVersion = "1.4.4"
 
-/** For parsing git tags for determining version number. */
-val ReleaseTag = """^v(\d+\.\d+(?:\.\d+(?:[-.]\w+)?)?)\$""".r
-
 /**
-  * For specifying the project's repository ID.
-  *
-  * Examples:
-  *
-  *  - typelevel/cats
-  *  - typelevel/cats-effect
-  *  - monix/monix
+  * Defines common plugins between all projects.
   */
-lazy val gitHubRepositoryID =
-  settingKey[String]("GitHub repository ID (e.g. user_id/project_name)")
-
-/**
-  * Folder where the API docs will be uploaded when generating site.
-  */
-lazy val docsMappingsAPIDir =
-  settingKey[String]("Name of subdirectory in site target directory for api docs")
-
-def profile: Project ⇒ Project = pr => {
+def defaultPlugins: Project ⇒ Project = pr => {
   val withCoverage = sys.env.getOrElse("SBT_PROFILE", "") match {
     case "coverage" => pr
     case _ => pr.disablePlugins(scoverage.ScoverageSbtPlugin)
   }
   withCoverage
     .enablePlugins(AutomateHeaderPlugin)
-    .enablePlugins(GitVersioning)
+    .enablePlugins(GitBranchPrompt)
 }
 
-def scalaPartV = Def setting (CrossVersion partialVersion scalaVersion.value)
-lazy val crossVersionSharedSources: Seq[Setting[_]] =
-  Seq(Compile, Test).map { sc =>
-    (unmanagedSourceDirectories in sc) ++= {
-      (unmanagedSourceDirectories in sc).value.flatMap { dir =>
-        Seq(
-          scalaPartV.value match {
-            case Some((2, y)) if y == 11 => new File(dir.getPath + "_2.11")
-            case Some((2, y)) if y == 12 => new File(dir.getPath + "_2.12")
-            case Some((2, y)) if y >= 13 => new File(dir.getPath + "_2.13")
-          },
-
-          scalaPartV.value match {
-            case Some((2, n)) if n >= 12 => new File(dir.getPath + "_2.12+")
-            case _                       => new File(dir.getPath + "_2.12-")
-          },
-
-          scalaPartV.value match {
-            case Some((2, n)) if n >= 13 => new File(dir.getPath + "_2.13+")
-            case _                       => new File(dir.getPath + "_2.13-")
-          },
-        )
-      }
-    }
-  }
-
-lazy val coverageSettings = Seq(
-  // For evicting Scoverage out of the generated POM
-  // See: https://github.com/scoverage/sbt-scoverage/issues/153
-  pomPostProcess := { (node: xml.Node) =>
-    new RuleTransformer(new RewriteRule {
-      override def transform(node: xml.Node): Seq[xml.Node] = node match {
-        case e: Elem
-          if e.label == "dependency" && e.child.exists(child => child.label == "groupId" && child.text == "org.scoverage") => Nil
-        case _ => Seq(node)
-      }
-    }).transform(node).head
-  },
-)
-
-lazy val doNotPublishArtifact = Seq(
-  publishArtifact := false,
-  publishArtifact in (Compile, packageDoc) := false,
-  publishArtifact in (Compile, packageSrc) := false,
-  publishArtifact in (Compile, packageBin) := false
-)
-
-lazy val sharedJSSettings = Seq(
-  coverageExcludedFiles := ".*",
-  // Use globally accessible (rather than local) source paths in JS source maps
-  scalacOptions += {
-    val tagOrHash =
-      if (isSnapshot.value) git.gitHeadCommit.value.get
-      else s"v\${git.baseVersion.value}"
-    val l = (baseDirectory in LocalRootProject).value.toURI.toString
-    val g = s"https://raw.githubusercontent.com/\${gitHubRepositoryID.value}/\$tagOrHash/"
-    s"-P:scalajs:mapSourceURI:\$l->\$g"
-  }
-)
-
-lazy val unidocSettings = Seq(
-  // Only include JVM sub-projects, exclude JS or Native sub-projects
-  unidocProjectFilter in (ScalaUnidoc, unidoc) :=
-    inProjects($sub_project_id$JVM),
-
-  scalacOptions in (ScalaUnidoc, unidoc) +=
-    "-Xfatal-warnings",
-  scalacOptions in (ScalaUnidoc, unidoc) --=
-    Seq("-Ywarn-unused-import", "-Ywarn-unused:imports"),
-  scalacOptions in (ScalaUnidoc, unidoc) ++=
-    Opts.doc.title(s"$name$"),
-  scalacOptions in (ScalaUnidoc, unidoc) ++=
-    Opts.doc.sourceUrl(s"https://github.com/$github_user_id$/$github_repository_name$/tree/v\${version.value}€{FILE_PATH}.scala"),
-  scalacOptions in (ScalaUnidoc, unidoc) ++=
-    Seq("-doc-root-content", file("rootdoc.txt").getAbsolutePath),
-  scalacOptions in (ScalaUnidoc, unidoc) ++=
-    Opts.doc.version(s"\${version.value}")
-)
-
-lazy val doctestTestSettings = Seq(
-  doctestTestFramework := DoctestTestFramework.Minitest,
-  doctestIgnoreRegex := Some(s".*(internal).*"),
-  doctestOnlyCodeBlocksMode := true
-)
-
 lazy val sharedSettings = Seq(
-  gitHubRepositoryID := "$github_user_id$/$github_repository_name$",
+  projectTitle := "$name$",
+  projectWebsiteRootURL := "https://$microsite_domain$/",
+  projectWebsiteBasePath := "$microsite_base_url$",
+  githubOwnerID := "$github_user_id$",
+  githubRelativeRepositoryID := "$github_repository_name$",
+
   organization := "$organization$",
   scalaVersion := "2.13.1",
   crossScalaVersions := Seq("2.12.10", "2.13.1"),
@@ -223,36 +124,32 @@ lazy val sharedSettings = Seq(
   // ---------------------------------------------------------------------------
   // Options meant for publishing on Maven Central
 
-  publishMavenStyle := true,
-  publishTo := sonatypePublishToBundle.value,
-
-  isSnapshot := version.value endsWith "SNAPSHOT",
   publishArtifact in Test := false,
   pomIncludeRepository := { _ => false }, // removes optional dependencies
 
   licenses := Seq("APL2" -> url("http://www.apache.org/licenses/LICENSE-2.0.txt")),
-  homepage := Some(url(s"$homepage_url$")),
+  homepage := Some(url(projectWebsiteFullURL.value)),
   headerLicense := Some(HeaderLicense.Custom(
-    """|Copyright (c) 2020 the $name$ contributors.
-       |See the project homepage at: $homepage_url$
-       |
-       |Licensed under the Apache License, Version 2.0 (the "License");
-       |you may not use this file except in compliance with the License.
-       |You may obtain a copy of the License at
-       |
-       |    http://www.apache.org/licenses/LICENSE-2.0
-       |
-       |Unless required by applicable law or agreed to in writing, software
-       |distributed under the License is distributed on an "AS IS" BASIS,
-       |WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
-       |See the License for the specific language governing permissions and
-       |limitations under the License."""
-    .stripMargin)),
+    s"""|Copyright (c) 2020 the \${projectTitle.value} contributors.
+        |See the project homepage at: \${projectWebsiteFullURL.value}
+        |
+        |Licensed under the Apache License, Version 2.0 (the "License");
+        |you may not use this file except in compliance with the License.
+        |You may obtain a copy of the License at
+        |
+        |    http://www.apache.org/licenses/LICENSE-2.0
+        |
+        |Unless required by applicable law or agreed to in writing, software
+        |distributed under the License is distributed on an "AS IS" BASIS,
+        |WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
+        |See the License for the specific language governing permissions and
+        |limitations under the License."""
+      .stripMargin)),
 
   scmInfo := Some(
     ScmInfo(
-      url(s"https://github.com/\${gitHubRepositoryID.value}"),
-      s"scm:git@github.com:\${gitHubRepositoryID.value}.git"
+      url(s"https://github.com/\${githubFullRepositoryID.value}"),
+      s"scm:git@github.com:\${githubFullRepositoryID.value}.git"
     )),
 
   developers := List(
@@ -265,33 +162,49 @@ lazy val sharedSettings = Seq(
 
   // -- Settings meant for deployment on oss.sonatype.org
   sonatypeProfileName := organization.value,
-
-  // ---------------------------------------------------------------------------
-  // Versioning settings — based on Git
-
-  git.baseVersion := "0.1.0",
-
-  git.gitTagToVersionNumber := {
-    case ReleaseTag(v) => Some(v)
-    case _ => None
-  },
-
-  git.formattedShaVersion := {
-    val suffix = git.makeUncommittedSignifierSuffix(git.gitUncommittedChanges.value, git.uncommittedSignifier.value)
-
-    git.gitHeadCommit.value map { _.substring(0, 7) } map { sha =>
-      git.baseVersion.value + "-" + sha + suffix
-    }
-  }
 )
+
+/**
+  * Shared configuration across all sub-projects with actual code to be published.
+  */
+def defaultCrossProjectConfiguration(pr: CrossProject) = {
+  val sharedJavascriptSettings = Seq(
+    coverageExcludedFiles := ".*",
+    // Use globally accessible (rather than local) source paths in JS source maps
+    scalacOptions += {
+      val tagOrHash = {
+        val ver = s"v\${version.value}"
+        if (isSnapshot.value)
+          git.gitHeadCommit.value.getOrElse(ver)
+        else
+          ver
+      }
+      val l = (baseDirectory in LocalRootProject).value.toURI.toString
+      val g = s"https://raw.githubusercontent.com/\${githubFullRepositoryID.value}/\$tagOrHash/"
+      s"-P:scalajs:mapSourceURI:\$l->\$g"
+    }
+  )
+
+  val sharedJVMSettings = Seq(
+    skip.in(publish) := customScalaJSVersion.isDefined
+  )
+
+  pr.configure(defaultPlugins)
+    .settings(sharedSettings)
+    .jsSettings(sharedJavascriptSettings)
+    .jvmSettings(doctestTestSettings(DoctestTestFramework.Minitest))
+    .jvmSettings(sharedJVMSettings)
+    .settings(crossVersionSharedSources)
+    .settings(coverageSettings)
+}
 
 lazy val root = project.in(file("."))
   .enablePlugins(ScalaUnidocPlugin)
   .aggregate($sub_project_id$JVM, $sub_project_id$JS)
-  .configure(profile)
+  .configure(defaultPlugins)
   .settings(sharedSettings)
   .settings(doNotPublishArtifact)
-  .settings(unidocSettings)
+  .settings(unidocSettings($sub_project_id$JVM))
   .settings(
     // Try really hard to not execute tasks in parallel ffs
     Global / concurrentRestrictions := Tags.limitAll(1) :: Nil,
@@ -304,19 +217,19 @@ lazy val site = project.in(file("site"))
   .settings(sharedSettings)
   .settings(doNotPublishArtifact)
   .dependsOn($sub_project_id$JVM)
-  .settings{
+  .settings {
     import microsites._
     Seq(
-      micrositeName := "$name$",
+      micrositeName := projectTitle.value,
       micrositeDescription := "$project_description$",
       micrositeAuthor := "$developer_name$",
       micrositeTwitterCreator := "@$developer_twitter_id$",
-      micrositeGithubOwner := "$github_user_id$",
-      micrositeGithubRepo := "$github_repository_name$",
-      micrositeUrl := "https://$microsite_domain$",
-      micrositeBaseUrl := "$microsite_base_url$".replaceAll("[/]+\$", ""),
-      micrositeDocumentationUrl := s"https://$microsite_domain$$microsite_base_url$api/",
-      micrositeGitterChannelUrl := "$github_user_id$/$github_repository_name$",
+      micrositeGithubOwner := githubOwnerID.value,
+      micrositeGithubRepo := githubRelativeRepositoryID.value,
+      micrositeUrl := projectWebsiteRootURL.value.replaceAll("[/]+\$", ""),
+      micrositeBaseUrl := projectWebsiteBasePath.value.replaceAll("[/]+\$", ""),
+      micrositeDocumentationUrl := s"\${projectWebsiteFullURL.value.replaceAll("[/]+\$", "")}/\${docsMappingsAPIDir.value}/",
+      micrositeGitterChannelUrl := githubFullRepositoryID.value,
       micrositeFooterText := None,
       micrositeHighlightTheme := "atom-one-light",
       micrositePalette := Map(
@@ -344,18 +257,18 @@ lazy val site = project.in(file("site"))
       sourceDirectory in Compile := baseDirectory.value / "src",
       sourceDirectory in Test := baseDirectory.value / "test",
       mdocIn := (sourceDirectory in Compile).value / "mdoc",
+
+      // Bug in sbt-microsites
+      micrositeConfigYaml := microsites.ConfigYml(
+        yamlCustomProperties = Map("exclude" -> List.empty[String])
+      ),
     )
   }
 
 lazy val $sub_project_id$ = crossProject(JSPlatform, JVMPlatform)
   .crossType(CrossType.Full)
   .in(file("$sub_project_id$"))
-  .configure(profile)
-  .settings(sharedSettings)
-  .settings(crossVersionSharedSources)
-  .settings(coverageSettings)
-  .jvmSettings(doctestTestSettings)
-  .jsSettings(sharedJSSettings)
+  .configureCross(defaultCrossProjectConfiguration)
   .settings(
     name := "$artifact_id$",
     libraryDependencies ++= Seq(
