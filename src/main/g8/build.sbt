@@ -1,6 +1,8 @@
 import BuildKeys._
 import Boilerplate._
+
 import sbtcrossproject.CrossPlugin.autoImport.{crossProject, CrossType}
+import sbtcrossproject.CrossProject
 
 // ---------------------------------------------------------------------------
 // Commands
@@ -162,22 +164,39 @@ lazy val sharedSettings = Seq(
   sonatypeProfileName := organization.value,
 )
 
-lazy val sharedJSSettings = Seq(
-  coverageExcludedFiles := ".*",
-  // Use globally accessible (rather than local) source paths in JS source maps
-  scalacOptions += {
-    val tagOrHash = {
-      val ver = s"v\${version.value}"
-      if (isSnapshot.value)
-        git.gitHeadCommit.value.getOrElse(ver)
-      else
-        ver
+/**
+  * Shared configuration across all sub-projects with actual code to be published.
+  */
+def defaultCrossProjectConfiguration(pr: CrossProject) = {
+  val sharedJavascriptSettings = Seq(
+    coverageExcludedFiles := ".*",
+    // Use globally accessible (rather than local) source paths in JS source maps
+    scalacOptions += {
+      val tagOrHash = {
+        val ver = s"v\${version.value}"
+        if (isSnapshot.value)
+          git.gitHeadCommit.value.getOrElse(ver)
+        else
+          ver
+      }
+      val l = (baseDirectory in LocalRootProject).value.toURI.toString
+      val g = s"https://raw.githubusercontent.com/\${githubFullRepositoryID.value}/\$tagOrHash/"
+      s"-P:scalajs:mapSourceURI:\$l->\$g"
     }
-    val l = (baseDirectory in LocalRootProject).value.toURI.toString
-    val g = s"https://raw.githubusercontent.com/\${githubFullRepositoryID.value}/\$tagOrHash/"
-    s"-P:scalajs:mapSourceURI:\$l->\$g"
-  }
-)
+  )
+
+  val sharedJVMSettings = Seq(
+    skip.in(publish) := customScalaJSVersion.isDefined
+  )
+
+  pr.configure(defaultPlugins)
+    .settings(sharedSettings)
+    .jsSettings(sharedJavascriptSettings)
+    .jvmSettings(doctestTestSettings(DoctestTestFramework.Minitest))
+    .jvmSettings(sharedJVMSettings)
+    .settings(crossVersionSharedSources)
+    .settings(coverageSettings)
+}
 
 lazy val root = project.in(file("."))
   .enablePlugins(ScalaUnidocPlugin)
@@ -198,7 +217,7 @@ lazy val site = project.in(file("site"))
   .settings(sharedSettings)
   .settings(doNotPublishArtifact)
   .dependsOn($sub_project_id$JVM)
-  .settings{
+  .settings {
     import microsites._
     Seq(
       micrositeName := projectTitle.value,
@@ -244,12 +263,7 @@ lazy val site = project.in(file("site"))
 lazy val $sub_project_id$ = crossProject(JSPlatform, JVMPlatform)
   .crossType(CrossType.Full)
   .in(file("$sub_project_id$"))
-  .configure(defaultPlugins)
-  .settings(sharedSettings)
-  .settings(crossVersionSharedSources)
-  .settings(coverageSettings)
-  .jvmSettings(doctestTestSettings(DoctestTestFramework.Minitest))
-  .jsSettings(sharedJSSettings)
+  .configureCross(defaultCrossProjectConfiguration)
   .settings(
     name := "$artifact_id$",
     libraryDependencies ++= Seq(
