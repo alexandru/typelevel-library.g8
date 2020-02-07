@@ -5,21 +5,12 @@ on:
     tags: ["v[0-9]+*"]
 
 jobs:
-  publish:
+  publish_sonatype:
     runs-on: ubuntu-latest
     steps:
       - uses: actions/checkout@v1
       - uses: olafurpg/setup-scala@v2
       - uses: olafurpg/setup-gpg@v2
-
-      - name: Set up Ruby 2.6 (for microsite)
-        uses: actions/setup-ruby@v1
-        with:
-          ruby-version: 2.6.x
-
-      - name: Install microsite dependencies
-        run: |
-          bundle install --system --gemfile=site/Gemfile
 
       - name: Publish to Sonatype (default versions)
         run: csbt +clean ci-release
@@ -37,6 +28,21 @@ jobs:
           PGP_SECRET: \${{ secrets.PGP_SECRET }}
           SONATYPE_PASSWORD: \${{ secrets.SONATYPE_PASSWORD }}
           SONATYPE_USERNAME: \${{ secrets.SONATYPE_USERNAME }}
+
+  publish_microsite:
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v1
+      - uses: olafurpg/setup-scala@v2
+
+      - name: Set up Ruby 2.6 (for microsite)
+        uses: actions/setup-ruby@v1
+        with:
+          ruby-version: 2.6.x
+
+      - name: Install microsite dependencies
+        run: |
+          bundle install --system --gemfile=site/Gemfile
 
       - name: Publish Website
         run: csbt +clean site/publishMicrosite
