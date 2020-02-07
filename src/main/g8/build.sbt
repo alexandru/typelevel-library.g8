@@ -257,6 +257,11 @@ lazy val site = project.in(file("site"))
       sourceDirectory in Compile := baseDirectory.value / "src",
       sourceDirectory in Test := baseDirectory.value / "test",
       mdocIn := (sourceDirectory in Compile).value / "mdoc",
+
+      // Bug in sbt-microsites
+      micrositeConfigYaml := microsites.ConfigYml(
+        yamlCustomProperties = Map("exclude" -> List.empty[String])
+      ),
     )
   }
 
