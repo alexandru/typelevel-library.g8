@@ -1,8 +1,6 @@
-This is the API documentation for the [[https://$microsite_domain$$microsite_base_url$ $name$]] library.
-
 $project_description$
 
 Links:
 
-- [[https://$microsite_domain$$microsite_base_url$ Homepage]]
-- [[https://github.com/$github_user_id$/$github_repository_name$ GitHub repository]]
+ - [[https://$microsite_domain$$microsite_base_url$ Homepage]]
+ - [[https://github.com/$github_user_id$/$github_repository_name$ GitHub repository]]
