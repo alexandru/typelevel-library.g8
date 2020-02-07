@@ -42,10 +42,15 @@ See sample library generated out of the box:
 
 The created project already has workflows defined for building and releasing the library on Sonatype via [GitHub Actions](https://github.com/features/actions). For automated releases to work, you need to configure:
 
-- `GITHUB_TOKEN` — for automatically publishing the documentation microsite with the `repo` scope:
+- `GH_TOKEN` — for automatically publishing the documentation microsite with the `repo` scope:
   - see [GitHub's documentation](https://help.github.com/en/github/authenticating-to-github/creating-a-personal-access-token-for-the-command-line)
   - [Quick link (click here)](https://github.com/settings/tokens/new?scopes=repo&description=sbt-microsites)
-- ...
+- For publishing to Sonatype:
+  - `PGP_PASSPHRASE`
+  - `PGP_SECRET`
+  - `SONATYPE_USERNAME`
+  - `SONATYPE_PASSWORD`
+  - See documentation at [sbt-ci-release](https://github.com/olafurpg/sbt-ci-release) for generating these
 
 To publish the website to [GitHub Pages](https://pages.github.com/), it is recommended that you first create the `gh-pages` branch:
 
