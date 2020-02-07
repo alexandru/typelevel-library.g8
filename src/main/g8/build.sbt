@@ -121,10 +121,7 @@ lazy val coverageSettings = Seq(
 )
 
 lazy val doNotPublishArtifact = Seq(
-  publishArtifact := false,
-  publishArtifact in (Compile, packageDoc) := false,
-  publishArtifact in (Compile, packageSrc) := false,
-  publishArtifact in (Compile, packageBin) := false
+  skip in publish := true,
 )
 
 lazy val sharedJSSettings = Seq(
@@ -137,7 +134,7 @@ lazy val sharedJSSettings = Seq(
         git.gitHeadCommit.value.getOrElse(ver)
       else
         ver
-    }   
+    }
     val l = (baseDirectory in LocalRootProject).value.toURI.toString
     val g = s"https://raw.githubusercontent.com/\${gitHubRepositoryID.value}/\$tagOrHash/"
     s"-P:scalajs:mapSourceURI:\$l->\$g"
