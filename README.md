@@ -4,6 +4,8 @@
 
 This is a [Giter8][g8] template for creating libraries ready to be published.
 
+## Usage
+
 ```
 sbt new alexandru/typelevel-library.g8
 ```
@@ -28,6 +30,28 @@ sbt new alexandru/typelevel-library.g8
   - [sbt-sonatype](https://github.com/xerial/sbt-sonatype) for faster and easier releases
 - [sbt-scoverage](https://github.com/scoverage/sbt-scoverage) for code coverage with sane setup
 - ...
+
+## Configuration of Automatic Releases to Sonatype
+
+The created project already has workflows defined for building and releasing the library on Sonatype via [GitHub Actions](https://github.com/features/actions). For automated releases to work, you need to configure:
+
+- `GITHUB_TOKEN` — for automatically publishing the documentation microsite with the `repo` scope:
+  - see [GitHub's documentation](https://help.github.com/en/github/authenticating-to-github/creating-a-personal-access-token-for-the-command-line)
+  - [Quick link (click here)](https://github.com/settings/tokens/new?scopes=repo&description=sbt-microsites)
+- ...
+
+To publish the website to [GitHub Pages](https://pages.github.com/), it is recommended that you first create the `gh-pages` branch:
+
+```sh
+git checkout --orphan gh-pages
+git rm --cached -r .
+touch index.html && git add index.html
+git commit -am 'Initial commit'
+git push --set-upstream origin gh-pages
+git add .
+git reset --hard HEAD
+git checkout master
+```
 
 Template license
 ----------------

@@ -12,6 +12,13 @@ The packages are published on Maven Central.
 libraryDependencies += "$organization$" %% "$artifact_id$" % "<version>"
 ```
 
+## Documentation
+
+Links:
+
+- [Website](https://$microsite_domain$$microsite_base_url$)
+- [API documentation](https://$microsite_domain$$microsite_base_url$/api/)
+
 ## Contributing
 
 The $name$ project welcomes contributions from anybody wishing to participate.  All code or documentation that is provided must be licensed with the same license that $name$ is licensed with (Apache 2.0, see LICENSE.txt).
