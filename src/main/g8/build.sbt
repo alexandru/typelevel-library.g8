@@ -132,8 +132,12 @@ lazy val sharedJSSettings = Seq(
   // Use globally accessible (rather than local) source paths in JS source maps
   scalacOptions += {
     val tagOrHash =
-      if (isSnapshot.value) git.gitHeadCommit.value.get
-      else s"v\${version.value}"
+      val ver = s"v\${version.value}"
+      if (isSnapshot.value)
+        git.gitHeadCommit.value.getOrElse(ver)
+      else
+        ver
+
     val l = (baseDirectory in LocalRootProject).value.toURI.toString
     val g = s"https://raw.githubusercontent.com/\${gitHubRepositoryID.value}/\$tagOrHash/"
     s"-P:scalajs:mapSourceURI:\$l->\$g"
