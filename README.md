@@ -21,9 +21,11 @@ sbt new alexandru/typelevel-library.g8
 - [sbt-microsites](https://github.com/47deg/sbt-microsites) for building the documentation website, type checked via [mdoc](https://github.com/scalameta/mdoc)
 - [sbt-header](https://github.com/sbt/sbt-header) for automatic copyright headers
 - [sbt-scalafmt](https://github.com/scalameta/scalafmt) default setup for auto-formatting
-- [sbt-git](https://github.com/sbt/sbt-git) setup for version management based on Git tags and SHAs
-- [sbt-sonatype](https://github.com/xerial/sbt-sonatype) for faster and easier releases
-- Sane setup for usage of [sbt-scoverage](https://github.com/scoverage/sbt-scoverage) for code coverage
+- [sbt-tpolecat](https://github.com/DavidGregory084/sbt-tpolecat) for sane Scalac compiler options with most linter options on
+- [sbt-ci-release](https://github.com/olafurpg/sbt-ci-release) for managing the versioning and the release to Sonatype
+  - [sbt-git](https://github.com/sbt/sbt-git) setup for version management based on Git tags and SHAs
+  - [sbt-sonatype](https://github.com/xerial/sbt-sonatype) for faster and easier releases
+- [sbt-scoverage](https://github.com/scoverage/sbt-scoverage) for code coverage with sane setup
 - ...
 
 Template license
