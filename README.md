@@ -24,6 +24,7 @@ sbt new alexandru/typelevel-library.g8
 - [sbt-tpolecat](https://github.com/DavidGregory084/sbt-tpolecat) for sane Scalac compiler options with most linter options on
 - [sbt-ci-release](https://github.com/olafurpg/sbt-ci-release) for managing the versioning and the release to Sonatype
   - [sbt-git](https://github.com/sbt/sbt-git) setup for version management based on Git tags and SHAs
+  - [sbt-dynver](https://github.com/dwijnand/sbt-dynver) a ready-made setup of `sbt-git` options for dynamic version management
   - [sbt-sonatype](https://github.com/xerial/sbt-sonatype) for faster and easier releases
 - [sbt-scoverage](https://github.com/scoverage/sbt-scoverage) for code coverage with sane setup
 - ...
