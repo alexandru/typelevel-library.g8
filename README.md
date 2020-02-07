@@ -4,19 +4,24 @@
 
 This is a [Giter8][g8] template for creating libraries ready to be published.
 
-See sample library generated out of the box: [my-typelevel-library](https://github.com/alexandru/my-typelevel-library) / [website](https://alexandru.github.io/my-typelevel-library/) / [maven central](https://search.maven.org/search?g:org.alexn%20AND%20a:my-typelevel-library-core_2.13=&core=gav).
-
 ## Usage
 
 ```
 sbt new alexandru/typelevel-library.g8
 ```
 
+See sample library generated out of the box:
+
+- [github repository](https://github.com/alexandru/my-typelevel-library)
+- [documentation website](https://alexandru.github.io/my-typelevel-library/)
+- [maven central artifacts](https://search.maven.org/search?g:org.alexn%20AND%20a:my-typelevel-library-core_2.13=&core=gav) (published via CI)
+
 ## Features
 
 - Build setup for multiple sub-projects
 - Sane Scala compiler defaults for doing FP (including [kind-projector](https://github.com/typelevel/kind-projector) and [better-monadic-for](https://github.com/oleg-py/better-monadic-for))
 - Continuous integration via [GitHub Actions](https://github.com/features/actions)
+  - With automated publishing to Sonatype!
 - Usual [contributing](./src/main/g8/CONTRIBUTING.md), [code of conduct](./src/main/g8/CODE_OF_CONDUCT.md), [license](./src/main/g8/LICENSE.md) boilerplate
 - [Scala.js](https://www.scala-js.org/) cross-compilation
 - [sbt-crossproject](https://github.com/portable-scala/sbt-crossproject) for managing the JVM / JS configuration
