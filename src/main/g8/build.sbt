@@ -77,7 +77,6 @@ def profile: Project ⇒ Project = pr => {
   }
   withCoverage
     .enablePlugins(AutomateHeaderPlugin)
-    .enablePlugins(GitVersioning)
 }
 
 def scalaPartV = Def setting (CrossVersion partialVersion scalaVersion.value)
@@ -133,7 +132,7 @@ lazy val sharedJSSettings = Seq(
   scalacOptions += {
     val tagOrHash =
       if (isSnapshot.value) git.gitHeadCommit.value.get
-      else s"v\${git.baseVersion.value}"
+      else s"v\${version.value}"
     val l = (baseDirectory in LocalRootProject).value.toURI.toString
     val g = s"https://raw.githubusercontent.com/\${gitHubRepositoryID.value}/\$tagOrHash/"
     s"-P:scalajs:mapSourceURI:\$l->\$g"
@@ -223,10 +222,6 @@ lazy val sharedSettings = Seq(
   // ---------------------------------------------------------------------------
   // Options meant for publishing on Maven Central
 
-  publishMavenStyle := true,
-  publishTo := sonatypePublishToBundle.value,
-
-  isSnapshot := version.value endsWith "SNAPSHOT",
   publishArtifact in Test := false,
   pomIncludeRepository := { _ => false }, // removes optional dependencies
 
@@ -265,24 +260,6 @@ lazy val sharedSettings = Seq(
 
   // -- Settings meant for deployment on oss.sonatype.org
   sonatypeProfileName := organization.value,
-
-  // ---------------------------------------------------------------------------
-  // Versioning settings — based on Git
-
-  git.baseVersion := "0.1.0",
-
-  git.gitTagToVersionNumber := {
-    case ReleaseTag(v) => Some(v)
-    case _ => None
-  },
-
-  git.formattedShaVersion := {
-    val suffix = git.makeUncommittedSignifierSuffix(git.gitUncommittedChanges.value, git.uncommittedSignifier.value)
-
-    git.gitHeadCommit.value map { _.substring(0, 7) } map { sha =>
-      git.baseVersion.value + "-" + sha + suffix
-    }
-  }
 )
 
 lazy val root = project.in(file("."))
