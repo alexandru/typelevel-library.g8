@@ -264,7 +264,7 @@ lazy val sharedSettings = Seq(
   sonatypeProfileName := organization.value,
 )
 
-lazy val root = project.in(file("."))
+lazy val $name;format="camel"$ = project.in(file("."))
   .enablePlugins(ScalaUnidocPlugin)
   .aggregate($sub_project_id$JVM, $sub_project_id$JS)
   .configure(profile)
