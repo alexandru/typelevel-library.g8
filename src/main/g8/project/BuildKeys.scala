@@ -72,4 +72,10 @@ object BuildKeys {
     */
   lazy val docsMappingsAPIDir =
     settingKey[String]("Name of subdirectory in site target directory for api docs")
+
+  /**
+    * Auto-detected by the build process.
+    */
+  lazy val needsScalaMacroParadise =
+    settingKey[Boolean]("Needs Scala Macro Paradise")        
 }
