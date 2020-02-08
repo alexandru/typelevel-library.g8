@@ -7,26 +7,55 @@ import sbt.Keys._
 import sbtunidoc.BaseUnidocPlugin.autoImport.{unidoc, unidocProjectFilter}
 import sbtunidoc.ScalaUnidocPlugin.autoImport.ScalaUnidoc
 
+import scala.util.matching.Regex
 import scala.xml.Elem
 import scala.xml.transform.{RewriteRule, RuleTransformer}
 
 object Boilerplate {
   /**
-    * Settings specific for Scoverage.
+    * Applies [[filterOutDependencyFromGeneratedPomXml]] to a list of multiple dependencies.
     */
-  lazy val coverageSettings = Seq(
-    // For evicting Scoverage out of the generated POM
-    // See: https://github.com/scoverage/sbt-scoverage/issues/153
-    pomPostProcess := { (node: xml.Node) =>
-      new RuleTransformer(new RewriteRule {
-        override def transform(node: xml.Node): Seq[xml.Node] = node match {
-          case e: Elem
-            if e.label == "dependency" && e.child.exists(child => child.label == "groupId" && child.text == "org.scoverage") => Nil
-          case _ => Seq(node)
+  def filterOutMultipleDependenciesFromGeneratedPomXml(list: List[(String, Regex)]*) =
+    list.foldLeft(List.empty[Def.Setting[_]]) { (acc, elem) =>
+      acc ++ filterOutDependencyFromGeneratedPomXml(elem:_*)
+    }
+
+  /**
+    * Filter out dependencies from the generated `pom.xml`.
+    *
+    * E.g. to exclude Scoverage:
+    * {{{
+    *   filterOutDependencyFromGeneratedPomXml("groupId" -> "org.scoverage")
+    * }}}
+    *
+    * Or to exclude based on both `groupId` and `artifactId`:
+    * {{{
+    *   filterOutDependencyFromGeneratedPomXml("groupId" -> "io\\.estatico".r, "artifactId" -> "newtype".r)
+    * }}}
+    */
+  def filterOutDependencyFromGeneratedPomXml(conditions: (String, Regex)*) = {
+    def shouldExclude(e: Elem) =
+      e.label == "dependency" && {
+        conditions.forall { case (key, regex) =>
+          e.child.exists(child => child.label == key && regex.findFirstIn(child.text).isDefined)
         }
-      }).transform(node).head
-    },
-  )
+      }
+
+    if (conditions.isEmpty) Nil else {
+      Seq(
+        // For evicting Scoverage out of the generated POM
+        // See: https://github.com/scoverage/sbt-scoverage/issues/153
+        pomPostProcess := { (node: xml.Node) =>
+          new RuleTransformer(new RewriteRule {
+            override def transform(node: xml.Node): Seq[xml.Node] = node match {
+              case e: Elem if shouldExclude(e) => Nil
+              case _ => Seq(node)
+            }
+          }).transform(node).head
+        },
+      )
+    }
+  }
 
   /**
     * For working with Scala version-specific source files, allowing us to
@@ -98,5 +127,29 @@ object Boilerplate {
     doctestTestFramework := tf,
     doctestIgnoreRegex := Some(s".*(internal).*"),
     doctestOnlyCodeBlocksMode := true
+  )
+
+  /**
+    * For macros that work across Scala versions.
+    */
+  def requiredMacroCompatDeps(macroParadiseVersion: String) = Seq(
+    needsScalaMacroParadise := {
+      val sv = scalaVersion.value
+      (sv startsWith "2.11.") || (sv startsWith "2.12.") || (sv == "2.13.0-M3")
+    },
+    libraryDependencies ++= Seq(
+      "org.scala-lang" % "scala-reflect" % scalaVersion.value % Compile,
+      "org.scala-lang" % "scala-compiler" % scalaVersion.value % Provided,
+    ),
+    libraryDependencies ++= {
+      if (needsScalaMacroParadise.value)
+        Seq(compilerPlugin("org.scalamacros" % "paradise" % macroParadiseVersion cross CrossVersion.patch))
+      else
+        Nil
+    },
+    scalacOptions ++= {
+      if (needsScalaMacroParadise.value) Nil
+      else Seq("-Ymacro-annotations")
+    }
   )
 }

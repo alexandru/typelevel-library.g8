@@ -19,4 +19,4 @@ jobs:
 
       - name: Test
         run: |
-          sbt g8Test
+          sbt test
