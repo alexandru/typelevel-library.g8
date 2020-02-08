@@ -3,7 +3,7 @@ val ScalaJSVersion =
 
 addSbtPlugin("com.47deg"                 % "sbt-microsites"                % "1.1.0")
 addSbtPlugin("com.eed3si9n"              % "sbt-unidoc"                    % "0.4.3")
-addSbtPlugin("com.geirsson"              % "sbt-ci-release"                % "1.5.0")
+addSbtPlugin("com.geirsson"              % "sbt-ci-release"                % "1.5.2")
 addSbtPlugin("com.github.tkawachi"       % "sbt-doctest"                   % "0.9.6")
 addSbtPlugin("com.typesafe"              % "sbt-mima-plugin"               % "0.6.4")
 addSbtPlugin("de.heikoseeberger"         % "sbt-header"                    % "5.4.0")
