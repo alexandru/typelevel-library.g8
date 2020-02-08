@@ -6,6 +6,8 @@ This is a [Giter8][g8] template for creating libraries ready to be published.
 
 ## Usage
 
+Using [sbt](https://www.scala-sbt.org/download.html) run the following in a terminal:
+
 ```
 sbt --sbt-version 1.3.8 new alexandru/typelevel-library.g8
 ```
