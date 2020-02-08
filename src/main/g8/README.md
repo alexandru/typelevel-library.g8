@@ -17,7 +17,7 @@ libraryDependencies += "$organization$" %% "$artifact_id$" % "<version>"
 Links:
 
 - [Website](https://$microsite_domain$$microsite_base_url$)
-- [API documentation](https://$microsite_domain$$microsite_base_url$/api/)
+- [API documentation](https://$microsite_domain$$microsite_base_url$api/)
 
 ## Contributing
 
