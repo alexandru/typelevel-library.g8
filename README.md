@@ -7,7 +7,7 @@ This is a [Giter8][g8] template for creating libraries ready to be published.
 ## Usage
 
 ```
-sbt new alexandru/typelevel-library.g8
+sbt --sbt-version 1.3.8 new alexandru/typelevel-library.g8
 ```
 
 See sample library generated out of the box:
