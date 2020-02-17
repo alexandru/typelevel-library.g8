@@ -61,7 +61,7 @@ val BetterMonadicForVersion = "0.3.1"
 /** Compiler plugin for silencing compiler warnings:
   * [[https://github.com/ghik/silencer]]
   */
-val SilencerVersion = "1.4.4"
+val SilencerVersion = "1.5.0"
 
 /**
   * Defines common plugins between all projects.
