@@ -7,7 +7,7 @@ val MinitestVersion         = "2.7.0"
 val ScalaCheckVersion       = "1.14.3"
 val KindProjectorVersion    = "0.11.0"
 val BetterMonadicForVersion = "0.3.1"
-val SilencerVersion         = "1.5.0"
+val SilencerVersion         = "1.6.0"
 val GitHub4sVersion         = "0.21.0"
 
 lazy val root = (project in file("."))
