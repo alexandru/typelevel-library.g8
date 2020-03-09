@@ -38,6 +38,7 @@ See sample library generated out of the box:
   - [sbt-dynver](https://github.com/dwijnand/sbt-dynver) a ready-made setup of `sbt-git` options for dynamic version management
   - [sbt-sonatype](https://github.com/xerial/sbt-sonatype) for faster and easier releases
 - [sbt-scoverage](https://github.com/scoverage/sbt-scoverage) for code coverage with sane setup
+- [Ammonite REPL](https://ammonite.io/) for quickly trying new stuff, run via `test:run`
 - ...
 
 ## Configuration of Automatic Releases to Sonatype

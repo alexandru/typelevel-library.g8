@@ -4,6 +4,8 @@ import Boilerplate._
 import sbtcrossproject.CrossPlugin.autoImport.{crossProject, CrossType}
 import sbtcrossproject.CrossProject
 
+import microsites.ExtraMdFileConfig
+
 // ---------------------------------------------------------------------------
 // Commands
 
@@ -22,6 +24,12 @@ val CatsVersion = "2.1.0"
   * [[https://typelevel.org/cats-effect/]]
   */
 val CatsEffectVersion = "2.1.1"
+
+/**
+ * ZIO asynchronous and concurrent programming library
+ * [[https://zio.dev/]]
+ */
+val ZIOVersion = "1.0.0-RC18-1"
 
 /** Newtype (opaque type) definitions:
   * [[https://github.com/estatico/scala-newtype]]
@@ -62,6 +70,12 @@ val BetterMonadicForVersion = "0.3.1"
   * [[https://github.com/ghik/silencer]]
   */
 val SilencerVersion = "1.6.0"
+
+/**
+ * Li Haoyi Ammonite repl embed:
+ * [[https://ammonite.io/]]
+ */
+val AmmoniteVersion = "2.0.0"
 
 /**
   * Defines common plugins between all projects.
@@ -296,6 +310,8 @@ lazy val $sub_project_id$ = crossProject(JSPlatform, JVMPlatform)
       "org.typelevel"  %%% "simulacrum"       % SimulacrumVersion % Provided,
       "org.typelevel"  %%% "cats-core"        % CatsVersion,
       "org.typelevel"  %%% "cats-effect"      % CatsEffectVersion,
+      "dev.zio"        %%% "zio"              % ZIOVersion,
+      "dev.zio"        %%% "zio-streams"      % ZIOVersion,
       // For testing
       "io.monix"       %%% "minitest"         % MinitestVersion % Test,
       "io.monix"       %%% "minitest-laws"    % MinitestVersion % Test,
@@ -304,6 +320,16 @@ lazy val $sub_project_id$ = crossProject(JSPlatform, JVMPlatform)
       "org.typelevel"  %%% "cats-effect-laws" % CatsEffectVersion % Test,
     ),
   )
+
+libraryDependencies += {
+  "com.lihaoyi" % "ammonite" % AmmoniteVersion % "test" cross CrossVersion.full
+}
+
+sourceGenerators in Test += Def.task {
+  val file = (sourceManaged in Test).value / "amm.scala"
+  IO.write(file, """object amm extends App { ammonite.Main.main(args) }""")
+  Seq(file)
+}.taskValue
 
 lazy val $sub_project_id$JVM = $sub_project_id$.jvm
 lazy val $sub_project_id$JS  = $sub_project_id$.js
