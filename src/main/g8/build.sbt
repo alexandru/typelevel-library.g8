@@ -16,12 +16,12 @@ addCommandAlias("ci", ";project root ;reload ;+clean ;+test:compile ;+test ;+pac
 /** Standard FP library for Scala:
   * [[https://typelevel.org/cats/]]
   */
-val CatsVersion = "2.1.0"
+val CatsVersion = "2.1.1"
 
 /** FP library for describing side-effects:
   * [[https://typelevel.org/cats-effect/]]
   */
-val CatsEffectVersion = "2.1.1"
+val CatsEffectVersion = "2.1.2"
 
 /** Newtype (opaque type) definitions:
   * [[https://github.com/estatico/scala-newtype]]
@@ -265,7 +265,7 @@ lazy val site = project.in(file("site"))
       micrositeCompilingDocsTool := WithMdoc,
       fork in mdoc := true,
       scalacOptions.in(Tut) ~= filterConsoleScalacOptions,
-      libraryDependencies += "com.47deg" %% "github4s" % "0.21.0",
+      libraryDependencies += "com.47deg" %% "github4s" % "0.22.0",
       micrositePushSiteWith := GitHub4s,
       micrositeGithubToken := sys.env.get("GITHUB_TOKEN"),
       micrositeExtraMdFiles := Map(
