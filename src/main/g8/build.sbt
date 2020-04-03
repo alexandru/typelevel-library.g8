@@ -16,7 +16,7 @@ addCommandAlias("ci", ";project root ;reload ;+clean ;+test:compile ;+test ;+pac
 /** Standard FP library for Scala:
   * [[https://typelevel.org/cats/]]
   */
-val CatsVersion = "2.1.0"
+val CatsVersion = "2.1.1"
 
 /** FP library for describing side-effects:
   * [[https://typelevel.org/cats-effect/]]
