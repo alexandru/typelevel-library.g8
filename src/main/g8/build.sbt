@@ -41,7 +41,7 @@ val MacroParadiseVersion = "2.1.0"
 /** Library for unit-testing:
   * [[https://github.com/monix/minitest/]]
   */
-val MinitestVersion = "2.7.0"
+val MinitestVersion = "2.8.1"
 
 /** Library for property-based testing:
   * [[https://www.scalacheck.org/]]
