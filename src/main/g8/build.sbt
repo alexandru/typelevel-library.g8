@@ -21,7 +21,7 @@ val CatsVersion = "2.1.1"
 /** FP library for describing side-effects:
   * [[https://typelevel.org/cats-effect/]]
   */
-val CatsEffectVersion = "2.1.2"
+val CatsEffectVersion = "2.1.3"
 
 /** Newtype (opaque type) definitions:
   * [[https://github.com/estatico/scala-newtype]]
