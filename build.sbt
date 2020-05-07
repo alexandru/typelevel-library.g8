@@ -1,6 +1,6 @@
 val CatsVersion             = "2.1.1"
 val CatsEffectVersion       = "2.1.2"
-val NewtypeVersion          = "0.4.3"
+val NewtypeVersion          = "0.4.4"
 val SimulacrumVersion       = "1.0.0"
 val MacroParadiseVersion    = "2.1.0"
 val MinitestVersion         = "2.8.2"

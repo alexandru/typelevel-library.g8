@@ -26,7 +26,7 @@ val CatsEffectVersion = "2.1.2"
 /** Newtype (opaque type) definitions:
   * [[https://github.com/estatico/scala-newtype]]
   */
-val NewtypeVersion = "0.4.3"
+val NewtypeVersion = "0.4.4"
 
 /** First-class support for type-classes:
   * [[https://github.com/typelevel/simulacrum]]
