@@ -18,7 +18,7 @@ addCommandAlias("ci", ";project root ;reload ;+clean ;+test:compile ;+test ;+pac
 /** Standard FP library for Scala:
   * [[https://typelevel.org/cats/]]
   */
-val CatsVersion = "2.1.0"
+val CatsVersion = "2.1.1"
 
 /** FP library for describing side-effects:
   * [[https://typelevel.org/cats-effect/]]
@@ -49,7 +49,7 @@ val MacroParadiseVersion = "2.1.0"
 /** Library for unit-testing:
   * [[https://github.com/monix/minitest/]]
   */
-val MinitestVersion = "2.7.0"
+val MinitestVersion = "2.8.2"
 
 /** Library for property-based testing:
   * [[https://www.scalacheck.org/]]
@@ -279,7 +279,7 @@ lazy val site = project.in(file("site"))
       micrositeCompilingDocsTool := WithMdoc,
       fork in mdoc := true,
       scalacOptions.in(Tut) ~= filterConsoleScalacOptions,
-      libraryDependencies += "com.47deg" %% "github4s" % "0.21.0",
+      libraryDependencies += "com.47deg" %% "github4s" % "0.24.0",
       micrositePushSiteWith := GitHub4s,
       micrositeGithubToken := sys.env.get("GITHUB_TOKEN"),
       micrositeExtraMdFiles := Map(
