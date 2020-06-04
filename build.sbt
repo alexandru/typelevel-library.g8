@@ -9,6 +9,7 @@ val KindProjectorVersion    = "0.11.0"
 val BetterMonadicForVersion = "0.3.1"
 val SilencerVersion         = "1.6.0"
 val GitHub4sVersion         = "0.21.0"
+val AmmoniteVersion         = "2.0.0"
 
 lazy val root = (project in file("."))
   .settings(
@@ -35,6 +36,7 @@ lazy val root = (project in file("."))
       "org.typelevel"  %%% "cats-laws"        % CatsVersion       % Test,
       "org.typelevel"  %%% "simulacrum"       % SimulacrumVersion % Test,
       "com.47deg"      %%% "github4s"         % GitHub4sVersion   % Test,
+      "com.lihaoyi"    % "ammonite"           % AmmoniteVersion   % Test,
 
       compilerPlugin(("org.typelevel"   % "kind-projector"     % KindProjectorVersion).cross(CrossVersion.full) % Test),
       compilerPlugin(("com.github.ghik" % "silencer-plugin"    % SilencerVersion).cross(CrossVersion.full) % Test),
