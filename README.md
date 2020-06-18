@@ -7,7 +7,7 @@
 This is a [Giter8][g8] template for creating libraries ready to be published.
 
 **NOTE:**
-This project is a fork of https://github.com/alexandru/typelevel-library.g8, with minimal changes (mostly dependencies) for now.
+This project is a fork of <https://github.com/alexandru/typelevel-library.g8>, with some minor changes and improvements.
 
 ## Usage
 
@@ -54,11 +54,21 @@ The created project already has workflows defined for building and releasing the
   - see [GitHub's documentation](https://help.github.com/en/github/authenticating-to-github/creating-a-personal-access-token-for-the-command-line)
   - [Quick link (click here)](https://github.com/settings/tokens/new?scopes=repo&description=sbt-microsites)
 - For publishing to Sonatype:
-  - `PGP_PASSPHRASE`
-  - `PGP_SECRET`
+  - `GPG_PASSPHRASE`
+  - `GPG_PRIVATE_KEY`
   - `SONATYPE_USERNAME`
   - `SONATYPE_PASSWORD`
   - See documentation at [sbt-ci-release](https://github.com/olafurpg/sbt-ci-release) for generating these
+
+## Keep dependencies up to date
+
+This template project, as well as created project, has a pre-configured [Scala Steward GitHub Action](https://github.com/scala-steward-org/scala-steward-action) that together with [Mergify Bot](https://mergify.io) keep dependencies up-to-date. For the action to work you also need secrets:
+
+- `GH_TOKEN`
+- `GPG_PASSPHRASE`
+- `GPG_PRIVATE_KEY`
+
+## Publish website
 
 To publish the website to [GitHub Pages](https://pages.github.com/), it is recommended that you first create the `gh-pages` branch:
 
@@ -73,8 +83,7 @@ git reset --hard HEAD
 git checkout master
 ```
 
-Template license
-----------------
+## Template license
 
 Cloned from [scala/scala-seed][source], inspired by the build definition of [Monix][monix] and by [ChristopherDavenport/library.g8][library.g8], another template with similar goals.
 
