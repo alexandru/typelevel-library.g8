@@ -25,8 +25,7 @@ val CatsVersion = "2.1.1"
   */
 val CatsEffectVersion = "2.1.3"
 
-/**
- * ZIO asynchronous and concurrent programming library
+/** ZIO asynchronous and concurrent programming library
  * [[https://zio.dev/]]
  */
 val ZIOVersion = "1.0.0-RC18-1"
@@ -44,7 +43,7 @@ val SimulacrumVersion = "1.0.0"
 /** For macros that are supported on older Scala versions.
   * Not needed starting with Scala 2.13.
   */
-val MacroParadiseVersion = "2.1.0"
+val MacroParadiseVersion = "2.1.1"
 
 /** Library for unit-testing:
   * [[https://github.com/monix/minitest/]]
@@ -71,11 +70,10 @@ val BetterMonadicForVersion = "0.3.1"
   */
 val SilencerVersion = "1.6.0"
 
-/**
- * Li Haoyi Ammonite repl embed:
+/** Li Haoyi Ammonite repl embed:
  * [[https://ammonite.io/]]
  */
-val AmmoniteVersion = "2.0.0"
+val AmmoniteVersion = "2.1.4"
 
 /**
   * Defines common plugins between all projects.
@@ -98,8 +96,8 @@ lazy val sharedSettings = Seq(
   githubRelativeRepositoryID := "$github_repository_name$",
 
   organization := "$organization$",
-  scalaVersion := "2.13.1",
-  crossScalaVersions := Seq("2.12.10", "2.13.1"),
+  scalaVersion := "2.13.2",
+  crossScalaVersions := Seq("2.12.11", "2.13.2"),
 
   // More version specific compiler options
   scalacOptions ++= (CrossVersion.partialVersion(scalaVersion.value) match {
