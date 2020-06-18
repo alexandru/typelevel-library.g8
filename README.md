@@ -22,7 +22,7 @@ See sample library generated out of the box:
 
 - [github repository](https://github.com/bpg/my-awesome-library)
 - [documentation website](https://bpg.github.io/my-awesome-library/)
-- [maven central artifacts](https://search.maven.org/search?g:org.alexn%20AND%20a:my-awesome-library-core_2.13=&core=gav) (published via CI)
+- [maven central artifacts](https://search.maven.org/search?g:com.github.bpg%20AND%20a:my-awesome-library-core_2.13=&core=gav) (published via CI)
 
 ## Features
 
