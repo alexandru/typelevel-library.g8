@@ -42,5 +42,5 @@ jobs:
           git reset --hard HEAD
           git checkout master
 
-          git tag v0.0.1
+          git tag v0.0.1-SNAPSHOT
           git push -f origin --tags
