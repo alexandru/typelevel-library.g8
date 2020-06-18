@@ -3,10 +3,12 @@ on: [push]
 
 jobs:
   generate:
-    runs-on: ubuntu-18.04
+    runs-on: ubuntu-latest
 
     steps:
       - uses: actions/checkout@v2
+      - uses: olafurpg/setup-scala@v2
+      - uses: rlespinasse/github-slug-action@v2.x
 
       - name: Import GPG key
         uses: crazy-max/ghaction-import-gpg@v2
@@ -23,21 +25,22 @@ jobs:
           sbt new bpg/awesome-library.g8 --name="My Awesome Library"
           cd ./my-awesome-library
           git init
+          git remote add origin https://${{ secrets.GH_TOKEN }}@github.com/${{ github.repository_owner }}/my-awesome-library.git
           git config --global user.email "bot@bpgca.net"
           git config --global user.name "GitHub Bot"
           git add .
-          git commit -m "Auto-generated from ${{ github.repository }} rev ${{ github.sha }}"
-          git push -f https://${{ secrets.GH_TOKEN }}@github.com/${{ github.repository_owner }}/my-awesome-library.git master
+          git commit -m "Auto-generated from ${{ github.repository }} rev ${{ env.GITHUB_SHA_SHORT }}"
+          git push -f origin master
           
           git checkout --orphan gh-pages
           git rm --cached -r .
           touch index.html && git add index.html
           git commit -am 'Initial commit'
-          git push -f --set-upstream https://${{ secrets.GH_TOKEN }}@github.com/${{ github.repository_owner }}/my-awesome-library.git gh-pages
+          git push -f --set-upstream origin gh-pages
 
           git add .
           git reset --hard HEAD
           git checkout master
 
           git tag v0.0.1
-          git push -f https://${{ secrets.GH_TOKEN }}@github.com/${{ github.repository_owner }}/my-awesome-library.git --tags
+          git push -f origin --tags
