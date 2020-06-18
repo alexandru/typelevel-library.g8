@@ -2,12 +2,12 @@ name: generate
 on: [push]
 
 jobs:
-  build:
+  generate:
     runs-on: ubuntu-18.04
 
     steps:
       - uses: actions/checkout@v2
-      
+
       - name: Import GPG key
         uses: crazy-max/ghaction-import-gpg@v2
         with:
@@ -20,7 +20,7 @@ jobs:
       - name: Generate New Project
         run: |
           rm -rf ./my-awesome-library
-          sbt new bpg/awesome-library.g8 --name=my-awesome-library
+          sbt new bpg/awesome-library.g8 --name="My Awesome Library"
           cd ./my-awesome-library
           git init
           git config --global user.email "bot@bpgca.net"
@@ -28,5 +28,16 @@ jobs:
           git add .
           git commit -m "Auto-generated from ${{ github.repository }} rev ${{ github.sha }}"
           git push -f https://${{ secrets.GH_TOKEN }}@github.com/${{ github.repository_owner }}/my-awesome-library.git master
+          
+          git checkout --orphan gh-pages
+          git rm --cached -r .
+          touch index.html && git add index.html
+          git commit -am 'Initial commit'
+          git push -f --set-upstream https://${{ secrets.GH_TOKEN }}@github.com/${{ github.repository_owner }}/my-awesome-library.git gh-pages
 
+          git add .
+          git reset --hard HEAD
+          git checkout master
 
+          git tag v0.0.1
+          git push -f https://${{ secrets.GH_TOKEN }}@github.com/${{ github.repository_owner }}/my-awesome-library.git --tags
