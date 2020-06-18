@@ -1,4 +1,4 @@
-# Typelevel Library Template
+# Awesome Scala Library Template
 
 [![build](https://github.com/bpg/typelevel-library.g8/workflows/build/badge.svg)](https://github.com/bpg/typelevel-library.g8/actions?query=workflow%3Abuild)
 [![Scala Steward Action badge](https://img.shields.io/badge/Scala_Steward_Action-helping-blue.svg?style=flat&logo=data:image/png;base64,iVBORw0KGgoAAAANSUhEUgAAAA4AAAAQCAMAAAARSr4IAAAAVFBMVEUAAACHjojlOy5NWlrKzcYRKjGFjIbp293YycuLa3pYY2LSqql4f3pCUFTgSjNodYRmcXUsPD/NTTbjRS+2jomhgnzNc223cGvZS0HaSD0XLjbaSjElhIr+AAAAAXRSTlMAQObYZgAAAHlJREFUCNdNyosOwyAIhWHAQS1Vt7a77/3fcxxdmv0xwmckutAR1nkm4ggbyEcg/wWmlGLDAA3oL50xi6fk5ffZ3E2E3QfZDCcCN2YtbEWZt+Drc6u6rlqv7Uk0LdKqqr5rk2UCRXOk0vmQKGfc94nOJyQjouF9H/wCc9gECEYfONoAAAAASUVORK5CYII=)](https://github.com/scala-steward-org/scala-steward-action)
@@ -7,21 +7,22 @@
 This is a [Giter8][g8] template for creating libraries ready to be published.
 
 **NOTE:**
-This project is a fork of <https://github.com/alexandru/typelevel-library.g8>, with some minor changes and improvements.
+This project started as a fork of <https://github.com/alexandru/typelevel-library.g8>, with some minor updates and improvements.
+But at this point I don't think i will be merging it back to the upstream, as I have quite a few specific changes, and the upstream project is not very active anymore.
 
 ## Usage
 
 Using [sbt](https://www.scala-sbt.org/download.html) run the following in a terminal:
 
 ```sh
-sbt --sbt-version 1.3.12 new bpg/typelevel-library.g8
+sbt --sbt-version 1.3.12 new bpg/awesome-library.g8
 ```
 
 See sample library generated out of the box:
 
-- [github repository](https://github.com/alexandru/my-typelevel-library)
-- [documentation website](https://alexandru.github.io/my-typelevel-library/)
-- [maven central artifacts](https://search.maven.org/search?g:org.alexn%20AND%20a:my-typelevel-library-core_2.13=&core=gav) (published via CI)
+- [github repository](https://github.com/bpg/my-awesome-library)
+- [documentation website](https://bpg.github.io/my-awesome-library/)
+- [maven central artifacts](https://search.maven.org/search?g:org.alexn%20AND%20a:my-awesome-library-core_2.13=&core=gav) (published via CI)
 
 ## Features
 

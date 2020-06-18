@@ -24,7 +24,7 @@ object BuildKeys {
   /**
     * Project homepage root URL.
     *
-    * Example: [[https://alexandru.github.io/]]
+    * Example: [[https://bpg.github.io/]]
     */
   lazy val projectWebsiteRootURL =
     settingKey[String]("Project homepage full URL")
@@ -32,7 +32,7 @@ object BuildKeys {
   /**
     * Project homepage root URL.
     *
-    * Example: `/my-typelevel-library/` or `/`
+    * Example: `/my-awesome-library/` or `/`
     */
   lazy val projectWebsiteBasePath =
     settingKey[String]("Project homepage base path")
@@ -46,23 +46,23 @@ object BuildKeys {
     )
 
   /**
-    * Example: alexandru, monix, typelevel, etc.
+    * Example: bpg, monix, typelevel, etc.
     */
   lazy val githubOwnerID =
     settingKey[String]("GitHub owner ID (e.g. user_id, organization_id)")
 
   /**
-    * Example: alexandru, monix, typelevel, etc.
+    * Example: my-awesome-library, etc.
     */
   lazy val githubRelativeRepositoryID =
     settingKey[String]("GitHub repository ID (e.g. project_name)")
 
   /**
-    * Example: `alexandru/my-typelevel-library`
+    * Example: `bpg/my-awesome-library`
     */
   lazy val githubFullRepositoryID =
     Def.setting(
-      s"\${githubOwnerID.value}/\${githubOwnerID.value}"
+      s"\${githubOwnerID.value}/\${githubRelativeRepositoryID.value}"
     )
 
   /**
