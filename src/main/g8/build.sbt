@@ -28,7 +28,7 @@ val CatsEffectVersion = "2.1.3"
 /** ZIO asynchronous and concurrent programming library
  * [[https://zio.dev/]]
  */
-val ZIOVersion = "1.0.0-RC18-1"
+val ZIOVersion = "1.0.0-RC21"
 
 /** Newtype (opaque type) definitions:
   * [[https://github.com/estatico/scala-newtype]]
