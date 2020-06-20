@@ -30,6 +30,9 @@ See sample library generated out of the box:
 - Sane Scala compiler defaults for doing FP (including [kind-projector](https://github.com/typelevel/kind-projector) and [better-monadic-for](https://github.com/oleg-py/better-monadic-for))
 - Continuous integration via [GitHub Actions](https://github.com/features/actions)
   - With automated publishing to Sonatype!
+  - Also, with automated
+    - dependency update via [Scala Steward GitHub Action](https://github.com/scala-steward-org/scala-steward-action)
+    - release drafting via [Release Drafter GitHub Action](https://github.com/release-drafter/release-drafter)
 - Usual [contributing](./src/main/g8/CONTRIBUTING.md), [code of conduct](./src/main/g8/CODE_OF_CONDUCT.md), [license](./src/main/g8/LICENSE.md) boilerplate
 - [Scala.js](https://www.scala-js.org/) cross-compilation
 - [sbt-crossproject](https://github.com/portable-scala/sbt-crossproject) for managing the JVM / JS configuration
@@ -68,6 +71,25 @@ This template project, as well as created project, has a pre-configured [Scala S
 - `GH_TOKEN`
 - `GPG_PASSPHRASE`
 - `GPG_PRIVATE_KEY`
+
+## Release drafting
+
+The created project has a pre-configured [Release Drafter GitHub Action](https://github.com/release-drafter/release-drafter) to draft a nicely looking release notes based on PR labels.
+
+It uses some custom labels to classify PRs, see `.github/release-drafter.yml` for more details. The labels can be created using the following script with [hub](https://github.com/github/hub) CLI:
+
+```sh
+#!/bin/sh
+REPO="bpg/my-awesome-library"
+
+hub api /repos/${REPO}/labels -X POST -f 'name=dependency' -f 'description=Dependency update' -f 'color=a8f49c'
+hub api /repos/${REPO}/labels -X POST -f 'name=skip-changelog' -f 'description=Do not include this PR in the changelog' -f 'color=ffffdd'
+hub api /repos/${REPO}/labels -X POST -f 'name=breaking' -f 'description=Backward-incompatible change, may break existing API clients' -f 'color=e2b236'
+hub api /repos/${REPO}/labels -X POST -f 'name=maintenance' -f 'description=Maintenance / technical debt' -f 'color=371596'
+hub api /repos/${REPO}/labels -X POST -f 'name=major' -f 'color=666666'
+hub api /repos/${REPO}/labels -X POST -f 'name=minor' -f 'color=666666'
+hub api /repos/${REPO}/labels -X POST -f 'name=patch' -f 'color=666666'
+```
 
 ## Publish website
 

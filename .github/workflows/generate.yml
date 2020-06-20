@@ -22,25 +22,15 @@ jobs:
       - name: Generate New Project
         run: |
           rm -rf ./my-awesome-library
+          git clone https://${{ secrets.GH_TOKEN }}@github.com/${{ github.repository_owner }}/my-awesome-library.git
+
+          find ./my-awesome-library/. -maxdepth 1 ! -name .git ! -name . -exec rm -rf {} \;
+
           sbt new bpg/awesome-library.g8 --name="My Awesome Library"
           cd ./my-awesome-library
-          git init
-          git remote add origin https://${{ secrets.GH_TOKEN }}@github.com/${{ github.repository_owner }}/my-awesome-library.git
+        
           git config --global user.email "bot@bpgca.net"
           git config --global user.name "GitHub Bot"
           git add .
           git commit -m "Auto-generated from ${{ github.repository }} rev ${{ env.GITHUB_SHA_SHORT }}"
-          git push -f origin master
-          
-          git checkout --orphan gh-pages
-          git rm --cached -r .
-          touch index.html && git add index.html
-          git commit -am 'Initial commit'
-          git push -f --set-upstream origin gh-pages
-
-          git add .
-          git reset --hard HEAD
-          git checkout master
-
-          git tag v0.0.1-SNAPSHOT
-          git push -f origin --tags
+          git push origin master
