@@ -1,5 +1,9 @@
 name: generate
-on: [push]
+
+on:
+  push:
+    branches:
+      - master
 
 jobs:
   generate:
@@ -17,7 +21,7 @@ jobs:
           git_user_signingkey: true
         env:
           GPG_PRIVATE_KEY: ${{ secrets.GPG_PRIVATE_KEY }}
-          PASSPHRASE:      ${{ secrets.GPG_PASSPHRASE }}
+          PASSPHRASE: ${{ secrets.GPG_PASSPHRASE }}
 
       - name: Generate New Project
         run: |
@@ -28,9 +32,14 @@ jobs:
 
           sbt new bpg/awesome-library.g8 --name="My Awesome Library"
           cd ./my-awesome-library
-        
+
           git config --global user.email "bot@bpgca.net"
           git config --global user.name "GitHub Bot"
           git add .
-          git commit -m "Auto-generated from ${{ github.repository }} rev ${{ env.GITHUB_SHA_SHORT }}"
-          git push origin master
+
+          if [[ $(git status -s) ]]; then
+            git commit -m "Auto-generated from ${{ github.repository }} rev ${{ env.GITHUB_SHA_SHORT }}"
+            git push origin master
+          else
+            echo No changes
+          fi
