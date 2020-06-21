@@ -1,19 +1,19 @@
 val CatsVersion             = "2.1.1"
-val CatsEffectVersion       = "2.1.2"
-val NewtypeVersion          = "0.4.3"
+val CatsEffectVersion       = "2.1.3"
 val SimulacrumVersion       = "1.0.0"
-val MacroParadiseVersion    = "2.1.0"
-val MinitestVersion         = "2.8.2"
+val MacroParadiseVersion    = "2.1.1"
 val ScalaCheckVersion       = "1.14.3"
 val KindProjectorVersion    = "0.11.0"
 val BetterMonadicForVersion = "0.3.1"
-val SilencerVersion         = "1.6.0"
-val GitHub4sVersion         = "0.21.0"
+val SilencerVersion         = "1.7.0"
+val GitHub4sVersion         = "0.24.1"
+val ScalaTestVersion        = "3.2.0"
+val ScalaTestPlusVersion    = "3.2.0.0"
 
 lazy val root = (project in file("."))
   .settings(
-    scalaVersion := "2.12.10",
-    crossScalaVersions := Seq("2.12.10", "2.13.1"),
+    scalaVersion := "2.12.11",
+    crossScalaVersions := Seq("2.12.11", "2.13.2"),
 
     test in Test := {
       val _ = (g8Test in Test).toTask("").value
@@ -25,16 +25,15 @@ lazy val root = (project in file("."))
     // Adding dependencies in order to force Scala Steward to help us
     // update the g8 template as well
     libraryDependencies ++= Seq(
-      "io.estatico"    %%% "newtype"          % NewtypeVersion    % Test,
-      "io.monix"       %%% "minitest"         % MinitestVersion   % Test,
-      "io.monix"       %%% "minitest-laws"    % MinitestVersion   % Test,
-      "org.scalacheck" %%% "scalacheck"       % ScalaCheckVersion % Test,
-      "org.typelevel"  %%% "cats-core"        % CatsVersion       % Test,
-      "org.typelevel"  %%% "cats-effect"      % CatsEffectVersion % Test,
-      "org.typelevel"  %%% "cats-effect-laws" % CatsEffectVersion % Test,
-      "org.typelevel"  %%% "cats-laws"        % CatsVersion       % Test,
-      "org.typelevel"  %%% "simulacrum"       % SimulacrumVersion % Test,
-      "com.47deg"      %%% "github4s"         % GitHub4sVersion   % Test,
+      "org.scalatest"     %%% "scalatest"        % ScalaTestVersion     % Test,
+      "org.scalatestplus" %%% "scalacheck-1-14"  % ScalaTestPlusVersion % Test,
+      "org.scalacheck"    %%% "scalacheck"       % ScalaCheckVersion    % Test,
+      "org.typelevel"     %%% "cats-core"        % CatsVersion          % Test,
+      "org.typelevel"     %%% "cats-effect"      % CatsEffectVersion    % Test,
+      "org.typelevel"     %%% "cats-effect-laws" % CatsEffectVersion    % Test,
+      "org.typelevel"     %%% "cats-laws"        % CatsVersion          % Test,
+      "org.typelevel"     %%% "simulacrum"       % SimulacrumVersion    % Test,
+      "com.47deg"         %%% "github4s"         % GitHub4sVersion      % Test,
 
       compilerPlugin(("org.typelevel"   % "kind-projector"     % KindProjectorVersion).cross(CrossVersion.full) % Test),
       compilerPlugin(("com.github.ghik" % "silencer-plugin"    % SilencerVersion).cross(CrossVersion.full) % Test),
