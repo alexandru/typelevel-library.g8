@@ -29,7 +29,7 @@ val CatsVersion = "2.1.1"
 /** FP library for describing side-effects:
   * [[https://typelevel.org/cats-effect/]]
   */
-val CatsEffectVersion = "2.1.2"
+val CatsEffectVersion = "2.1.3"
 
 /** Newtype (opaque type) definitions:
   * [[https://github.com/estatico/scala-newtype]]
@@ -73,6 +73,11 @@ val BetterMonadicForVersion = "0.3.1"
   * [[https://github.com/ghik/silencer]]
   */
 val SilencerVersion = "1.7.0"
+
+/** Used for publishing the microsite:
+  * [[https://github.com/47degrees/github4s]]
+  */
+val GitHub4sVersion = "0.24.1"
 
 /**
   * Defines common plugins between all projects.
@@ -274,7 +279,7 @@ lazy val site = project.in(file("site"))
       micrositeCompilingDocsTool := WithMdoc,
       fork in mdoc := true,
       scalacOptions.in(Tut) ~= filterConsoleScalacOptions,
-      libraryDependencies += "com.47deg" %% "github4s" % "0.23.0",
+      libraryDependencies += "com.47deg" %% "github4s" % GitHub4sVersion,
       micrositePushSiteWith := GitHub4s,
       micrositeGithubToken := sys.env.get("GITHUB_TOKEN"),
       micrositeExtraMdFiles := Map(
