@@ -2,8 +2,8 @@ name: scala-steward
 
 on:
   # Uncomment to run this workflow at 00:00 UTC every Sunday
-  # schedule:    
-  #   - cron: '0 0 * * 0'
+  # schedule:
+  #   - cron: "0 0 * * 0"
   repository_dispatch:
     types: [scala-steward]
 
@@ -20,7 +20,7 @@ jobs:
           git_user_signingkey: true
         env:
           GPG_PRIVATE_KEY: \${{ secrets.GPG_PRIVATE_KEY }}
-          PASSPHRASE:      \${{ secrets.GPG_PASSPHRASE }}
+          PASSPHRASE: \${{ secrets.GPG_PASSPHRASE }}
       - name: Launch Scala Steward
         uses: scala-steward-org/scala-steward-action@v2
         with:

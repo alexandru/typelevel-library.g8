@@ -1,35 +1,35 @@
-name-template: 'v\$RESOLVED_VERSION'
-tag-template: 'v\$RESOLVED_VERSION'
+name-template: "v\$RESOLVED_VERSION"
+tag-template: "v\$RESOLVED_VERSION"
 categories:
-  - title: '⚠️ Breaking changes'
-    label: 'breaking'
-  - title: '🚀 Features'
-    label: 'enhancement'
-  - title: '📘 Documentation'
-    label: 'documentation'
-  - title: '🐛 Bug Fixes'
-    label: 'bug'
-  - title: '📈 Dependency updates'
-    label: 'dependency'
-  - title: '🧰 Maintenance'
-    label: 'maintenance'
+  - title: "⚠️ Breaking changes"
+    label: "breaking"
+  - title: "🚀 Features"
+    label: "enhancement"
+  - title: "📘 Documentation"
+    label: "documentation"
+  - title: "🐛 Bug Fixes"
+    label: "bug"
+  - title: "📈 Dependency updates"
+    label: "dependency"
+  - title: "🧰 Maintenance"
+    label: "maintenance"
 exclude-labels:
-  - 'skip-changelog'
+  - "skip-changelog"
 version-resolver:
   major:
     labels:
-      - 'major'
-      - 'breaking'
+      - "major"
+      - "breaking"
   minor:
     labels:
-      - 'minor'
-      - 'enhancement'
+      - "minor"
+      - "enhancement"
   patch:
     labels:
-      - 'patch'
-      - 'maintenance'
-      - 'dependency'
-      - 'bug'
+      - "patch"
+      - "maintenance"
+      - "dependency"
+      - "bug"
   default: patch
 template: |
   ## What's changed

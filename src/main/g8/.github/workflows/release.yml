@@ -8,8 +8,10 @@ jobs:
   publish_sonatype:
     runs-on: ubuntu-latest
     steps:
-      - uses: actions/checkout@v1
-      - uses: olafurpg/setup-scala@v2
+      - uses: actions/checkout@v2
+      - uses: olafurpg/setup-scala@v5
+        with:
+          java-version: adopt@1.11
 
       - name: Import GPG key
         uses: crazy-max/ghaction-import-gpg@v2
@@ -18,7 +20,7 @@ jobs:
           git_user_signingkey: true
         env:
           GPG_PRIVATE_KEY: \${{ secrets.GPG_PRIVATE_KEY }}
-          PASSPHRASE:      \${{ secrets.GPG_PASSPHRASE }}
+          PASSPHRASE: \${{ secrets.GPG_PASSPHRASE }}
 
       - name: Publish to Sonatype (Scala.js 1.1)
         run: csbt +clean ci-release
@@ -32,8 +34,10 @@ jobs:
   publish_microsite:
     runs-on: ubuntu-latest
     steps:
-      - uses: actions/checkout@v1
-      - uses: olafurpg/setup-scala@v2
+      - uses: actions/checkout@v2
+      - uses: olafurpg/setup-scala@v5
+        with:
+          java-version: adopt@1.11
 
       - name: Set up Ruby 2.6 (for microsite)
         uses: actions/setup-ruby@v1
@@ -41,8 +45,7 @@ jobs:
           ruby-version: 2.6.x
 
       - name: Install microsite dependencies
-        run: |
-          bundle install --system --gemfile=site/Gemfile
+        run: bundle install --system --gemfile=site/Gemfile
 
       - name: Publish Website
         run: csbt +clean site/publishMicrosite
