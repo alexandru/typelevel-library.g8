@@ -7,7 +7,7 @@ val MacroParadiseVersion    = "2.1.1"
 val MinitestVersion         = "2.8.2"
 val NewtypeVersion          = "0.4.4"
 val ScalaCheckVersion       = "1.14.3"
-val SilencerVersion         = "1.6.0"
+val SilencerVersion         = "1.7.0"
 val SimulacrumVersion       = "1.0.0"
 val ZIOVersion = "1.0.0-RC21"
 
