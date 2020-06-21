@@ -1,8 +1,9 @@
 name: scala-steward
-# This workflow will launch at 00:00 every Sunday
+
 on:
-  schedule:    
-    - cron: '0 0 * * 0'
+  # Uncomment to run this workflow at 00:00 UTC every Sunday
+  # schedule:    
+  #   - cron: '0 0 * * 0'
   repository_dispatch:
     types: [scala-steward]
 
