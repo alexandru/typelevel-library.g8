@@ -9,12 +9,12 @@ val NewtypeVersion          = "0.4.4"
 val ScalaCheckVersion       = "1.14.3"
 val SilencerVersion         = "1.7.0"
 val SimulacrumVersion       = "1.0.0"
-val ZIOVersion = "1.0.0-RC21"
+val ZIOVersion              = "1.0.0-RC21"
 
 lazy val root = (project in file("."))
   .settings(
-    scalaVersion := "2.12.10",
-    crossScalaVersions := Seq("2.12.10", "2.13.2"),
+    scalaVersion := "2.12.11",
+    crossScalaVersions := Seq("2.12.11", "2.13.2"),
 
     test in Test := {
       val _ = (g8Test in Test).toTask("").value
