@@ -1,0 +1,45 @@
+name: generate
+
+on:
+  push:
+    branches:
+      - master
+
+jobs:
+  generate:
+    runs-on: ubuntu-latest
+
+    steps:
+      - uses: actions/checkout@v2
+      - uses: olafurpg/setup-scala@v2
+      - uses: rlespinasse/github-slug-action@v2.x
+
+      - name: Import GPG key
+        uses: crazy-max/ghaction-import-gpg@v2
+        with:
+          git_commit_gpgsign: true
+          git_user_signingkey: true
+        env:
+          GPG_PRIVATE_KEY: ${{ secrets.GPG_PRIVATE_KEY }}
+          PASSPHRASE: ${{ secrets.GPG_PASSPHRASE }}
+
+      - name: Generate New Project
+        run: |
+          rm -rf ./my-awesome-library
+          git clone https://${{ secrets.GH_TOKEN }}@github.com/${{ github.repository_owner }}/my-awesome-library.git
+
+          find ./my-awesome-library/. -maxdepth 1 ! -name .git ! -name . -exec rm -rf {} \;
+
+          sbt new bpg/awesome-library.g8 --name="My Awesome Library"
+          cd ./my-awesome-library
+
+          git config --global user.email "bot@bpgca.net"
+          git config --global user.name "GitHub Bot"
+          git add .
+
+          if [[ $(git status -s) ]]; then
+            git commit -m "Auto-generated from ${{ github.repository }} rev ${{ env.GITHUB_SHA_SHORT }}"
+            git push origin master
+          else
+            echo No changes
+          fi
