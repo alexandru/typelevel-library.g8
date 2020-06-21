@@ -7,7 +7,7 @@ object BuildKeys {
     * version, therefore we shouldn't re-publish the JVM packages.
     */
   lazy val customScalaJSVersion =
-    Option(System.getenv("SCALAJS_VERSION"))
+    Option(System.getenv("SCALAJS_VERSION")).filter(_.nonEmpty)
 
   /**
     * Human readable project title.

@@ -7,8 +7,16 @@ import sbtcrossproject.CrossProject
 // ---------------------------------------------------------------------------
 // Commands
 
-addCommandAlias("release", ";+clean ;ci-release ;unidoc ;microsite/publishMicrosite")
-addCommandAlias("ci", ";project root ;reload ;+clean ;+test:compile ;+test ;+package ;unidoc ;site/makeMicrosite")
+
+/* We have no other way to target only JVM or JS projects in tests. */
+lazy val aggregatorIDs = Seq("core")
+
+addCommandAlias("ci-jvm",     ";" + aggregatorIDs.map(id => s"\${id}JVM/clean ;\${id}JVM/test:compile ;\${id}JVM/test").mkString(";"))
+addCommandAlias("ci-js",      ";" + aggregatorIDs.map(id => s"\${id}JS/clean ;\${id}JS/test:compile ;\${id}JS/test").mkString(";"))
+addCommandAlias("ci-package", ";scalafmtCheckAll ;package")
+addCommandAlias("ci-doc",     ";unidoc ;site/makeMicrosite")
+addCommandAlias("ci",         ";project root ;reload ;+scalafmtCheckAll ;+ci-jvm ;+ci-js ;+package ;ci-doc")
+addCommandAlias("release",    ";+clean ;ci-release ;unidoc ;microsite/publishMicrosite")
 
 // ---------------------------------------------------------------------------
 // Dependencies
@@ -26,7 +34,7 @@ val CatsEffectVersion = "2.1.2"
 /** Newtype (opaque type) definitions:
   * [[https://github.com/estatico/scala-newtype]]
   */
-val NewtypeVersion = "0.4.3"
+val NewtypeVersion = "0.4.4"
 
 /** First-class support for type-classes:
   * [[https://github.com/typelevel/simulacrum]]
@@ -36,12 +44,15 @@ val SimulacrumVersion = "1.0.0"
 /** For macros that are supported on older Scala versions.
   * Not needed starting with Scala 2.13.
   */
-val MacroParadiseVersion = "2.1.0"
+val MacroParadiseVersion = "2.1.1"
 
 /** Library for unit-testing:
   * [[https://github.com/monix/minitest/]]
+  *  - [[https://github.com/scalatest/scalatest]]
+  *  - [[https://github.com/scalatest/scalatestplus-scalacheck/]]
   */
-val MinitestVersion = "2.8.2"
+val ScalaTestVersion = "3.2.0"
+val ScalaTestPlusVersion = "3.2.0.0"
 
 /** Library for property-based testing:
   * [[https://www.scalacheck.org/]]
@@ -61,7 +72,7 @@ val BetterMonadicForVersion = "0.3.1"
 /** Compiler plugin for silencing compiler warnings:
   * [[https://github.com/ghik/silencer]]
   */
-val SilencerVersion = "1.6.0"
+val SilencerVersion = "1.7.0"
 
 /**
   * Defines common plugins between all projects.
@@ -84,8 +95,8 @@ lazy val sharedSettings = Seq(
   githubRelativeRepositoryID := "$github_repository_name$",
 
   organization := "$organization$",
-  scalaVersion := "2.13.1",
-  crossScalaVersions := Seq("2.12.10", "2.13.1"),
+  scalaVersion := "2.13.2",
+  crossScalaVersions := Seq("2.12.11", "2.13.2"),
 
   // More version specific compiler options
   scalacOptions ++= (CrossVersion.partialVersion(scalaVersion.value) match {
@@ -126,15 +137,8 @@ lazy val sharedSettings = Seq(
   // ---------------------------------------------------------------------------
   // Options for testing
 
-  testFrameworks += new TestFramework("minitest.runner.Framework"),
   logBuffered in Test := false,
   logBuffered in IntegrationTest := false,
-  // Disables parallel execution
-  parallelExecution in Test := false,
-  parallelExecution in IntegrationTest := false,
-  testForkedParallel in Test := false,
-  testForkedParallel in IntegrationTest := false,
-  concurrentRestrictions in Global += Tags.limit(Tags.Test, 1),
 
   // ---------------------------------------------------------------------------
   // Options meant for publishing on Maven Central
@@ -176,7 +180,7 @@ lazy val sharedSettings = Seq(
     )),
 
   // -- Settings meant for deployment on oss.sonatype.org
-  sonatypeProfileName := organization.value,
+  sonatypeProfileName := organization.value
 )
 
 /**
@@ -197,17 +201,22 @@ def defaultCrossProjectConfiguration(pr: CrossProject) = {
       val l = (baseDirectory in LocalRootProject).value.toURI.toString
       val g = s"https://raw.githubusercontent.com/\${githubFullRepositoryID.value}/\$tagOrHash/"
       s"-P:scalajs:mapSourceURI:\$l->\$g"
-    }
+    },
+    // Needed in order to publish for multiple Scala.js versions:
+    // https://github.com/olafurpg/sbt-ci-release#how-do-i-publish-cross-built-scalajs-projects
+    skip.in(publish) := customScalaJSVersion.isEmpty,
   )
 
   val sharedJVMSettings = Seq(
-    skip.in(publish) := customScalaJSVersion.isDefined
+    // Needed in order to publish for multiple Scala.js versions:
+    // https://github.com/olafurpg/sbt-ci-release#how-do-i-publish-cross-built-scalajs-projects
+    skip.in(publish) := customScalaJSVersion.isDefined,
   )
 
   pr.configure(defaultPlugins)
     .settings(sharedSettings)
     .jsSettings(sharedJavascriptSettings)
-    .jvmSettings(doctestTestSettings(DoctestTestFramework.Minitest))
+    .jvmSettings(doctestTestSettings(DoctestTestFramework.ScalaTest))
     .jvmSettings(sharedJVMSettings)
     .settings(crossVersionSharedSources)
     .settings(requiredMacroCompatDeps(MacroParadiseVersion))
@@ -297,11 +306,11 @@ lazy val $sub_project_id$ = crossProject(JSPlatform, JVMPlatform)
       "org.typelevel"  %%% "cats-core"        % CatsVersion,
       "org.typelevel"  %%% "cats-effect"      % CatsEffectVersion,
       // For testing
-      "io.monix"       %%% "minitest"         % MinitestVersion % Test,
-      "io.monix"       %%% "minitest-laws"    % MinitestVersion % Test,
-      "org.scalacheck" %%% "scalacheck"       % ScalaCheckVersion % Test,
-      "org.typelevel"  %%% "cats-laws"        % CatsVersion % Test,
-      "org.typelevel"  %%% "cats-effect-laws" % CatsEffectVersion % Test,
+      "org.scalatest"     %%% "scalatest"        % ScalaTestVersion % Test,
+      "org.scalatestplus" %%% "scalacheck-1-14"  % ScalaTestPlusVersion % Test,
+      "org.scalacheck"    %%% "scalacheck"       % ScalaCheckVersion % Test,
+      "org.typelevel"     %%% "cats-laws"        % CatsVersion % Test,
+      "org.typelevel"     %%% "cats-effect-laws" % CatsEffectVersion % Test,
     ),
   )
 
