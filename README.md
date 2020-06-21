@@ -76,7 +76,7 @@ This template project, as well as created project, has a pre-configured [Scala S
 
 The created project has a pre-configured [Release Drafter GitHub Action](https://github.com/release-drafter/release-drafter) to draft a nicely looking release notes based on PR labels.
 
-It uses some custom labels to classify PRs, see `.github/release-drafter.yml` for more details. The labels can be created using the following script with [hub](https://github.com/github/hub) CLI:
+It uses some custom labels to classify PRs, see `.github/release-drafter.yml` for more details. The labels can be created with help of [hub](https://github.com/github/hub) CLI using [the script](create-labels.sh):
 
 ```sh
 #!/bin/sh
