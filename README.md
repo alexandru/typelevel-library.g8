@@ -8,7 +8,7 @@ This is a [Giter8][g8] template for creating libraries ready to be published.
 
 **NOTE:**
 This project started as a fork of <https://github.com/alexandru/typelevel-library.g8>, with some minor updates and improvements.
-But at this point I don't think i will be merging it back to the upstream, as I have quite a few specific changes, and the upstream project is not very active anymore.
+But at this point I don't think i will be merging it back to the upstream, as I have quite a few specific changes, ~~and the upstream project is not very active anymore~~.
 
 ## Usage
 
