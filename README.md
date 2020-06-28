@@ -15,7 +15,7 @@ But at this point I don't think i will be merging it back to the upstream, as I 
 Using [sbt](https://www.scala-sbt.org/download.html) run the following in a terminal:
 
 ```sh
-sbt --sbt-version 1.3.12 new bpg/awesome-library.g8
+sbt --sbt-version 1.3.13 new bpg/awesome-library.g8
 ```
 
 See sample library generated out of the box:
@@ -41,6 +41,8 @@ See sample library generated out of the box:
 - [sbt-microsites](https://github.com/47deg/sbt-microsites) for building the documentation website, type checked via [mdoc](https://github.com/scalameta/mdoc)
 - [sbt-header](https://github.com/sbt/sbt-header) for automatic copyright headers
 - [sbt-scalafmt](https://github.com/scalameta/scalafmt) default setup for auto-formatting
+- [sbt-scalafix](https://scalacenter.github.io/scalafix/) for linting and light code refactoring
+  - [scalafix-organize-imports](https://github.com/liancheng/scalafix-organize-imports) for organizing imports (similar to IntelliJ's Scala plugin)
 - [sbt-tpolecat](https://github.com/DavidGregory084/sbt-tpolecat) for sane Scalac compiler options with most linter options on
 - [sbt-ci-release](https://github.com/olafurpg/sbt-ci-release) for managing the versioning and the release to Sonatype
   - [sbt-git](https://github.com/sbt/sbt-git) setup for version management based on Git tags and SHAs

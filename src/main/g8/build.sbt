@@ -9,8 +9,10 @@ import microsites.ExtraMdFileConfig
 // ---------------------------------------------------------------------------
 // Commands
 
+addCommandAlias("fix", "all compile:scalafix test:scalafix")
+addCommandAlias("fixCheck", ";compile:scalafix --check ;test:scalafix --check")
 addCommandAlias("release", ";+clean ;ci-release ;unidoc ;microsite/publishMicrosite")
-addCommandAlias("ci", ";project root ;reload ;+clean ;+test:compile ;+test ;+package ;unidoc ;site/makeMicrosite")
+addCommandAlias("ci", ";project root ;reload ;+clean ;fixCheck ;+test:compile ;+test ;+package ;unidoc ;site/makeMicrosite")
 
 // ---------------------------------------------------------------------------
 // Dependencies
@@ -26,8 +28,8 @@ val CatsVersion = "2.1.1"
 val CatsEffectVersion = "2.1.3"
 
 /** ZIO asynchronous and concurrent programming library
- * [[https://zio.dev/]]
- */
+  * [[https://zio.dev/]]
+  */
 val ZIOVersion = "1.0.0-RC21-1"
 
 /** Newtype (opaque type) definitions:
@@ -71,22 +73,25 @@ val BetterMonadicForVersion = "0.3.1"
 val SilencerVersion = "1.7.0"
 
 /** Li Haoyi Ammonite repl embed:
- * [[https://ammonite.io/]]
- */
+  * [[https://ammonite.io/]]
+  */
 val AmmoniteVersion = "2.1.4"
 
 /**
   * Defines common plugins between all projects.
   */
-def defaultPlugins: Project ⇒ Project = pr => {
-  val withCoverage = sys.env.getOrElse("SBT_PROFILE", "") match {
-    case "coverage" => pr
-    case _ => pr.disablePlugins(scoverage.ScoverageSbtPlugin)
+def defaultPlugins: Project ⇒ Project =
+  pr => {
+    val withCoverage = sys.env.getOrElse("SBT_PROFILE", "") match {
+      case "coverage" => pr
+      case _ => pr.disablePlugins(scoverage.ScoverageSbtPlugin)
+    }
+    withCoverage
+      .enablePlugins(AutomateHeaderPlugin)
+      .enablePlugins(GitBranchPrompt)
   }
-  withCoverage
-    .enablePlugins(AutomateHeaderPlugin)
-    .enablePlugins(GitBranchPrompt)
-}
+
+scalafixDependencies in ThisBuild += "com.github.liancheng" %% "organize-imports" % "0.3.1-RC3"
 
 lazy val sharedSettings = Seq(
   projectTitle := "$name$",
@@ -103,24 +108,26 @@ lazy val sharedSettings = Seq(
   scalacOptions ++= (CrossVersion.partialVersion(scalaVersion.value) match {
     case Some((2, v)) if v <= 12 =>
       Seq(
-        "-Ypartial-unification",
+        "-Ywarn-unused-import",
+        "-Ypartial-unification"
       )
     case _ =>
       Seq(
+        "-Wunused:imports",
         // Replaces macro-paradise in Scala 2.13
-        "-Ymacro-annotations",
+        "-Ymacro-annotations"
       )
   }),
 
-    // Turning off fatal warnings for doc generation
+  // Turning off fatal warnings for doc generation
   scalacOptions.in(Compile, doc) ~= filterConsoleScalacOptions,
   // Silence all warnings from src_managed files
-  scalacOptions += "-P:silencer:pathFilters=.*[/]src_managed[/].*",
-
-  addCompilerPlugin("org.typelevel" % "kind-projector" % KindProjectorVersion cross CrossVersion.full),
+  scalacOptions     += "-P:silencer:pathFilters=.*[/]src_managed[/].*",
+  semanticdbEnabled := true,
+  semanticdbVersion := scalafixSemanticdb.revision,
+  addCompilerPlugin("org.typelevel"                      % "kind-projector"  % KindProjectorVersion cross CrossVersion.full),
   addCompilerPlugin("com.olegpy" %% "better-monadic-for" % BetterMonadicForVersion),
-  addCompilerPlugin("com.github.ghik" % "silencer-plugin" % SilencerVersion cross CrossVersion.full),
-
+  addCompilerPlugin("com.github.ghik"                    % "silencer-plugin" % SilencerVersion cross CrossVersion.full),
   // ScalaDoc settings
   autoAPIMappings := true,
   scalacOptions in ThisBuild ++= Seq(
@@ -131,54 +138,46 @@ lazy val sharedSettings = Seq(
     // definitely not what we want.
     "-sourcepath", file(".").getAbsolutePath.replaceAll("[.]\$", "")
   ),
-
   // https://github.com/sbt/sbt/issues/2654
   incOptions := incOptions.value.withLogRecompileOnMacro(false),
-
   // ---------------------------------------------------------------------------
   // Options for testing
-
-  testFrameworks += new TestFramework("minitest.runner.Framework"),
-  logBuffered in Test := false,
+  testFrameworks                 += new TestFramework("minitest.runner.Framework"),
+  logBuffered in Test            := false,
   logBuffered in IntegrationTest := false,
   // Disables parallel execution
-  parallelExecution in Test := false,
-  parallelExecution in IntegrationTest := false,
-  testForkedParallel in Test := false,
+  parallelExecution in Test             := false,
+  parallelExecution in IntegrationTest  := false,
+  testForkedParallel in Test            := false,
   testForkedParallel in IntegrationTest := false,
-  concurrentRestrictions in Global += Tags.limit(Tags.Test, 1),
-
+  concurrentRestrictions in Global      += Tags.limit(Tags.Test, 1),
   // ---------------------------------------------------------------------------
   // Options meant for publishing on Maven Central
-
   publishArtifact in Test := false,
-  pomIncludeRepository := { _ => false }, // removes optional dependencies
-
-  licenses := Seq("APL2" -> url("http://www.apache.org/licenses/LICENSE-2.0.txt")),
-  homepage := Some(url(projectWebsiteFullURL.value)),
-  headerLicense := Some(HeaderLicense.Custom(
-    s"""|Copyright (c) 2020 the \${projectTitle.value} contributors.
-        |See the project homepage at: \${projectWebsiteFullURL.value}
-        |
-        |Licensed under the Apache License, Version 2.0 (the "License");
-        |you may not use this file except in compliance with the License.
-        |You may obtain a copy of the License at
-        |
-        |    http://www.apache.org/licenses/LICENSE-2.0
-        |
-        |Unless required by applicable law or agreed to in writing, software
-        |distributed under the License is distributed on an "AS IS" BASIS,
-        |WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
-        |See the License for the specific language governing permissions and
-        |limitations under the License."""
-      .stripMargin)),
-
+  pomIncludeRepository    := { _ => false }, // removes optional dependencies
+  licenses                := Seq("APL2" -> url("http://www.apache.org/licenses/LICENSE-2.0.txt")),
+  homepage                := Some(url(projectWebsiteFullURL.value)),
+  headerLicense := Some(
+    HeaderLicense
+      .Custom(s"""|Copyright (c) 2020 the \${projectTitle.value} contributors.
+                  |See the project homepage at: \${projectWebsiteFullURL.value}
+                  |
+                  |Licensed under the Apache License, Version 2.0 (the "License");
+                  |you may not use this file except in compliance with the License.
+                  |You may obtain a copy of the License at
+                  |
+                  |    http://www.apache.org/licenses/LICENSE-2.0
+                  |
+                  |Unless required by applicable law or agreed to in writing, software
+                  |distributed under the License is distributed on an "AS IS" BASIS,
+                  |WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
+                  |See the License for the specific language governing permissions and
+                  |limitations under the License.""".stripMargin)),
   scmInfo := Some(
     ScmInfo(
       url(s"https://github.com/\${githubFullRepositoryID.value}"),
       s"scm:git@github.com:\${githubFullRepositoryID.value}.git"
     )),
-
   developers := List(
     Developer(
       id="$sonatype_developer_id$",
@@ -186,9 +185,8 @@ lazy val sharedSettings = Seq(
       email="$developer_email$",
       url=url("$developer_website$")
     )),
-
   // -- Settings meant for deployment on oss.sonatype.org
-  sonatypeProfileName := organization.value,
+  sonatypeProfileName := organization.value
 )
 
 /**
@@ -227,10 +225,11 @@ def defaultCrossProjectConfiguration(pr: CrossProject) = {
       "groupId" -> "org.scoverage".r :: Nil,
       "groupId" -> "io.estatico".r   :: "artifactId" -> "newtype".r    :: Nil,
       "groupId" -> "org.typelevel".r :: "artifactId" -> "simulacrum".r :: Nil,
-    ))
+   ))
 }
 
-lazy val root = project.in(file("."))
+lazy val root = project
+  .in(file("."))
   .enablePlugins(ScalaUnidocPlugin)
   .aggregate($sub_project_id$JVM, $sub_project_id$JS)
   .configure(defaultPlugins)
@@ -239,10 +238,11 @@ lazy val root = project.in(file("."))
   .settings(unidocSettings($sub_project_id$JVM))
   .settings(
     // Try really hard to not execute tasks in parallel ffs
-    Global / concurrentRestrictions := Tags.limitAll(1) :: Nil,
+    Global / concurrentRestrictions := Tags.limitAll(1) :: Nil
   )
 
-lazy val site = project.in(file("site"))
+lazy val site = project
+  .in(file("site"))
   .disablePlugins(MimaPlugin)
   .enablePlugins(MicrositesPlugin)
   .enablePlugins(MdocPlugin)
@@ -275,25 +275,30 @@ lazy val site = project.in(file("site"))
         "white-color" -> "#FFFFFF"
       ),
       micrositeCompilingDocsTool := WithMdoc,
-      fork in mdoc := true,
-      scalacOptions.in(Tut) ~= filterConsoleScalacOptions,
-      libraryDependencies += "com.47deg" %% "github4s" % "0.24.0",
-      micrositePushSiteWith := GitHub4s,
-      micrositeGithubToken := sys.env.get("GITHUB_TOKEN"),
+      fork in mdoc               := true,
+      scalacOptions.in(Tut)      ~= filterConsoleScalacOptions,
+      libraryDependencies        += "com.47deg" %% "github4s" % "0.24.0",
+      micrositePushSiteWith      := GitHub4s,
+      micrositeGithubToken       := sys.env.get("GITHUB_TOKEN"),
       micrositeExtraMdFiles := Map(
-        file("CODE_OF_CONDUCT.md") -> ExtraMdFileConfig("CODE_OF_CONDUCT.md", "page", Map("title" -> "Code of Conduct",   "section" -> "code of conduct", "position" -> "100")),
-        file("LICENSE.md") -> ExtraMdFileConfig("LICENSE.md", "page", Map("title" -> "License",   "section" -> "license",   "position" -> "101"))
+        file("CODE_OF_CONDUCT.md") -> ExtraMdFileConfig(
+          "CODE_OF_CONDUCT.md",
+          "page",
+          Map("title" -> "Code of Conduct", "section" -> "code of conduct", "position" -> "100")),
+        file("LICENSE.md") -> ExtraMdFileConfig(
+          "LICENSE.md",
+          "page",
+          Map("title" -> "License", "section" -> "license", "position" -> "101"))
       ),
       docsMappingsAPIDir := s"api",
       addMappingsToSiteDir(mappings in (ScalaUnidoc, packageDoc) in root, docsMappingsAPIDir),
       sourceDirectory in Compile := baseDirectory.value / "src",
-      sourceDirectory in Test := baseDirectory.value / "test",
-      mdocIn := (sourceDirectory in Compile).value / "mdoc",
-
+      sourceDirectory in Test    := baseDirectory.value / "test",
+      mdocIn                     := (sourceDirectory in Compile).value / "mdoc",
       // Bug in sbt-microsites
       micrositeConfigYaml := microsites.ConfigYml(
         yamlCustomProperties = Map("exclude" -> List.empty[String])
-      ),
+      )
     )
   }
 
@@ -315,8 +320,8 @@ lazy val $sub_project_id$ = crossProject(JSPlatform, JVMPlatform)
       "io.monix"       %%% "minitest-laws"    % MinitestVersion % Test,
       "org.scalacheck" %%% "scalacheck"       % ScalaCheckVersion % Test,
       "org.typelevel"  %%% "cats-laws"        % CatsVersion % Test,
-      "org.typelevel"  %%% "cats-effect-laws" % CatsEffectVersion % Test,
-    ),
+      "org.typelevel"  %%% "cats-effect-laws" % CatsEffectVersion % Test
+    )
   )
 
 libraryDependencies += {
