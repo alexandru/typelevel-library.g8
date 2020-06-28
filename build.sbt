@@ -27,8 +27,8 @@ lazy val root = (project in file("."))
     // update the g8 template as well
     libraryDependencies ++= Seq(
       "com.47deg"      %%% "github4s"         % GitHub4sVersion   % Test,
-      "dev.zio"        %%% "zio-streams"      % ZIOVersion,
-      "dev.zio"        %%% "zio"              % ZIOVersion,
+      "dev.zio"        %%% "zio-streams"      % ZIOVersion        % Test,
+      "dev.zio"        %%% "zio"              % ZIOVersion        % Test,
       "io.estatico"    %%% "newtype"          % NewtypeVersion    % Test,
       "io.monix"       %%% "minitest-laws"    % MinitestVersion   % Test,
       "io.monix"       %%% "minitest"         % MinitestVersion   % Test,
