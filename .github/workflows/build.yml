@@ -33,7 +33,7 @@ jobs:
 
     steps:
       - uses: actions/checkout@v2
-      - uses: olafurpg/setup-scala@v2
+      - uses: olafurpg/setup-scala@v5
       - uses: rlespinasse/github-slug-action@v2.x
 
       - name: Import GPG key
@@ -52,7 +52,7 @@ jobs:
 
           find ./my-awesome-library/. -maxdepth 1 ! -name .git ! -name . -exec rm -rf {} \;
 
-          sbt new bpg/awesome-library.g8 --name="My Awesome Library"
+          csbt new bpg/awesome-library.g8 --name="My Awesome Library"
           cd ./my-awesome-library
 
           git config --global user.email "bot@bpgca.net"
