@@ -6,10 +6,10 @@ jobs:
     runs-on: ubuntu-latest
 
     steps:
-      - name: Cancel currently running builds
-        uses: rokroskar/workflow-run-cleanup-action@master
-        env:
-          GITHUB_TOKEN: "${{ secrets.GH_TOKEN }}"
+      - name: Cancel Previous Runs
+        uses: styfle/cancel-workflow-action@0.4.0
+        with:
+          access_token: ${{ secrets.GH_TOKEN }}
 
       - uses: actions/checkout@v2
       - uses: olafurpg/setup-scala@v5
