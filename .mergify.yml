@@ -3,6 +3,7 @@ pull_request_rules:
     conditions:
       - author=bpg-bot
       - status-success=build
+      - body~=labels:.*semver-patch
     actions:
       merge:
         method: merge
