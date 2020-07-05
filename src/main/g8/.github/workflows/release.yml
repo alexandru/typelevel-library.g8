@@ -25,7 +25,7 @@ jobs:
       - name: Publish to Sonatype (Scala.js 1.1)
         run: csbt +clean ci-release
         env:
-          SCALAJS_VERSION: 1.1.0
+          SCALAJS_VERSION: 1.1.1
           PGP_PASSPHRASE: \${{ secrets.GPG_PASSPHRASE }}
           PGP_SECRET: \${{ secrets.GPG_PRIVATE_KEY }}
           SONATYPE_PASSWORD: \${{ secrets.SONATYPE_PASSWORD }}
