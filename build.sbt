@@ -9,7 +9,7 @@ val NewtypeVersion          = "0.4.4"
 val ScalaCheckVersion       = "1.14.3"
 val SilencerVersion         = "1.7.0"
 val SimulacrumVersion       = "1.0.0"
-val ZIOVersion              = "1.0.0-RC21-1"
+val ZIOVersion              = "1.0.0-RC21-2"
 
 lazy val root = (project in file("."))
   .settings(
