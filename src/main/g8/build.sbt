@@ -96,7 +96,7 @@ lazy val sharedSettings = Seq(
 
   organization := "$organization$",
   scalaVersion := "2.13.3",
-  crossScalaVersions := Seq("2.12.11", "2.13.3"),
+  crossScalaVersions := Seq("2.12.12", "2.13.3"),
 
   // More version specific compiler options
   scalacOptions ++= (CrossVersion.partialVersion(scalaVersion.value) match {

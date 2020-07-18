@@ -12,8 +12,8 @@ val ScalaTestPlusVersion    = "3.2.0.0"
 
 lazy val root = (project in file("."))
   .settings(
-    scalaVersion := "2.12.11",
-    crossScalaVersions := Seq("2.12.11", "2.13.3"),
+    scalaVersion := "2.12.12",
+    crossScalaVersions := Seq("2.12.12", "2.13.3"),
 
     test in Test := {
       val _ = (g8Test in Test).toTask("").value
