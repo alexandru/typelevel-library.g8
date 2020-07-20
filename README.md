@@ -4,6 +4,13 @@
 
 This is a [Giter8][g8] template for creating libraries ready to be published.
 
+- [Usage](#usage)
+  - [Setting Up GitHub (with `main` instead of `master`)](#setting-up-github-with-main-instead-of-master)
+  - [Configuration of Automatic Releases to Sonatype](#configuration-of-automatic-releases-to-sonatype)
+- [Sample Project](#sample-project)
+- [Features](#features)
+- [Template license](#template-license)
+
 ## Usage
 
 Using [sbt](https://www.scala-sbt.org/download.html) run the following in a terminal:
@@ -45,6 +52,33 @@ Next in GitHub:
 
 (Hoping GitHub will soon make this easier)
 
+### Configuration of Automatic Releases to Sonatype
+
+The created project already has workflows defined for building and releasing the library on Sonatype via [GitHub Actions](https://github.com/features/actions). For automated releases to work, you need to configure:
+
+- `GH_TOKEN` — for automatically publishing the documentation microsite with the `repo` scope:
+  - see [GitHub's documentation](https://help.github.com/en/github/authenticating-to-github/creating-a-personal-access-token-for-the-command-line)
+  - [Quick link (click here)](https://github.com/settings/tokens/new?scopes=repo&description=sbt-microsites)
+- For publishing to Sonatype:
+  - `PGP_PASSPHRASE`
+  - `PGP_SECRET`
+  - `SONATYPE_USERNAME`
+  - `SONATYPE_PASSWORD`
+  - See documentation at [sbt-ci-release](https://github.com/olafurpg/sbt-ci-release) for generating these
+
+To publish the website to [GitHub Pages](https://pages.github.com/), it is recommended that you first create the `gh-pages` branch:
+
+```sh
+git checkout --orphan gh-pages
+git rm --cached -r .
+touch index.html && git add index.html
+git commit -am 'Initial commit'
+git push --set-upstream origin gh-pages
+git add .
+git reset --hard HEAD
+git checkout main
+```
+
 ## Sample Project
 
 See sample library generated out of the box:
@@ -74,33 +108,6 @@ See sample library generated out of the box:
   - [sbt-sonatype](https://github.com/xerial/sbt-sonatype) for faster and easier releases
 - [sbt-scoverage](https://github.com/scoverage/sbt-scoverage) for code coverage with sane setup
 - ...
-
-## Configuration of Automatic Releases to Sonatype
-
-The created project already has workflows defined for building and releasing the library on Sonatype via [GitHub Actions](https://github.com/features/actions). For automated releases to work, you need to configure:
-
-- `GH_TOKEN` — for automatically publishing the documentation microsite with the `repo` scope:
-  - see [GitHub's documentation](https://help.github.com/en/github/authenticating-to-github/creating-a-personal-access-token-for-the-command-line)
-  - [Quick link (click here)](https://github.com/settings/tokens/new?scopes=repo&description=sbt-microsites)
-- For publishing to Sonatype:
-  - `PGP_PASSPHRASE`
-  - `PGP_SECRET`
-  - `SONATYPE_USERNAME`
-  - `SONATYPE_PASSWORD`
-  - See documentation at [sbt-ci-release](https://github.com/olafurpg/sbt-ci-release) for generating these
-
-To publish the website to [GitHub Pages](https://pages.github.com/), it is recommended that you first create the `gh-pages` branch:
-
-```sh
-git checkout --orphan gh-pages
-git rm --cached -r .
-touch index.html && git add index.html
-git commit -am 'Initial commit'
-git push --set-upstream origin gh-pages
-git add .
-git reset --hard HEAD
-git checkout main
-```
 
 Template license
 ----------------
