@@ -14,7 +14,7 @@ We hope that our community will be respectful, helpful, and kind. If you find yo
 
 2. Before starting to work, make sure there is a ticket in the issue or create one first. It can help accelerate the acceptance process if the change is agreed upon
 
-3. If you don't have write access to the repository, you should do your work in a local branch of your own fork and then submit a pull request. If you do have write access to the repository, never work directly on master.
+3. If you don't have write access to the repository, you should do your work in a local branch of your own fork and then submit a pull request. If you do have write access to the repository, never work directly on the `main` branch.
 
 4. Submit a Pull Request.
 

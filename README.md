@@ -1,6 +1,6 @@
 # Typelevel Library Template
 
-[![Build status](https://github.com/alexandru/typelevel-library.g8/workflows/build/badge.svg?branch=master)](https://github.com/alexandru/typelevel-library.g8/actions?query=branch%3Amaster+workflow%3Abuild) [![Scala Steward badge](https://img.shields.io/badge/Scala_Steward-helping-blue.svg?style=flat&logo=data:image/png;base64,iVBORw0KGgoAAAANSUhEUgAAAA4AAAAQCAMAAAARSr4IAAAAVFBMVEUAAACHjojlOy5NWlrKzcYRKjGFjIbp293YycuLa3pYY2LSqql4f3pCUFTgSjNodYRmcXUsPD/NTTbjRS+2jomhgnzNc223cGvZS0HaSD0XLjbaSjElhIr+AAAAAXRSTlMAQObYZgAAAHlJREFUCNdNyosOwyAIhWHAQS1Vt7a77/3fcxxdmv0xwmckutAR1nkm4ggbyEcg/wWmlGLDAA3oL50xi6fk5ffZ3E2E3QfZDCcCN2YtbEWZt+Drc6u6rlqv7Uk0LdKqqr5rk2UCRXOk0vmQKGfc94nOJyQjouF9H/wCc9gECEYfONoAAAAASUVORK5CYII=)](https://scala-steward.org)
+[![Build status](https://github.com/alexandru/typelevel-library.g8/workflows/build/badge.svg?branch=main)](https://github.com/alexandru/typelevel-library.g8/actions?query=branch%3Amain+workflow%3Abuild) [![Scala Steward badge](https://img.shields.io/badge/Scala_Steward-helping-blue.svg?style=flat&logo=data:image/png;base64,iVBORw0KGgoAAAANSUhEUgAAAA4AAAAQCAMAAAARSr4IAAAAVFBMVEUAAACHjojlOy5NWlrKzcYRKjGFjIbp293YycuLa3pYY2LSqql4f3pCUFTgSjNodYRmcXUsPD/NTTbjRS+2jomhgnzNc223cGvZS0HaSD0XLjbaSjElhIr+AAAAAXRSTlMAQObYZgAAAHlJREFUCNdNyosOwyAIhWHAQS1Vt7a77/3fcxxdmv0xwmckutAR1nkm4ggbyEcg/wWmlGLDAA3oL50xi6fk5ffZ3E2E3QfZDCcCN2YtbEWZt+Drc6u6rlqv7Uk0LdKqqr5rk2UCRXOk0vmQKGfc94nOJyQjouF9H/wCc9gECEYfONoAAAAASUVORK5CYII=)](https://scala-steward.org)
 
 This is a [Giter8][g8] template for creating libraries ready to be published.
 
@@ -11,6 +11,41 @@ Using [sbt](https://www.scala-sbt.org/download.html) run the following in a term
 ```sh
 sbt --sbt-version 1.3.13 new alexandru/typelevel-library.g8
 ```
+
+### Setting Up GitHub (with `main` instead of `master`)
+
+**NOTE:** the template is set to use `main` as the default branch, instead of `master` and this is reflected in the README pixels.
+
+First initialize the local git repository, and do your first commit:
+
+```sh
+cd $project-folder/
+
+git init
+
+git branch -m master main
+
+git commit -am 'Initial commit'
+```
+
+Create a new repository on GitHub, see [github.com/new](https://github.com/new) and add it as your origin:
+
+```scala
+git remote add origin https://github.com/$GITHUB_USERNAME/$GITHUB_REPOSITORY
+
+git push -u origin main
+```
+
+Next in GitHub:
+
+- Navigate to your repository > Settings > Branches
+- Select main as your default branch
+- Update your branch protection rules
+- Navigate to Code > Branches and delete `master`
+
+(Hoping GitHub will soon make this easier)
+
+## Sample Project
 
 See sample library generated out of the box:
 
@@ -64,7 +99,7 @@ git commit -am 'Initial commit'
 git push --set-upstream origin gh-pages
 git add .
 git reset --hard HEAD
-git checkout master
+git checkout main
 ```
 
 Template license
