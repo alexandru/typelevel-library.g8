@@ -16,7 +16,7 @@ addCommandAlias("ci-js",      ";" + aggregatorIDs.map(id => s"\${id}JS/clean ;\$
 addCommandAlias("ci-package", ";scalafmtCheckAll ;package")
 addCommandAlias("ci-doc",     ";unidoc ;site/makeMicrosite")
 addCommandAlias("ci",         ";project root ;reload ;+scalafmtCheckAll ;+ci-jvm ;+ci-js ;+package ;ci-doc")
-addCommandAlias("release",    ";+clean ;ci-release ;unidoc ;microsite/publishMicrosite")
+addCommandAlias("release",    ";+clean ;ci-release ;unidoc ;site/publishMicrosite")
 
 // ---------------------------------------------------------------------------
 // Dependencies
