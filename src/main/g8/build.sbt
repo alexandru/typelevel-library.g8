@@ -289,6 +289,18 @@ lazy val site = project.in(file("site"))
       micrositeConfigYaml := microsites.ConfigYml(
         yamlCustomProperties = Map("exclude" -> List.empty[String])
       ),
+
+      run in Compile := {
+        import scala.sys.process._
+
+        val s: TaskStreams = streams.value
+        val shell: Seq[String] = if (sys.props("os.name").contains("Windows")) Seq("cmd", "/c") else Seq("bash", "-c")
+
+        val jekyllServe: String = s"jekyll serve --open-url --baseurl \${(micrositeBaseUrl in Compile).value}"
+
+        s.log.info("Running Jekyll...")
+        Process(shell :+ jekyllServe, (micrositeExtraMdFilesOutput in Compile).value) !
+      },
     )
   }
 
