@@ -2,7 +2,7 @@ name: build
 on:
   push:
     branches-ignore:
-      - master
+      - main
 
 jobs:
   build:
@@ -19,10 +19,10 @@ jobs:
         with:
           java-version: adopt@1.11
 
-      - name: Set up Ruby 2.6 (for microsite)
+      - name: Set up Ruby 2.7 (for microsite)
         uses: actions/setup-ruby@v1
         with:
-          ruby-version: 2.6.x
+          ruby-version: 2.7.x
 
       - name: Install microsite dependencies
         run: bundle install --system --gemfile=src/main/g8/site/Gemfile

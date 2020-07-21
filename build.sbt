@@ -7,14 +7,16 @@ val MacroParadiseVersion    = "2.1.1"
 val MinitestVersion         = "2.8.2"
 val NewtypeVersion          = "0.4.4"
 val ScalaCheckVersion       = "1.14.3"
+val ScalaTestVersion        = "3.2.0"
+val ScalaTestPlusVersion    = "3.2.0.0"
 val SilencerVersion         = "1.7.0"
 val SimulacrumVersion       = "1.0.0"
 val ZIOVersion              = "1.0.0-RC21-2"
 
 lazy val root = (project in file("."))
   .settings(
-    scalaVersion := "2.12.11",
-    crossScalaVersions := Seq("2.12.11", "2.13.2"),
+    scalaVersion := "2.12.12",
+    crossScalaVersions := Seq("2.12.12", "2.13.3"),
 
     test in Test := {
       val _ = (g8Test in Test).toTask("").value
@@ -32,7 +34,9 @@ lazy val root = (project in file("."))
       "io.estatico"    %%% "newtype"          % NewtypeVersion    % Test,
       "io.monix"       %%% "minitest-laws"    % MinitestVersion   % Test,
       "io.monix"       %%% "minitest"         % MinitestVersion   % Test,
-      "org.scalacheck" %%% "scalacheck"       % ScalaCheckVersion % Test,
+      "org.scalatest"     %%% "scalatest"        % ScalaTestVersion     % Test,
+      "org.scalatestplus" %%% "scalacheck-1-14"  % ScalaTestPlusVersion % Test,
+      "org.scalacheck"    %%% "scalacheck"       % ScalaCheckVersion    % Test,
       "org.typelevel"  %%% "cats-core"        % CatsVersion       % Test,
       "org.typelevel"  %%% "cats-effect-laws" % CatsEffectVersion % Test,
       "org.typelevel"  %%% "cats-effect"      % CatsEffectVersion % Test,

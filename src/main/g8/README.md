@@ -1,8 +1,7 @@
 # $name$
 
 [![Scala Steward Action badge](https://img.shields.io/badge/Scala_Steward_Action-helping-blue.svg?style=flat&logo=data:image/png;base64,iVBORw0KGgoAAAANSUhEUgAAAA4AAAAQCAMAAAARSr4IAAAAVFBMVEUAAACHjojlOy5NWlrKzcYRKjGFjIbp293YycuLa3pYY2LSqql4f3pCUFTgSjNodYRmcXUsPD/NTTbjRS+2jomhgnzNc223cGvZS0HaSD0XLjbaSjElhIr+AAAAAXRSTlMAQObYZgAAAHlJREFUCNdNyosOwyAIhWHAQS1Vt7a77/3fcxxdmv0xwmckutAR1nkm4ggbyEcg/wWmlGLDAA3oL50xi6fk5ffZ3E2E3QfZDCcCN2YtbEWZt+Drc6u6rlqv7Uk0LdKqqr5rk2UCRXOk0vmQKGfc94nOJyQjouF9H/wCc9gECEYfONoAAAAASUVORK5CYII=)](https://github.com/scala-steward-org/scala-steward-action)
-[![Build](https://github.com/$github_user_id$/$github_repository_name$/workflows/build/badge.svg?branch=master)](https://github.com/$github_user_id$/$github_repository_name$/actions?query=branch%3Amaster+workflow%3Abuild)
-[![Release](https://github.com/$github_user_id$/$github_repository_name$/workflows/release/badge.svg)](https://github.com/$github_user_id$/$github_repository_name$/actions?query=workflow%3Arelease)
+[![Build](https://github.com/$github_user_id$/$github_repository_name$/workflows/build/badge.svg?branch=main)](https://github.com/$github_user_id$/$github_repository_name$/actions?query=branch%3Amain+workflow%3Abuild)
 [![Maven Central](https://maven-badges.herokuapp.com/maven-central/$organization$/$artifact_id$_2.13/badge.svg)](https://maven-badges.herokuapp.com/maven-central/$organization$/$artifact_id$_2.13)
 
 $project_description$

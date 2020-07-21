@@ -31,6 +31,6 @@ object Example {
     *   Example.sumAll(List(1, 2, 3, 4))
     * }}}
     */
-  def sumAll[F[_] : Traverse, A: Monoid](list: F[A]): A =
+  def sumAll[F[_]: Traverse, A: Monoid](list: F[A]): A =
     list.foldLeft(Monoid[A].empty)(Monoid[A].combine)
 }

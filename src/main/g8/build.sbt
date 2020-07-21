@@ -9,10 +9,16 @@ import microsites.ExtraMdFileConfig
 // ---------------------------------------------------------------------------
 // Commands
 
-addCommandAlias("fix", "all compile:scalafix test:scalafix")
-addCommandAlias("fixCheck", ";compile:scalafix --check ;test:scalafix --check")
-addCommandAlias("release", ";+clean ;ci-release ;unidoc ;microsite/publishMicrosite")
-addCommandAlias("ci", ";project root ;reload ;+clean ;fixCheck ;+test:compile ;+test ;+package ;unidoc ;site/makeMicrosite")
+
+/* We have no other way to target only JVM or JS projects in tests. */
+lazy val aggregatorIDs = Seq("core")
+
+addCommandAlias("ci-jvm",     ";" + aggregatorIDs.map(id => s"\${id}JVM/clean ;\${id}JVM/test:compile ;\${id}JVM/test").mkString(";"))
+addCommandAlias("ci-js",      ";" + aggregatorIDs.map(id => s"\${id}JS/clean ;\${id}JS/test:compile ;\${id}JS/test").mkString(";"))
+addCommandAlias("ci-package", ";scalafmtCheckAll ;package")
+addCommandAlias("ci-doc",     ";unidoc ;site/makeMicrosite")
+addCommandAlias("ci",         ";project root ;reload ;+scalafmtCheckAll ;+ci-jvm ;+ci-js ;+package ;ci-doc")
+addCommandAlias("release",    ";+clean ;ci-release ;unidoc ;microsite/publishMicrosite")
 
 // ---------------------------------------------------------------------------
 // Dependencies
@@ -32,11 +38,6 @@ val CatsEffectVersion = "2.1.4"
   */
 val ZIOVersion = "1.0.0-RC21-2"
 
-/** Newtype (opaque type) definitions:
-  * [[https://github.com/estatico/scala-newtype]]
-  */
-val NewtypeVersion = "0.4.4"
-
 /** First-class support for type-classes:
   * [[https://github.com/typelevel/simulacrum]]
   */
@@ -49,8 +50,11 @@ val MacroParadiseVersion = "2.1.1"
 
 /** Library for unit-testing:
   * [[https://github.com/monix/minitest/]]
+  *  - [[https://github.com/scalatest/scalatest]]
+  *  - [[https://github.com/scalatest/scalatestplus-scalacheck/]]
   */
-val MinitestVersion = "2.8.2"
+val ScalaTestVersion = "3.2.0"
+val ScalaTestPlusVersion = "3.2.0.0"
 
 /** Library for property-based testing:
   * [[https://www.scalacheck.org/]]
@@ -75,7 +79,12 @@ val SilencerVersion = "1.7.0"
 /** Li Haoyi Ammonite repl embed:
   * [[https://ammonite.io/]]
   */
-val AmmoniteVersion = "2.1.4"
+val AmmoniteVersion = "2.2.0"
+
+/** Used for publishing the microsite:
+  * [[https://github.com/47degrees/github4s]]
+  */
+val GitHub4sVersion = "0.25.0"
 
 /**
   * Defines common plugins between all projects.
@@ -101,22 +110,20 @@ lazy val sharedSettings = Seq(
   githubRelativeRepositoryID := "$github_repository_name$",
 
   organization := "$organization$",
-  scalaVersion := "2.13.2",
-  crossScalaVersions := Seq("2.12.11", "2.13.2"),
+  scalaVersion := "2.13.3",
+  crossScalaVersions := Seq("2.12.12", "2.13.3"),
 
   // More version specific compiler options
   scalacOptions ++= (CrossVersion.partialVersion(scalaVersion.value) match {
-    case Some((2, v)) if v <= 12 =>
-      Seq(
-        "-Ywarn-unused-import",
-        "-Ypartial-unification"
-      )
-    case _ =>
+    case Some((2, v)) if v >= 13 =>
       Seq(
         "-Wunused:imports",
         // Replaces macro-paradise in Scala 2.13
-        "-Ymacro-annotations"
+        // No
+        //"-Ymacro-annotations",
       )
+    case _ =>
+      Seq.empty
   }),
 
   // Turning off fatal warnings for doc generation
@@ -142,15 +149,10 @@ lazy val sharedSettings = Seq(
   incOptions := incOptions.value.withLogRecompileOnMacro(false),
   // ---------------------------------------------------------------------------
   // Options for testing
-  testFrameworks                 += new TestFramework("minitest.runner.Framework"),
-  logBuffered in Test            := false,
+
+  logBuffered in Test := false,
   logBuffered in IntegrationTest := false,
-  // Disables parallel execution
-  parallelExecution in Test             := false,
-  parallelExecution in IntegrationTest  := false,
-  testForkedParallel in Test            := false,
-  testForkedParallel in IntegrationTest := false,
-  concurrentRestrictions in Global      += Tags.limit(Tags.Test, 1),
+
   // ---------------------------------------------------------------------------
   // Options meant for publishing on Maven Central
   publishArtifact in Test := false,
@@ -207,23 +209,27 @@ def defaultCrossProjectConfiguration(pr: CrossProject) = {
       val l = (baseDirectory in LocalRootProject).value.toURI.toString
       val g = s"https://raw.githubusercontent.com/\${githubFullRepositoryID.value}/\$tagOrHash/"
       s"-P:scalajs:mapSourceURI:\$l->\$g"
-    }
+    },
+    // Needed in order to publish for multiple Scala.js versions:
+    // https://github.com/olafurpg/sbt-ci-release#how-do-i-publish-cross-built-scalajs-projects
+    skip.in(publish) := customScalaJSVersion.isEmpty,
   )
 
   val sharedJVMSettings = Seq(
-    skip.in(publish) := customScalaJSVersion.isDefined
+    // Needed in order to publish for multiple Scala.js versions:
+    // https://github.com/olafurpg/sbt-ci-release#how-do-i-publish-cross-built-scalajs-projects
+    skip.in(publish) := customScalaJSVersion.isDefined,
   )
 
   pr.configure(defaultPlugins)
     .settings(sharedSettings)
     .jsSettings(sharedJavascriptSettings)
-    .jvmSettings(doctestTestSettings(DoctestTestFramework.Minitest))
+    .jvmSettings(doctestTestSettings(DoctestTestFramework.ScalaTest))
     .jvmSettings(sharedJVMSettings)
     .settings(crossVersionSharedSources)
     .settings(requiredMacroCompatDeps(MacroParadiseVersion))
     .settings(filterOutMultipleDependenciesFromGeneratedPomXml(
       "groupId" -> "org.scoverage".r :: Nil,
-      "groupId" -> "io.estatico".r   :: "artifactId" -> "newtype".r    :: Nil,
       "groupId" -> "org.typelevel".r :: "artifactId" -> "simulacrum".r :: Nil,
    ))
 }
@@ -275,11 +281,11 @@ lazy val site = project
         "white-color" -> "#FFFFFF"
       ),
       micrositeCompilingDocsTool := WithMdoc,
-      fork in mdoc               := true,
-      scalacOptions.in(Tut)      ~= filterConsoleScalacOptions,
-      libraryDependencies        += "com.47deg" %% "github4s" % "0.24.0",
-      micrositePushSiteWith      := GitHub4s,
-      micrositeGithubToken       := sys.env.get("GITHUB_TOKEN"),
+      fork in mdoc := true,
+      scalacOptions.in(Tut) ~= filterConsoleScalacOptions,
+      libraryDependencies += "com.47deg" %% "github4s" % GitHub4sVersion,
+      micrositePushSiteWith := GitHub4s,
+      micrositeGithubToken := sys.env.get("GITHUB_TOKEN"),
       micrositeExtraMdFiles := Map(
         file("CODE_OF_CONDUCT.md") -> ExtraMdFileConfig(
           "CODE_OF_CONDUCT.md",
@@ -309,19 +315,18 @@ lazy val $sub_project_id$ = crossProject(JSPlatform, JVMPlatform)
   .settings(
     name := "$artifact_id$",
     libraryDependencies ++= Seq(
-      "io.estatico"    %%% "newtype"          % NewtypeVersion % Provided,
       "org.typelevel"  %%% "simulacrum"       % SimulacrumVersion % Provided,
       "org.typelevel"  %%% "cats-core"        % CatsVersion,
       "org.typelevel"  %%% "cats-effect"      % CatsEffectVersion,
       "dev.zio"        %%% "zio"              % ZIOVersion,
       "dev.zio"        %%% "zio-streams"      % ZIOVersion,
       // For testing
-      "io.monix"       %%% "minitest"         % MinitestVersion % Test,
-      "io.monix"       %%% "minitest-laws"    % MinitestVersion % Test,
-      "org.scalacheck" %%% "scalacheck"       % ScalaCheckVersion % Test,
-      "org.typelevel"  %%% "cats-laws"        % CatsVersion % Test,
-      "org.typelevel"  %%% "cats-effect-laws" % CatsEffectVersion % Test
-    )
+      "org.scalatest"     %%% "scalatest"        % ScalaTestVersion % Test,
+      "org.scalatestplus" %%% "scalacheck-1-14"  % ScalaTestPlusVersion % Test,
+      "org.scalacheck"    %%% "scalacheck"       % ScalaCheckVersion % Test,
+      "org.typelevel"     %%% "cats-laws"        % CatsVersion % Test,
+      "org.typelevel"     %%% "cats-effect-laws" % CatsEffectVersion % Test,
+    ),
   )
 
 libraryDependencies += {
