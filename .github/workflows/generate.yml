@@ -1,4 +1,4 @@
-name: build
+name: build and generate example project
 on:
   push:
     branches:
