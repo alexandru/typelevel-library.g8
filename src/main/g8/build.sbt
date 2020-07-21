@@ -72,7 +72,7 @@ val SilencerVersion = "1.7.0"
 /** Used for publishing the microsite:
   * [[https://github.com/47degrees/github4s]]
   */
-val GitHub4sVersion = "0.24.1"
+val GitHub4sVersion = "0.25.0"
 
 /**
   * Defines common plugins between all projects.
@@ -291,6 +291,18 @@ lazy val site = project.in(file("site"))
       sourceDirectory in Compile := baseDirectory.value / "src",
       sourceDirectory in Test := baseDirectory.value / "test",
       mdocIn := (sourceDirectory in Compile).value / "mdoc",
+
+      run in Compile := {
+        import scala.sys.process._
+
+        val s: TaskStreams = streams.value
+        val shell: Seq[String] = if (sys.props("os.name").contains("Windows")) Seq("cmd", "/c") else Seq("bash", "-c")
+
+        val jekyllServe: String = s"jekyll serve --open-url --baseurl \${(micrositeBaseUrl in Compile).value}"
+
+        s.log.info("Running Jekyll...")
+        Process(shell :+ jekyllServe, (micrositeExtraMdFilesOutput in Compile).value) !
+      },
     )
   }
 
