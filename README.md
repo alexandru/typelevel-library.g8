@@ -7,7 +7,7 @@
 This is a [Giter8][g8] template for creating libraries ready to be published.
 
 **NOTE:**
-This project started as a fork of <https://github.com/alexandru/typelevel-library.g8>, with some minor updates and improvements.
+This project was started as a fork of <https://github.com/alexandru/typelevel-library.g8>, with some minor updates and improvements.
 But at this point I don't think I will be merging it back to the upstream, as I have quite a few specific changes.
 
 - [Usage](#usage)
@@ -142,7 +142,6 @@ See sample library generated out of the box:
   - [sbt-dynver](https://github.com/dwijnand/sbt-dynver) a ready-made setup of `sbt-git` options for dynamic version management
   - [sbt-sonatype](https://github.com/xerial/sbt-sonatype) for faster and easier releases
 - [sbt-scoverage](https://github.com/scoverage/sbt-scoverage) for code coverage with sane setup
-
 - [Ammonite REPL](https://ammonite.io/) for quickly trying new stuff, run via `test:run`
 - ...
 
