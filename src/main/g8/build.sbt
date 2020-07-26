@@ -74,7 +74,7 @@ val BetterMonadicForVersion = "0.3.1"
 /** Compiler plugin for silencing compiler warnings:
   * [[https://github.com/ghik/silencer]]
   */
-val SilencerVersion = "1.7.0"
+val SilencerVersion = "1.7.1"
 
 /** Li Haoyi Ammonite repl embed:
   * [[https://ammonite.io/]]

@@ -9,7 +9,7 @@ val NewtypeVersion          = "0.4.4"
 val ScalaCheckVersion       = "1.14.3"
 val ScalaTestVersion        = "3.2.0"
 val ScalaTestPlusVersion    = "3.2.0.0"
-val SilencerVersion         = "1.7.0"
+val SilencerVersion         = "1.7.1"
 val SimulacrumVersion       = "1.0.0"
 val ZIOVersion              = "1.0.0-RC21-2"
 
