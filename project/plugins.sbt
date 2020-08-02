@@ -13,6 +13,6 @@ addSbtPlugin("org.portable-scala"        % "sbt-scala-native-crossproject" % "1.
 addSbtPlugin("org.portable-scala"        % "sbt-scalajs-crossproject"      % "1.0.0")
 addSbtPlugin("org.scala-js"              % "sbt-scalajs"                   % ScalaJSVersion)
 addSbtPlugin("org.scalameta"             % "sbt-mdoc"                      % "2.2.3")
-addSbtPlugin("org.scalameta"             % "sbt-scalafmt"                  % "2.4.0")
+addSbtPlugin("org.scalameta"             % "sbt-scalafmt"                  % "2.4.2")
 addSbtPlugin("org.scoverage"             % "sbt-scoverage"                 % "1.6.1")
 addSbtPlugin("pl.project13.scala"        % "sbt-jmh"                       % "0.3.7")
