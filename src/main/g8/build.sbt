@@ -18,7 +18,7 @@ addCommandAlias("ci-js",      ";" + aggregatorIDs.map(id => s"\${id}JS/clean ;\$
 addCommandAlias("ci-package", ";scalafmtCheckAll ;package")
 addCommandAlias("ci-doc",     ";unidoc ;site/makeMicrosite")
 addCommandAlias("ci",         ";project root ;reload ;+scalafmtCheckAll ;+ci-jvm ;+ci-js ;+package ;ci-doc")
-addCommandAlias("release",    ";+clean ;ci-release ;unidoc ;microsite/publishMicrosite")
+addCommandAlias("release",    ";+clean ;ci-release ;unidoc ;site/publishMicrosite")
 
 // ---------------------------------------------------------------------------
 // Dependencies
@@ -286,25 +286,34 @@ lazy val site = project
       libraryDependencies += "com.47deg" %% "github4s" % GitHub4sVersion,
       micrositePushSiteWith := GitHub4s,
       micrositeGithubToken := sys.env.get("GITHUB_TOKEN"),
+      micrositeExtraMdFilesOutput := (resourceManaged in Compile).value / "jekyll",
+      micrositeConfigYaml := ConfigYml(
+        yamlPath = Some((resourceDirectory in Compile).value / "microsite" / "_config.yml")
+      ),
       micrositeExtraMdFiles := Map(
-        file("CODE_OF_CONDUCT.md") -> ExtraMdFileConfig(
-          "CODE_OF_CONDUCT.md",
-          "page",
-          Map("title" -> "Code of Conduct", "section" -> "code of conduct", "position" -> "100")),
-        file("LICENSE.md") -> ExtraMdFileConfig(
-          "LICENSE.md",
-          "page",
-          Map("title" -> "License", "section" -> "license", "position" -> "101"))
+        file("README.md") -> ExtraMdFileConfig("index.md", "page", Map("title" -> "Home", "section" -> "home", "position" -> "100")),
+        file("CHANGELOG.md") -> ExtraMdFileConfig("CHANGELOG.md", "page", Map("title" -> "Change Log", "section" -> "changelog", "position" -> "101")),
+        file("CONTRIBUTING.md") -> ExtraMdFileConfig("CONTRIBUTING.md", "page", Map("title" -> "Contributing", "section" -> "contributing", "position" -> "102")),
+        file("CODE_OF_CONDUCT.md") -> ExtraMdFileConfig("CODE_OF_CONDUCT.md", "page", Map("title" -> "Code of Conduct", "section" -> "code of conduct", "position" -> "103")),
+        file("LICENSE.md") -> ExtraMdFileConfig("LICENSE.md", "page", Map("title" -> "License", "section" -> "license", "position" -> "104")),
       ),
       docsMappingsAPIDir := s"api",
       addMappingsToSiteDir(mappings in (ScalaUnidoc, packageDoc) in root, docsMappingsAPIDir),
       sourceDirectory in Compile := baseDirectory.value / "src",
-      sourceDirectory in Test    := baseDirectory.value / "test",
-      mdocIn                     := (sourceDirectory in Compile).value / "mdoc",
-      // Bug in sbt-microsites
-      micrositeConfigYaml := microsites.ConfigYml(
-        yamlCustomProperties = Map("exclude" -> List.empty[String])
-      )
+      sourceDirectory in Test := baseDirectory.value / "test",
+      mdocIn := (sourceDirectory in Compile).value / "mdoc",
+
+      run in Compile := {
+        import scala.sys.process._
+
+        val s: TaskStreams = streams.value
+        val shell: Seq[String] = if (sys.props("os.name").contains("Windows")) Seq("cmd", "/c") else Seq("bash", "-c")
+
+        val jekyllServe: String = s"jekyll serve --open-url --baseurl \${(micrositeBaseUrl in Compile).value}"
+
+        s.log.info("Running Jekyll...")
+        Process(shell :+ jekyllServe, (micrositeExtraMdFilesOutput in Compile).value) !
+      },
     )
   }
 
