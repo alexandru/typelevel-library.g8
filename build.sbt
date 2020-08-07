@@ -8,7 +8,7 @@ val BetterMonadicForVersion = "0.3.1"
 val SilencerVersion         = "1.7.1"
 val GitHub4sVersion         = "0.25.0"
 val ScalaTestVersion        = "3.2.0"
-val ScalaTestPlusVersion    = "3.2.0.0"
+val ScalaTestPlusVersion    = "3.2.1.0"
 
 lazy val root = (project in file("."))
   .settings(
