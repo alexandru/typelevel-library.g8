@@ -54,7 +54,7 @@ val MacroParadiseVersion = "2.1.1"
   *  - [[https://github.com/scalatest/scalatestplus-scalacheck/]]
   */
 val ScalaTestVersion = "3.2.1"
-val ScalaTestPlusVersion = "3.2.0.0"
+val ScalaTestPlusVersion = "3.2.1.0"
 
 /** Library for property-based testing:
   * [[https://www.scalacheck.org/]]
