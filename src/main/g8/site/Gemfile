@@ -1,5 +1,6 @@
 source 'http://rubygems.org'
 
+gem "kramdown-parser-gfm"
 gem "jekyll", ">= 3.2.1", "< 4.0.0"
 gem "jekyll-relative-links"
 gem "sass"
