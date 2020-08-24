@@ -9,7 +9,7 @@ import sbtcrossproject.CrossProject
 
 
 /* We have no other way to target only JVM or JS projects in tests. */
-lazy val aggregatorIDs = Seq("core")
+lazy val aggregatorIDs = Seq("$sub_project_id$")
 
 addCommandAlias("ci-jvm",     ";" + aggregatorIDs.map(id => s"\${id}JVM/clean ;\${id}JVM/test:compile ;\${id}JVM/test").mkString(";"))
 addCommandAlias("ci-js",      ";" + aggregatorIDs.map(id => s"\${id}JS/clean ;\${id}JS/test:compile ;\${id}JS/test").mkString(";"))
