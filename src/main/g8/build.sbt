@@ -72,7 +72,7 @@ val SilencerVersion = "1.7.1"
 /** Used for publishing the microsite:
   * [[https://github.com/47degrees/github4s]]
   */
-val GitHub4sVersion = "0.25.0"
+val GitHub4sVersion = "0.26.0"
 
 /**
   * Defines common plugins between all projects.
