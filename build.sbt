@@ -1,6 +1,6 @@
 val CatsVersion             = "2.2.0"
 val CatsEffectVersion       = "2.2.0"
-val SimulacrumVersion       = "1.0.0"
+val SimulacrumVersion       = "1.0.1"
 val MacroParadiseVersion    = "2.1.1"
 val ScalaCheckVersion       = "1.14.3"
 val KindProjectorVersion    = "0.11.0"

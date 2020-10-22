@@ -34,7 +34,7 @@ val CatsEffectVersion = "2.2.0"
 /** First-class support for type-classes:
   * [[https://github.com/typelevel/simulacrum]]
   */
-val SimulacrumVersion = "1.0.0"
+val SimulacrumVersion = "1.0.1"
 
 /** For macros that are supported on older Scala versions.
   * Not needed starting with Scala 2.13.
