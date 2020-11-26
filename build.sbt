@@ -1,5 +1,5 @@
-val CatsVersion             = "2.2.0"
-val CatsEffectVersion       = "2.2.0"
+val CatsVersion             = "2.3.0"
+val CatsEffectVersion       = "2.3.0"
 val SimulacrumVersion       = "1.0.0"
 val MacroParadiseVersion    = "2.1.1"
 val ScalaCheckVersion       = "1.14.3"
@@ -8,7 +8,7 @@ val BetterMonadicForVersion = "0.3.1"
 val SilencerVersion         = "1.7.1"
 val GitHub4sVersion         = "0.26.0"
 val ScalaTestVersion        = "3.2.2"
-val ScalaTestPlusVersion    = "3.2.2.0"
+val ScalaTestPlusVersion    = "3.2.3.0"
 
 lazy val root = (project in file("."))
   .settings(

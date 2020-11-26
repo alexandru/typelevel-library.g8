@@ -24,12 +24,12 @@ addCommandAlias("release",    ";+clean ;ci-release ;unidoc ;site/publishMicrosit
 /** Standard FP library for Scala:
   * [[https://typelevel.org/cats/]]
   */
-val CatsVersion = "2.2.0"
+val CatsVersion = "2.3.0"
 
 /** FP library for describing side-effects:
   * [[https://typelevel.org/cats-effect/]]
   */
-val CatsEffectVersion = "2.2.0"
+val CatsEffectVersion = "2.3.0"
 
 /** First-class support for type-classes:
   * [[https://github.com/typelevel/simulacrum]]
@@ -47,7 +47,7 @@ val MacroParadiseVersion = "2.1.1"
   *  - [[https://github.com/scalatest/scalatestplus-scalacheck/]]
   */
 val ScalaTestVersion = "3.2.2"
-val ScalaTestPlusVersion = "3.2.2.0"
+val ScalaTestPlusVersion = "3.2.3.0"
 
 /** Library for property-based testing:
   * [[https://www.scalacheck.org/]]
