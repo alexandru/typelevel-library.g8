@@ -57,7 +57,7 @@ val ScalaCheckVersion = "1.14.3"
 /** Compiler plugin for working with partially applied types:
   * [[https://github.com/typelevel/kind-projector]]
   */
-val KindProjectorVersion = "0.11.0"
+val KindProjectorVersion = "0.11.2"
 
 /** Compiler plugin for fixing "for comprehensions" to do desugaring w/o `withFilter`:
   * [[https://github.com/typelevel/kind-projector]]
