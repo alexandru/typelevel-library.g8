@@ -95,8 +95,8 @@ lazy val sharedSettings = Seq(
   githubRelativeRepositoryID := "$github_repository_name$",
 
   organization := "$organization$",
-  scalaVersion := "2.13.3",
-  crossScalaVersions := Seq("2.12.12", "2.13.3"),
+  scalaVersion := "2.13.5",
+  crossScalaVersions := Seq("2.12.12", "2.13.5"),
 
   // More version specific compiler options
   scalacOptions ++= (CrossVersion.partialVersion(scalaVersion.value) match {
