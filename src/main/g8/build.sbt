@@ -60,7 +60,7 @@ val ScalaCheckVersion = "1.14.3"
 val KindProjectorVersion = "0.11.0"
 
 /** Compiler plugin for fixing "for comprehensions" to do desugaring w/o `withFilter`:
-  * [[https://github.com/typelevel/kind-projector]]
+  * [[https://github.com/oleg-py/better-monadic-for]]
   */
 val BetterMonadicForVersion = "0.3.1"
 
