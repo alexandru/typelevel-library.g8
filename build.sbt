@@ -6,7 +6,7 @@ val ScalaCheckVersion       = "1.14.3"
 val KindProjectorVersion    = "0.11.0"
 val BetterMonadicForVersion = "0.3.1"
 val SilencerVersion         = "1.7.1"
-val GitHub4sVersion         = "0.26.0"
+val GitHub4sVersion         = "0.28.4"
 val ScalaTestVersion        = "3.2.2"
 val ScalaTestPlusVersion    = "3.2.2.0"
 
