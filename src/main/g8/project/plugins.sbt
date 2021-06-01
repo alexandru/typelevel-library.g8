@@ -7,7 +7,7 @@ addSbtPlugin("com.geirsson"              % "sbt-ci-release"                % "1.
 addSbtPlugin("com.github.tkawachi"       % "sbt-doctest"                   % "0.9.7")
 addSbtPlugin("com.typesafe"              % "sbt-mima-plugin"               % "0.8.0")
 addSbtPlugin("de.heikoseeberger"         % "sbt-header"                    % "5.6.0")
-addSbtPlugin("io.github.davidgregory084" % "sbt-tpolecat"                  % "0.1.14")
+addSbtPlugin("io.github.davidgregory084" % "sbt-tpolecat"                  % "0.1.20")
 addSbtPlugin("org.portable-scala"        % "sbt-scala-native-crossproject" % "1.0.0")
 addSbtPlugin("org.portable-scala"        % "sbt-scalajs-crossproject"      % "1.0.0")
 addSbtPlugin("org.scala-js"              % "sbt-scalajs"                   % ScalaJSVersion)
