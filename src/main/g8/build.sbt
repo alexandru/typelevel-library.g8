@@ -29,7 +29,7 @@ val CatsVersion = "2.2.0"
 /** FP library for describing side-effects:
   * [[https://typelevel.org/cats-effect/]]
   */
-val CatsEffectVersion = "2.2.0"
+val CatsEffectVersion = "2.5.3"
 
 /** First-class support for type-classes:
   * [[https://github.com/typelevel/simulacrum]]
