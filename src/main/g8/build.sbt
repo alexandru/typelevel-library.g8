@@ -115,9 +115,19 @@ lazy val sharedSettings = Seq(
   // Silence all warnings from src_managed files
   scalacOptions += "-P:silencer:pathFilters=.*[/]src_managed[/].*",
 
-  addCompilerPlugin("org.typelevel" % "kind-projector" % KindProjectorVersion cross CrossVersion.full),
-  addCompilerPlugin("com.olegpy" %% "better-monadic-for" % BetterMonadicForVersion),
+  // Cross-version compiler plugins
   addCompilerPlugin("com.github.ghik" % "silencer-plugin" % SilencerVersion cross CrossVersion.full),
+
+  // Compiler plugins that aren't necessarily compatible with Scala 3
+  libraryDependencies ++= (CrossVersion.partialVersion(scalaVersion.value) match {
+    case Some((2, _)) =>
+      Seq(
+        compilerPlugin("com.olegpy" %% "better-monadic-for" % BetterMonadicForVersion),
+        compilerPlugin("org.typelevel" % "kind-projector" % KindProjectorVersion cross CrossVersion.full),
+      )
+    case _ =>
+      Seq.empty
+  }),
 
   // ScalaDoc settings
   autoAPIMappings := true,
