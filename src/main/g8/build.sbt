@@ -24,17 +24,17 @@ addCommandAlias("release",    ";+clean ;ci-release ;unidoc ;microsite/publishMic
 /** Standard FP library for Scala:
   * [[https://typelevel.org/cats/]]
   */
-val CatsVersion = "2.1.1"
+val CatsVersion = "2.6.1"
 
 /** FP library for describing side-effects:
   * [[https://typelevel.org/cats-effect/]]
   */
-val CatsEffectVersion = "2.1.3"
+val CatsEffectVersion = "3.2.4"
 
 /** First-class support for type-classes:
   * [[https://github.com/typelevel/simulacrum]]
   */
-val SimulacrumVersion = "1.0.0"
+val SimulacrumVersion = "1.0.1"
 
 /** For macros that are supported on older Scala versions.
   * Not needed starting with Scala 2.13.
@@ -46,18 +46,18 @@ val MacroParadiseVersion = "2.1.1"
   *  - [[https://github.com/scalatest/scalatest]]
   *  - [[https://github.com/scalatest/scalatestplus-scalacheck/]]
   */
-val ScalaTestVersion = "3.2.0"
-val ScalaTestPlusVersion = "3.2.0.0"
+val ScalaTestVersion = "3.2.9"
+val ScalaTestPlusVersion = "3.2.2.0"
 
 /** Library for property-based testing:
   * [[https://www.scalacheck.org/]]
   */
-val ScalaCheckVersion = "1.14.3"
+val ScalaCheckVersion = "1.15.4"
 
 /** Compiler plugin for working with partially applied types:
   * [[https://github.com/typelevel/kind-projector]]
   */
-val KindProjectorVersion = "0.11.0"
+val KindProjectorVersion = "0.13.1"
 
 /** Compiler plugin for fixing "for comprehensions" to do desugaring w/o `withFilter`:
   * [[https://github.com/typelevel/kind-projector]]
@@ -67,12 +67,12 @@ val BetterMonadicForVersion = "0.3.1"
 /** Compiler plugin for silencing compiler warnings:
   * [[https://github.com/ghik/silencer]]
   */
-val SilencerVersion = "1.7.0"
+val SilencerVersion = "1.7.1"
 
 /** Used for publishing the microsite:
   * [[https://github.com/47degrees/github4s]]
   */
-val GitHub4sVersion = "0.24.1"
+val GitHub4sVersion = "0.29.1"
 
 /**
   * Defines common plugins between all projects.
@@ -95,8 +95,8 @@ lazy val sharedSettings = Seq(
   githubRelativeRepositoryID := "$github_repository_name$",
 
   organization := "$organization$",
-  scalaVersion := "2.13.3",
-  crossScalaVersions := Seq("2.12.11", "2.13.3"),
+  scalaVersion := "3.0.1",
+  crossScalaVersions := Seq("2.12.11", "2.13.6", "3.0.1"),
 
   // More version specific compiler options
   scalacOptions ++= (CrossVersion.partialVersion(scalaVersion.value) match {

@@ -1,19 +1,19 @@
-val CatsVersion             = "2.1.1"
-val CatsEffectVersion       = "2.1.3"
-val SimulacrumVersion       = "1.0.0"
+val CatsVersion             = "2.6.1"
+val CatsEffectVersion       = "3.2.4"
+val SimulacrumVersion       = "1.0.1"
 val MacroParadiseVersion    = "2.1.1"
-val ScalaCheckVersion       = "1.14.3"
-val KindProjectorVersion    = "0.11.0"
+val ScalaCheckVersion       = "1.15.4"
+val KindProjectorVersion    = "0.13.1"
 val BetterMonadicForVersion = "0.3.1"
-val SilencerVersion         = "1.7.0"
-val GitHub4sVersion         = "0.24.1"
-val ScalaTestVersion        = "3.2.0"
-val ScalaTestPlusVersion    = "3.2.0.0"
+val SilencerVersion         = "1.7.1"
+val GitHub4sVersion         = "0.29.1"
+val ScalaTestVersion        = "3.2.9"
+val ScalaTestPlusVersion    = "3.2.2.0"
 
 lazy val root = (project in file("."))
   .settings(
     scalaVersion := "2.12.11",
-    crossScalaVersions := Seq("2.12.11", "2.13.3"),
+    crossScalaVersions := Seq("2.12.11", "2.13.6", "3.0.1"),
 
     test in Test := {
       val _ = (g8Test in Test).toTask("").value
