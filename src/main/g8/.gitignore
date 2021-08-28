@@ -17,3 +17,4 @@ project/metals.sbt
 .metals
 .bloop
 site/Gemfile.lock
+node_modules/

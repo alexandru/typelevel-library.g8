@@ -9,14 +9,14 @@ import sbtcrossproject.CrossProject
 
 
 /* We have no other way to target only JVM or JS projects in tests. */
-lazy val aggregatorIDs = Seq("core")
+lazy val aggregatorIDs = Seq("$sub_project_id$")
 
 addCommandAlias("ci-jvm",     ";" + aggregatorIDs.map(id => s"\${id}JVM/clean ;\${id}JVM/test:compile ;\${id}JVM/test").mkString(";"))
 addCommandAlias("ci-js",      ";" + aggregatorIDs.map(id => s"\${id}JS/clean ;\${id}JS/test:compile ;\${id}JS/test").mkString(";"))
 addCommandAlias("ci-package", ";scalafmtCheckAll ;package")
 addCommandAlias("ci-doc",     ";unidoc ;site/makeMicrosite")
 addCommandAlias("ci",         ";project root ;reload ;+scalafmtCheckAll ;+ci-jvm ;+ci-js ;+package ;ci-doc")
-addCommandAlias("release",    ";+clean ;ci-release ;unidoc ;microsite/publishMicrosite")
+addCommandAlias("release",    ";+clean ;ci-release ;unidoc ;site/publishMicrosite")
 
 // ---------------------------------------------------------------------------
 // Dependencies
@@ -96,7 +96,7 @@ lazy val sharedSettings = Seq(
 
   organization := "$organization$",
   scalaVersion := "3.0.1",
-  crossScalaVersions := Seq("2.12.11", "2.13.6", "3.0.1"),
+  crossScalaVersions := Seq("2.12.12", "2.13.6", "3.0.1"),
 
   // More version specific compiler options
   scalacOptions ++= (CrossVersion.partialVersion(scalaVersion.value) match {
@@ -269,15 +269,21 @@ lazy val site = project.in(file("site"))
         "gray-lighter" -> "#F4F3F4",
         "white-color" -> "#FFFFFF"
       ),
-      micrositeCompilingDocsTool := WithMdoc,
       fork in mdoc := true,
-      scalacOptions.in(Tut) ~= filterConsoleScalacOptions,
+      scalacOptions.in(mdoc) ~= filterConsoleScalacOptions,
       libraryDependencies += "com.47deg" %% "github4s" % GitHub4sVersion,
       micrositePushSiteWith := GitHub4s,
       micrositeGithubToken := sys.env.get("GITHUB_TOKEN"),
+      micrositeExtraMdFilesOutput := (resourceManaged in Compile).value / "jekyll",
+      micrositeConfigYaml := ConfigYml(
+        yamlPath = Some((resourceDirectory in Compile).value / "microsite" / "_config.yml")
+      ),
       micrositeExtraMdFiles := Map(
-        file("CODE_OF_CONDUCT.md") -> ExtraMdFileConfig("CODE_OF_CONDUCT.md", "page", Map("title" -> "Code of Conduct",   "section" -> "code of conduct", "position" -> "100")),
-        file("LICENSE.md") -> ExtraMdFileConfig("LICENSE.md", "page", Map("title" -> "License",   "section" -> "license",   "position" -> "101"))
+        file("README.md") -> ExtraMdFileConfig("index.md", "page", Map("title" -> "Home", "section" -> "home", "position" -> "100")),
+        file("CHANGELOG.md") -> ExtraMdFileConfig("CHANGELOG.md", "page", Map("title" -> "Change Log", "section" -> "changelog", "position" -> "101")),
+        file("CONTRIBUTING.md") -> ExtraMdFileConfig("CONTRIBUTING.md", "page", Map("title" -> "Contributing", "section" -> "contributing", "position" -> "102")),
+        file("CODE_OF_CONDUCT.md") -> ExtraMdFileConfig("CODE_OF_CONDUCT.md", "page", Map("title" -> "Code of Conduct", "section" -> "code of conduct", "position" -> "103")),
+        file("LICENSE.md") -> ExtraMdFileConfig("LICENSE.md", "page", Map("title" -> "License", "section" -> "license", "position" -> "104")),
       ),
       docsMappingsAPIDir := s"api",
       addMappingsToSiteDir(mappings in (ScalaUnidoc, packageDoc) in root, docsMappingsAPIDir),
@@ -285,10 +291,17 @@ lazy val site = project.in(file("site"))
       sourceDirectory in Test := baseDirectory.value / "test",
       mdocIn := (sourceDirectory in Compile).value / "mdoc",
 
-      // Bug in sbt-microsites
-      micrositeConfigYaml := microsites.ConfigYml(
-        yamlCustomProperties = Map("exclude" -> List.empty[String])
-      ),
+      run in Compile := {
+        import scala.sys.process._
+
+        val s: TaskStreams = streams.value
+        val shell: Seq[String] = if (sys.props("os.name").contains("Windows")) Seq("cmd", "/c") else Seq("bash", "-c")
+
+        val jekyllServe: String = s"jekyll serve --open-url --baseurl \${(micrositeBaseUrl in Compile).value}"
+
+        s.log.info("Running Jekyll...")
+        Process(shell :+ jekyllServe, (micrositeExtraMdFilesOutput in Compile).value) !
+      },
     )
   }
 
