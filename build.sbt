@@ -34,11 +34,17 @@ lazy val root = (project in file("."))
       "org.typelevel"     %%% "cats-laws"        % CatsVersion          % Test,
       "org.typelevel"     %%% "simulacrum"       % SimulacrumVersion    % Test,
       "com.47deg"         %%% "github4s"         % GitHub4sVersion      % Test,
-
-      compilerPlugin(("org.typelevel"   % "kind-projector"     % KindProjectorVersion).cross(CrossVersion.full) % Test),
-      compilerPlugin(("com.github.ghik" % "silencer-plugin"    % SilencerVersion).cross(CrossVersion.full) % Test),
-      compilerPlugin(("org.scalamacros" % "paradise"           % MacroParadiseVersion).cross(CrossVersion.patch) % Test),
-      compilerPlugin("com.olegpy"      %% "better-monadic-for" % BetterMonadicForVersion % Test),
     ),
+    libraryDependencies ++= (CrossVersion.partialVersion(scalaVersion.value) match {
+      case Some((2, _)) =>
+        Seq(
+          compilerPlugin(("org.typelevel"   % "kind-projector"     % KindProjectorVersion).cross(CrossVersion.full) % Test),
+          compilerPlugin(("com.github.ghik" % "silencer-plugin"    % SilencerVersion).cross(CrossVersion.full) % Test),
+          compilerPlugin(("org.scalamacros" % "paradise"           % MacroParadiseVersion).cross(CrossVersion.patch) % Test),
+          compilerPlugin("com.olegpy"      %% "better-monadic-for" % BetterMonadicForVersion % Test),
+        )
+      case _ =>
+        Seq.empty
+    }),
   )
 
