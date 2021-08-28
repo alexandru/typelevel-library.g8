@@ -37,7 +37,7 @@ val CatsEffectVersion = "3.2.4"
   *  - [[https://github.com/scalatest/scalatestplus-scalacheck/]]
   */
 val ScalaTestVersion = "3.2.9"
-val ScalaTestPlusVersion = "3.2.2.0"
+val ScalaTestPlusVersion = "3.2.9.0"
 
 /** Library for property-based testing:
   * [[https://www.scalacheck.org/]]
@@ -292,7 +292,7 @@ lazy val $sub_project_id$ = crossProject(JSPlatform, JVMPlatform)
       "org.typelevel"  %%% "cats-effect"      % CatsEffectVersion,
       // For testing
       "org.scalatest"     %%% "scalatest"        % ScalaTestVersion % Test,
-      "org.scalatestplus" %%% "scalacheck-1-14"  % ScalaTestPlusVersion % Test,
+      "org.scalatestplus" %%% "scalacheck-1-15"  % ScalaTestPlusVersion % Test,
       "org.scalacheck"    %%% "scalacheck"       % ScalaCheckVersion % Test,
       "org.typelevel"     %%% "cats-laws"        % CatsVersion % Test,
       "org.typelevel"     %%% "cats-effect-laws" % CatsEffectVersion % Test,

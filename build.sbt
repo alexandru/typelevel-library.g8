@@ -6,7 +6,7 @@ val KindProjectorVersion    = "0.13.1"
 val BetterMonadicForVersion = "0.3.1"
 val GitHub4sVersion         = "0.29.1"
 val ScalaTestVersion        = "3.2.9"
-val ScalaTestPlusVersion    = "3.2.2.0"
+val ScalaTestPlusVersion    = "3.2.9.0"
 
 lazy val root = (project in file("."))
   .settings(
@@ -24,7 +24,7 @@ lazy val root = (project in file("."))
     // update the g8 template as well
     libraryDependencies ++= Seq(
       "org.scalatest"     %%% "scalatest"        % ScalaTestVersion     % Test,
-      "org.scalatestplus" %%% "scalacheck-1-14"  % ScalaTestPlusVersion % Test,
+      "org.scalatestplus" %%% "scalacheck-1-15"  % ScalaTestPlusVersion % Test,
       "org.scalacheck"    %%% "scalacheck"       % ScalaCheckVersion    % Test,
       "org.typelevel"     %%% "cats-core"        % CatsVersion          % Test,
       "org.typelevel"     %%% "cats-effect"      % CatsEffectVersion    % Test,
