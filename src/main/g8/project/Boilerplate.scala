@@ -133,28 +133,4 @@ object Boilerplate {
     doctestIgnoreRegex := Some(s".*(internal).*"),
     doctestOnlyCodeBlocksMode := true
   )
-
-  /**
-    * For macros that work across Scala versions.
-    */
-  def requiredMacroCompatDeps(macroParadiseVersion: String) = Seq(
-    needsScalaMacroParadise := {
-      val sv = scalaVersion.value
-      (sv startsWith "2.11.") || (sv startsWith "2.12.") || (sv == "2.13.0-M3")
-    },
-    libraryDependencies ++= Seq(
-      "org.scala-lang" % "scala-reflect" % scalaVersion.value % Compile,
-      "org.scala-lang" % "scala-compiler" % scalaVersion.value % Provided,
-    ),
-    libraryDependencies ++= {
-      if (needsScalaMacroParadise.value)
-        Seq(compilerPlugin("org.scalamacros" % "paradise" % macroParadiseVersion cross CrossVersion.patch))
-      else
-        Nil
-    },
-    scalacOptions ++= {
-      if (needsScalaMacroParadise.value) Nil
-      else Seq("-Ymacro-annotations")
-    }
-  )
 }

@@ -31,16 +31,6 @@ val CatsVersion = "2.6.1"
   */
 val CatsEffectVersion = "3.2.4"
 
-/** First-class support for type-classes:
-  * [[https://github.com/typelevel/simulacrum]]
-  */
-val SimulacrumVersion = "1.0.1"
-
-/** For macros that are supported on older Scala versions.
-  * Not needed starting with Scala 2.13.
-  */
-val MacroParadiseVersion = "2.1.1"
-
 /** Library for unit-testing:
   * [[https://github.com/monix/minitest/]]
   *  - [[https://github.com/scalatest/scalatest]]
@@ -63,11 +53,6 @@ val KindProjectorVersion = "0.13.1"
   * [[https://github.com/typelevel/kind-projector]]
   */
 val BetterMonadicForVersion = "0.3.1"
-
-/** Compiler plugin for silencing compiler warnings:
-  * [[https://github.com/ghik/silencer]]
-  */
-val SilencerVersion = "1.7.1"
 
 /** Used for publishing the microsite:
   * [[https://github.com/47degrees/github4s]]
@@ -98,22 +83,8 @@ lazy val sharedSettings = Seq(
   scalaVersion := "3.0.1",
   crossScalaVersions := Seq("2.12.12", "2.13.6", "3.0.1"),
 
-  // More version specific compiler options
-  scalacOptions ++= (CrossVersion.partialVersion(scalaVersion.value) match {
-    case Some((2, v)) if v >= 13 =>
-      Seq(
-        // Replaces macro-paradise in Scala 2.13
-        // No
-        //"-Ymacro-annotations",
-      )
-    case _ =>
-      Seq.empty
-  }),
-
   // Turning off fatal warnings for doc generation
   scalacOptions.in(Compile, doc) ~= filterConsoleScalacOptions,
-  // Silence all warnings from src_managed files
-  scalacOptions += "-P:silencer:pathFilters=.*[/]src_managed[/].*",
 
   // Compiler plugins that aren't necessarily compatible with Scala 3
   libraryDependencies ++= (CrossVersion.partialVersion(scalaVersion.value) match {
@@ -121,7 +92,6 @@ lazy val sharedSettings = Seq(
       Seq(
         compilerPlugin("com.olegpy" %% "better-monadic-for" % BetterMonadicForVersion),
         compilerPlugin("org.typelevel" % "kind-projector" % KindProjectorVersion cross CrossVersion.full),
-        compilerPlugin("com.github.ghik" % "silencer-plugin" % SilencerVersion cross CrossVersion.full),
       )
     case _ =>
       Seq.empty
@@ -226,10 +196,8 @@ def defaultCrossProjectConfiguration(pr: CrossProject) = {
     .jvmSettings(doctestTestSettings(DoctestTestFramework.ScalaTest))
     .jvmSettings(sharedJVMSettings)
     .settings(crossVersionSharedSources)
-    .settings(requiredMacroCompatDeps(MacroParadiseVersion))
     .settings(filterOutMultipleDependenciesFromGeneratedPomXml(
       "groupId" -> "org.scoverage".r :: Nil,
-      "groupId" -> "org.typelevel".r :: "artifactId" -> "simulacrum".r :: Nil,
     ))
 }
 
@@ -320,7 +288,6 @@ lazy val $sub_project_id$ = crossProject(JSPlatform, JVMPlatform)
   .settings(
     name := "$artifact_id$",
     libraryDependencies ++= Seq(
-      "org.typelevel"  %%% "simulacrum"       % SimulacrumVersion % Provided,
       "org.typelevel"  %%% "cats-core"        % CatsVersion,
       "org.typelevel"  %%% "cats-effect"      % CatsEffectVersion,
       // For testing

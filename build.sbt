@@ -1,11 +1,9 @@
 val CatsVersion             = "2.6.1"
 val CatsEffectVersion       = "3.2.4"
-val SimulacrumVersion       = "1.0.1"
 val MacroParadiseVersion    = "2.1.1"
 val ScalaCheckVersion       = "1.15.4"
 val KindProjectorVersion    = "0.13.1"
 val BetterMonadicForVersion = "0.3.1"
-val SilencerVersion         = "1.7.1"
 val GitHub4sVersion         = "0.29.1"
 val ScalaTestVersion        = "3.2.9"
 val ScalaTestPlusVersion    = "3.2.2.0"
@@ -32,14 +30,12 @@ lazy val root = (project in file("."))
       "org.typelevel"     %%% "cats-effect"      % CatsEffectVersion    % Test,
       "org.typelevel"     %%% "cats-effect-laws" % CatsEffectVersion    % Test,
       "org.typelevel"     %%% "cats-laws"        % CatsVersion          % Test,
-      "org.typelevel"     %%% "simulacrum"       % SimulacrumVersion    % Test,
       "com.47deg"         %%% "github4s"         % GitHub4sVersion      % Test,
     ),
     libraryDependencies ++= (CrossVersion.partialVersion(scalaVersion.value) match {
       case Some((2, _)) =>
         Seq(
           compilerPlugin(("org.typelevel"   % "kind-projector"     % KindProjectorVersion).cross(CrossVersion.full) % Test),
-          compilerPlugin(("com.github.ghik" % "silencer-plugin"    % SilencerVersion).cross(CrossVersion.full) % Test),
           compilerPlugin(("org.scalamacros" % "paradise"           % MacroParadiseVersion).cross(CrossVersion.patch) % Test),
           compilerPlugin("com.olegpy"      %% "better-monadic-for" % BetterMonadicForVersion % Test),
         )
