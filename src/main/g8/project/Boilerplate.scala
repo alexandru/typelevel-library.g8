@@ -64,8 +64,8 @@ object Boilerplate {
   lazy val crossVersionSharedSources: Seq[Setting[_]] = {
     def scalaPartV = Def setting (CrossVersion partialVersion scalaVersion.value)
     Seq(Compile, Test).map { sc =>
-      (unmanagedSourceDirectories in sc) ++= {
-        (unmanagedSourceDirectories in sc).value.flatMap { dir =>
+      (sc / unmanagedSourceDirectories) ++= {
+        (sc / unmanagedSourceDirectories).value.flatMap { dir =>
           Seq(
             scalaPartV.value match {
               case Some((2, y)) if y == 11 => Seq(new File(dir.getPath + "-2.11"))
@@ -109,19 +109,19 @@ object Boilerplate {
     */
   def unidocSettings(projects: ProjectReference*) = Seq(
     // Only include JVM sub-projects, exclude JS or Native sub-projects
-    unidocProjectFilter in (ScalaUnidoc, unidoc) := inProjects(projects:_*),
+    ScalaUnidoc / unidoc / unidocProjectFilter := inProjects(projects:_*),
 
-    scalacOptions in (ScalaUnidoc, unidoc) +=
+    ScalaUnidoc / unidoc / scalacOptions +=
       "-Xfatal-warnings",
-    scalacOptions in (ScalaUnidoc, unidoc) --=
+    ScalaUnidoc / unidoc / scalacOptions --=
       Seq("-Ywarn-unused-import", "-Ywarn-unused:imports"),
-    scalacOptions in (ScalaUnidoc, unidoc) ++=
+    ScalaUnidoc / unidoc / scalacOptions ++=
       Opts.doc.title(projectTitle.value),
-    scalacOptions in (ScalaUnidoc, unidoc) ++=
+    ScalaUnidoc / unidoc / scalacOptions ++=
       Opts.doc.sourceUrl(s"https://github.com/\${githubFullRepositoryID.value}/tree/v\${version.value}€{FILE_PATH}.scala"),
-    scalacOptions in (ScalaUnidoc, unidoc) ++=
+    ScalaUnidoc / unidoc / scalacOptions ++=
       Seq("-doc-root-content", file("rootdoc.txt").getAbsolutePath),
-    scalacOptions in (ScalaUnidoc, unidoc) ++=
+    ScalaUnidoc / unidoc / scalacOptions ++=
       Opts.doc.version(version.value)
   )
 
