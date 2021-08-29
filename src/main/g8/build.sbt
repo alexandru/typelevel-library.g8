@@ -216,6 +216,11 @@ lazy val root = project.in(file("."))
   .settings(
     // Try really hard to not execute tasks in parallel ffs
     Global / concurrentRestrictions := Tags.limitAll(1) :: Nil,
+    Global / excludeLintKeys ++= Set(
+      IntegrationTest / logBuffered,
+      coverageExcludedFiles,
+      githubRelativeRepositoryID,
+    )
   )
 
 lazy val site = project.in(file("site"))
@@ -250,8 +255,6 @@ lazy val site = project.in(file("site"))
         "gray-lighter" -> "#F4F3F4",
         "white-color" -> "#FFFFFF"
       ),
-      fork in mdoc := true,
-      mdoc / scalacOptions ~= filterConsoleScalacOptions,
       libraryDependencies += "com.47deg" %% "github4s" % GitHub4sVersion,
       micrositePushSiteWith := GitHub4s,
       micrositeGithubToken := sys.env.get("GITHUB_TOKEN"),
