@@ -7,12 +7,11 @@ import sbtcrossproject.CrossProject
 // ---------------------------------------------------------------------------
 // Commands
 
-
 /* We have no other way to target only JVM or JS projects in tests. */
 lazy val aggregatorIDs = Seq("$sub_project_id$")
 
-addCommandAlias("ci-jvm",     ";" + aggregatorIDs.map(id => s"\${id}JVM/clean ;\${id}JVM/test:compile ;\${id}JVM/test").mkString(";"))
-addCommandAlias("ci-js",      ";" + aggregatorIDs.map(id => s"\${id}JS/clean ;\${id}JS/test:compile ;\${id}JS/test").mkString(";"))
+addCommandAlias("ci-jvm",     ";" + aggregatorIDs.map(id => s"\${id}JVM/clean ;\${id}JVM/Test/compile ;\${id}JVM/test").mkString(";"))
+addCommandAlias("ci-js",      ";" + aggregatorIDs.map(id => s"\${id}JS/clean ;\${id}JS/Test/compile ;\${id}JS/test").mkString(";"))
 addCommandAlias("ci-package", ";scalafmtCheckAll ;package")
 addCommandAlias("ci-doc",     ";unidoc ;site/makeMicrosite")
 addCommandAlias("ci",         ";project root ;reload ;+scalafmtCheckAll ;+ci-jvm ;+ci-js ;+package ;ci-doc")
@@ -80,7 +79,7 @@ lazy val sharedSettings = Seq(
   githubRelativeRepositoryID := "$github_repository_name$",
 
   organization := "$organization$",
-  scalaVersion := "3.0.1",
+  scalaVersion := "2.13.6",
   crossScalaVersions := Seq("2.12.12", "2.13.6", "3.0.1"),
 
   // Turning off fatal warnings for doc generation
