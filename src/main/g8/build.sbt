@@ -137,7 +137,7 @@ lazy val sharedSettings = Seq(
     val years = {
       val start = "$copyright_start_year$"
       val current = java.time.LocalDate.now().getYear().toString()
-      if (start != current) s"$start-$current"
+      if (start != current) s"\$start-\$current"
       else start
     }
     HeaderLicense.Custom(
