@@ -86,6 +86,14 @@ lazy val sharedSettings = Seq(
   // Turning off fatal warnings for doc generation
   Compile / doc / scalacOptions ~= filterConsoleScalacOptions,
 
+  // Turning off fatal warnings and certain annoyances during testing
+  Test / scalacOptions ~= (_ filterNot (Set( 
+    "-Xfatal-warnings",
+    "-Werror",
+    "-Ywarn-value-discard",
+    "-Wvalue-discard",
+  ))),
+
   // Compiler plugins that aren't necessarily compatible with Scala 3
   libraryDependencies ++= (CrossVersion.partialVersion(scalaVersion.value) match {
     case Some((2, _)) =>
