@@ -216,6 +216,9 @@ lazy val root = project.in(file("."))
   .settings(
     // Try really hard to not execute tasks in parallel ffs
     Global / concurrentRestrictions := Tags.limitAll(1) :: Nil,
+    // Reloads build.sbt changes whenever detected
+    Global / onChangedBuildSource := ReloadOnSourceChanges,
+    // Deactivate sbt's linter for some temporarily unused keys
     Global / excludeLintKeys ++= Set(
       IntegrationTest / logBuffered,
       coverageExcludedFiles,
@@ -309,6 +312,3 @@ lazy val $sub_project_id$ = crossProject(JSPlatform, JVMPlatform)
 
 lazy val $sub_project_id$JVM = $sub_project_id$.jvm
 lazy val $sub_project_id$JS  = $sub_project_id$.js
-
-// Reloads build.sbt changes whenever detected
-Global / onChangedBuildSource := ReloadOnSourceChanges
