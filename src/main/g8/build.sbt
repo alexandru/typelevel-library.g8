@@ -175,7 +175,7 @@ def defaultCrossProjectConfiguration(pr: CrossProject) = {
         else
           ver
       }
-      val l = (baseDirectory in LocalRootProject).value.toURI.toString
+      val l = (LocalRootProject / baseDirectory).value.toURI.toString
       val g = s"https://raw.githubusercontent.com/\${githubFullRepositoryID.value}/\$tagOrHash/"
       CrossVersion.partialVersion(scalaVersion.value) match {
         case Some((2, _)) =>
@@ -261,9 +261,9 @@ lazy val site = project.in(file("site"))
       libraryDependencies += "com.47deg" %% "github4s" % GitHub4sVersion,
       micrositePushSiteWith := GitHub4s,
       micrositeGithubToken := sys.env.get("GITHUB_TOKEN"),
-      micrositeExtraMdFilesOutput := (resourceManaged in Compile).value / "jekyll",
+      micrositeExtraMdFilesOutput := (Compile / resourceManaged).value / "jekyll",
       micrositeConfigYaml := ConfigYml(
-        yamlPath = Some((resourceDirectory in Compile).value / "microsite" / "_config.yml")
+        yamlPath = Some((Compile / resourceDirectory).value / "microsite" / "_config.yml")
       ),
       micrositeExtraMdFiles := Map(
         file("README.md") -> ExtraMdFileConfig("index.md", "page", Map("title" -> "Home", "section" -> "home", "position" -> "100")),
@@ -273,21 +273,21 @@ lazy val site = project.in(file("site"))
         file("LICENSE.md") -> ExtraMdFileConfig("LICENSE.md", "page", Map("title" -> "License", "section" -> "license", "position" -> "104")),
       ),
       docsMappingsAPIDir := s"api",
-      addMappingsToSiteDir(mappings in (ScalaUnidoc, packageDoc) in root, docsMappingsAPIDir),
-      sourceDirectory in Compile := baseDirectory.value / "src",
-      sourceDirectory in Test := baseDirectory.value / "test",
-      mdocIn := (sourceDirectory in Compile).value / "mdoc",
+      addMappingsToSiteDir(root / ScalaUnicod / packageDoc / mappings, docsMappingsAPIDir),
+      Compile / sourceDirectory := baseDirectory.value / "src",
+      Test / sourceDirectory := baseDirectory.value / "test",
+      mdocIn := (Compile / sourceDirectory).value / "mdoc",
 
-      run in Compile := {
+      Compile / run := {
         import scala.sys.process._
 
         val s: TaskStreams = streams.value
         val shell: Seq[String] = if (sys.props("os.name").contains("Windows")) Seq("cmd", "/c") else Seq("bash", "-c")
 
-        val jekyllServe: String = s"jekyll serve --open-url --baseurl \${(micrositeBaseUrl in Compile).value}"
+        val jekyllServe: String = s"jekyll serve --open-url --baseurl \${(Compile / micrositeBaseUrl).value}"
 
         s.log.info("Running Jekyll...")
-        Process(shell :+ jekyllServe, (micrositeExtraMdFilesOutput in Compile).value) !
+        Process(shell :+ jekyllServe, (Compile / micrositeExtraMdFilesOutput).value) !
       },
     )
   }
