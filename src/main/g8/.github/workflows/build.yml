@@ -15,14 +15,14 @@ jobs:
       matrix:
         os: [ubuntu-20.04]
         java: [8, 11]
-        scala: [2.12.14, 2.13.3]
+        scala: [2.12.12, 2.13.6, 3.0.1]
         command: ["ci-jvm"]
 
     runs-on: \${{ matrix.os }}
 
     steps:
       - uses: actions/checkout@v2
-      - uses: olafurpg/setup-scala@v5
+      - uses: olafurpg/setup-scala@v11
         with:
           java-version: "adopt@1.\${{ matrix.java }}"
 
@@ -40,15 +40,15 @@ jobs:
       matrix:
         os: [ubuntu-20.04]
         java: [11]
-        scala: [2.12.14, 2.13.3]
-        scalajs: [0.6.33, 1.2.0]
+        scala: [2.12.12, 2.13.6, 3.0.1]
+        scalajs: [1.7.0]
         command: [ci-js]
 
     runs-on: \${{ matrix.os }}
 
     steps:
       - uses: actions/checkout@v2
-      - uses: olafurpg/setup-scala@v5
+      - uses: olafurpg/setup-scala@v11
         with:
           java-version: "adopt@1.\${{ matrix.java }}"
 
@@ -67,15 +67,15 @@ jobs:
       matrix:
         os: [ubuntu-20.04]
         java: [11]
-        scala: [2.12.14, 2.13.3]
-        scalajs: [0.6.33, 1.2.0]
+        scala: [2.12.12, 2.13.6, 3.0.1]
+        scalajs: [1.7.0]
         command: [ci-package]
 
     runs-on: \${{ matrix.os }}
 
     steps:
       - uses: actions/checkout@v2
-      - uses: olafurpg/setup-scala@v5
+      - uses: olafurpg/setup-scala@v11
         with:
           java-version: "adopt@1.\${{ matrix.java }}"
 
@@ -94,15 +94,15 @@ jobs:
       matrix:
         os: [ubuntu-20.04]
         java: [11]
-        scala: [2.13.3]
-        scalajs: [1.2.0]
+        scala: [2.13.6]
+        scalajs: [1.7.0]
         command: ["ci-doc"]
 
     runs-on: \${{ matrix.os }}
 
     steps:
       - uses: actions/checkout@v2
-      - uses: olafurpg/setup-scala@v5
+      - uses: olafurpg/setup-scala@v11
         with:
           java-version: "adopt@1.\${{ matrix.java }}"
 
@@ -135,13 +135,13 @@ jobs:
       fail-fast: true      
       max-parallel: 1
       matrix:
-        scalajs: ["", 0.6.33, 1.2.0]
+        scalajs: ["", 1.7.0]
         command: [ci-release]
 
     runs-on: ubuntu-20.04
     steps:
       - uses: actions/checkout@v1
-      - uses: olafurpg/setup-scala@v2
+      - uses: olafurpg/setup-scala@v11
         with:
           java-version: "adopt@1.8"
 
@@ -176,7 +176,7 @@ jobs:
     runs-on: ubuntu-20.04
     steps:
       - uses: actions/checkout@v1
-      - uses: olafurpg/setup-scala@v2
+      - uses: olafurpg/setup-scala@v11
         with:
           java-version: "adopt@1.8"
 

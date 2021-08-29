@@ -64,8 +64,8 @@ object Boilerplate {
   lazy val crossVersionSharedSources: Seq[Setting[_]] = {
     def scalaPartV = Def setting (CrossVersion partialVersion scalaVersion.value)
     Seq(Compile, Test).map { sc =>
-      (unmanagedSourceDirectories in sc) ++= {
-        (unmanagedSourceDirectories in sc).value.flatMap { dir =>
+      (sc / unmanagedSourceDirectories) ++= {
+        (sc / unmanagedSourceDirectories).value.flatMap { dir =>
           Seq(
             scalaPartV.value match {
               case Some((2, y)) if y == 11 => Seq(new File(dir.getPath + "-2.11"))
@@ -97,7 +97,7 @@ object Boilerplate {
     * Skip publishing artifact for this project.
     */
   lazy val doNotPublishArtifact = Seq(
-    skip in publish := true,
+    publish / skip := true,
     publish := (()),
     publishLocal := (()),
     publishArtifact := false,
@@ -109,19 +109,19 @@ object Boilerplate {
     */
   def unidocSettings(projects: ProjectReference*) = Seq(
     // Only include JVM sub-projects, exclude JS or Native sub-projects
-    unidocProjectFilter in (ScalaUnidoc, unidoc) := inProjects(projects:_*),
+    ScalaUnidoc / unidoc / unidocProjectFilter := inProjects(projects:_*),
 
-    scalacOptions in (ScalaUnidoc, unidoc) +=
+    ScalaUnidoc / unidoc / scalacOptions +=
       "-Xfatal-warnings",
-    scalacOptions in (ScalaUnidoc, unidoc) --=
+    ScalaUnidoc / unidoc / scalacOptions --=
       Seq("-Ywarn-unused-import", "-Ywarn-unused:imports"),
-    scalacOptions in (ScalaUnidoc, unidoc) ++=
+    ScalaUnidoc / unidoc / scalacOptions ++=
       Opts.doc.title(projectTitle.value),
-    scalacOptions in (ScalaUnidoc, unidoc) ++=
+    ScalaUnidoc / unidoc / scalacOptions ++=
       Opts.doc.sourceUrl(s"https://github.com/\${githubFullRepositoryID.value}/tree/v\${version.value}€{FILE_PATH}.scala"),
-    scalacOptions in (ScalaUnidoc, unidoc) ++=
+    ScalaUnidoc / unidoc / scalacOptions ++=
       Seq("-doc-root-content", file("rootdoc.txt").getAbsolutePath),
-    scalacOptions in (ScalaUnidoc, unidoc) ++=
+    ScalaUnidoc / unidoc / scalacOptions ++=
       Opts.doc.version(version.value)
   )
 
@@ -132,29 +132,5 @@ object Boilerplate {
     doctestTestFramework := tf,
     doctestIgnoreRegex := Some(s".*(internal).*"),
     doctestOnlyCodeBlocksMode := true
-  )
-
-  /**
-    * For macros that work across Scala versions.
-    */
-  def requiredMacroCompatDeps(macroParadiseVersion: String) = Seq(
-    needsScalaMacroParadise := {
-      val sv = scalaVersion.value
-      (sv startsWith "2.11.") || (sv startsWith "2.12.") || (sv == "2.13.0-M3")
-    },
-    libraryDependencies ++= Seq(
-      "org.scala-lang" % "scala-reflect" % scalaVersion.value % Compile,
-      "org.scala-lang" % "scala-compiler" % scalaVersion.value % Provided,
-    ),
-    libraryDependencies ++= {
-      if (needsScalaMacroParadise.value)
-        Seq(compilerPlugin("org.scalamacros" % "paradise" % macroParadiseVersion cross CrossVersion.patch))
-      else
-        Nil
-    },
-    scalacOptions ++= {
-      if (needsScalaMacroParadise.value) Nil
-      else Seq("-Ymacro-annotations")
-    }
   )
 }

@@ -1,5 +1,5 @@
 /*
- * Copyright (c) 2020 the $name$ contributors.
+ * Copyright (c) $copyright_start_year$ the $name$ contributors.
  * See the project homepage at: https://$microsite_domain$$microsite_base_url$
  *
  * Licensed under the Apache License, Version 2.0 (the "License");

@@ -7,12 +7,11 @@ import sbtcrossproject.CrossProject
 // ---------------------------------------------------------------------------
 // Commands
 
-
 /* We have no other way to target only JVM or JS projects in tests. */
 lazy val aggregatorIDs = Seq("$sub_project_id$")
 
-addCommandAlias("ci-jvm",     ";" + aggregatorIDs.map(id => s"\${id}JVM/clean ;\${id}JVM/test:compile ;\${id}JVM/test").mkString(";"))
-addCommandAlias("ci-js",      ";" + aggregatorIDs.map(id => s"\${id}JS/clean ;\${id}JS/test:compile ;\${id}JS/test").mkString(";"))
+addCommandAlias("ci-jvm",     ";" + aggregatorIDs.map(id => s"\${id}JVM/clean ;\${id}JVM/Test/compile ;\${id}JVM/test").mkString(";"))
+addCommandAlias("ci-js",      ";" + aggregatorIDs.map(id => s"\${id}JS/clean ;\${id}JS/Test/compile ;\${id}JS/test").mkString(";"))
 addCommandAlias("ci-package", ";scalafmtCheckAll ;package")
 addCommandAlias("ci-doc",     ";unidoc ;site/makeMicrosite")
 addCommandAlias("ci",         ";project root ;reload ;+scalafmtCheckAll ;+ci-jvm ;+ci-js ;+package ;ci-doc")
@@ -24,55 +23,40 @@ addCommandAlias("release",    ";+clean ;ci-release ;unidoc ;site/publishMicrosit
 /** Standard FP library for Scala:
   * [[https://typelevel.org/cats/]]
   */
-val CatsVersion = "2.2.0"
+val CatsVersion = "2.6.1"
 
 /** FP library for describing side-effects:
   * [[https://typelevel.org/cats-effect/]]
   */
-val CatsEffectVersion = "2.2.0"
-
-/** First-class support for type-classes:
-  * [[https://github.com/typelevel/simulacrum]]
-  */
-val SimulacrumVersion = "1.0.0"
-
-/** For macros that are supported on older Scala versions.
-  * Not needed starting with Scala 2.13.
-  */
-val MacroParadiseVersion = "2.1.1"
+val CatsEffectVersion = "3.2.4"
 
 /** Library for unit-testing:
   * [[https://github.com/monix/minitest/]]
   *  - [[https://github.com/scalatest/scalatest]]
   *  - [[https://github.com/scalatest/scalatestplus-scalacheck/]]
   */
-val ScalaTestVersion = "3.2.2"
-val ScalaTestPlusVersion = "3.2.2.0"
+val ScalaTestVersion = "3.2.9"
+val ScalaTestPlusVersion = "3.2.9.0"
 
 /** Library for property-based testing:
   * [[https://www.scalacheck.org/]]
   */
-val ScalaCheckVersion = "1.14.3"
+val ScalaCheckVersion = "1.15.4"
 
 /** Compiler plugin for working with partially applied types:
   * [[https://github.com/typelevel/kind-projector]]
   */
-val KindProjectorVersion = "0.11.0"
+val KindProjectorVersion = "0.13.1"
 
 /** Compiler plugin for fixing "for comprehensions" to do desugaring w/o `withFilter`:
   * [[https://github.com/typelevel/kind-projector]]
   */
 val BetterMonadicForVersion = "0.3.1"
 
-/** Compiler plugin for silencing compiler warnings:
-  * [[https://github.com/ghik/silencer]]
-  */
-val SilencerVersion = "1.7.1"
-
 /** Used for publishing the microsite:
   * [[https://github.com/47degrees/github4s]]
   */
-val GitHub4sVersion = "0.26.0"
+val GitHub4sVersion = "0.29.1"
 
 /**
   * Defines common plugins between all projects.
@@ -95,33 +79,34 @@ lazy val sharedSettings = Seq(
   githubRelativeRepositoryID := "$github_repository_name$",
 
   organization := "$organization$",
-  scalaVersion := "2.13.3",
-  crossScalaVersions := Seq("2.12.14", "2.13.3"),
+  scalaVersion := "2.13.6",
+  crossScalaVersions := Seq("2.12.12", "2.13.6", "3.0.1"),
 
-  // More version specific compiler options
-  scalacOptions ++= (CrossVersion.partialVersion(scalaVersion.value) match {
-    case Some((2, v)) if v >= 13 =>
+  // Turning off fatal warnings for doc generation
+  Compile / doc / scalacOptions ~= filterConsoleScalacOptions,
+
+  // Turning off fatal warnings and certain annoyances during testing
+  Test / scalacOptions ~= (_ filterNot (Set( 
+    "-Xfatal-warnings",
+    "-Werror",
+    "-Ywarn-value-discard",
+    "-Wvalue-discard",
+  ))),
+
+  // Compiler plugins that aren't necessarily compatible with Scala 3
+  libraryDependencies ++= (CrossVersion.partialVersion(scalaVersion.value) match {
+    case Some((2, _)) =>
       Seq(
-        // Replaces macro-paradise in Scala 2.13
-        // No
-        //"-Ymacro-annotations",
+        compilerPlugin("com.olegpy" %% "better-monadic-for" % BetterMonadicForVersion),
+        compilerPlugin("org.typelevel" % "kind-projector" % KindProjectorVersion cross CrossVersion.full),
       )
     case _ =>
       Seq.empty
   }),
 
-  // Turning off fatal warnings for doc generation
-  scalacOptions.in(Compile, doc) ~= filterConsoleScalacOptions,
-  // Silence all warnings from src_managed files
-  scalacOptions += "-P:silencer:pathFilters=.*[/]src_managed[/].*",
-
-  addCompilerPlugin("org.typelevel" % "kind-projector" % KindProjectorVersion cross CrossVersion.full),
-  addCompilerPlugin("com.olegpy" %% "better-monadic-for" % BetterMonadicForVersion),
-  addCompilerPlugin("com.github.ghik" % "silencer-plugin" % SilencerVersion cross CrossVersion.full),
-
   // ScalaDoc settings
   autoAPIMappings := true,
-  scalacOptions in ThisBuild ++= Seq(
+  scalacOptions ++= Seq(
     // Note, this is used by the doc-source-url feature to determine the
     // relative path of a given source file. If it's not a prefix of a the
     // absolute path of the source file, the absolute path of that file
@@ -136,33 +121,42 @@ lazy val sharedSettings = Seq(
   // ---------------------------------------------------------------------------
   // Options for testing
 
-  logBuffered in Test := false,
-  logBuffered in IntegrationTest := false,
+  Test / logBuffered := false,
+  IntegrationTest / logBuffered := false,
 
   // ---------------------------------------------------------------------------
   // Options meant for publishing on Maven Central
 
-  publishArtifact in Test := false,
+  Test / publishArtifact := false,
   pomIncludeRepository := { _ => false }, // removes optional dependencies
 
   licenses := Seq("APL2" -> url("http://www.apache.org/licenses/LICENSE-2.0.txt")),
   homepage := Some(url(projectWebsiteFullURL.value)),
-  headerLicense := Some(HeaderLicense.Custom(
-    s"""|Copyright (c) 2020 the \${projectTitle.value} contributors.
-        |See the project homepage at: \${projectWebsiteFullURL.value}
-        |
-        |Licensed under the Apache License, Version 2.0 (the "License");
-        |you may not use this file except in compliance with the License.
-        |You may obtain a copy of the License at
-        |
-        |    http://www.apache.org/licenses/LICENSE-2.0
-        |
-        |Unless required by applicable law or agreed to in writing, software
-        |distributed under the License is distributed on an "AS IS" BASIS,
-        |WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
-        |See the License for the specific language governing permissions and
-        |limitations under the License."""
-      .stripMargin)),
+  headerLicense := Some {
+    val years = {
+      val start = "$copyright_start_year$"
+      val current = java.time.LocalDate.now().getYear().toString()
+      if (start != current) s"\$start-\$current"
+      else start
+    }
+    HeaderLicense.Custom(
+      s"""|Copyright (c) \$years the \${projectTitle.value} contributors.
+          |See the project homepage at: \${projectWebsiteFullURL.value}
+          |
+          |Licensed under the Apache License, Version 2.0 (the "License");
+          |you may not use this file except in compliance with the License.
+          |You may obtain a copy of the License at
+          |
+          |    http://www.apache.org/licenses/LICENSE-2.0
+          |
+          |Unless required by applicable law or agreed to in writing, software
+          |distributed under the License is distributed on an "AS IS" BASIS,
+          |WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
+          |See the License for the specific language governing permissions and
+          |limitations under the License."""
+      .stripMargin
+    )
+  },
 
   scmInfo := Some(
     ScmInfo(
@@ -197,19 +191,24 @@ def defaultCrossProjectConfiguration(pr: CrossProject) = {
         else
           ver
       }
-      val l = (baseDirectory in LocalRootProject).value.toURI.toString
+      val l = (LocalRootProject / baseDirectory).value.toURI.toString
       val g = s"https://raw.githubusercontent.com/\${githubFullRepositoryID.value}/\$tagOrHash/"
-      s"-P:scalajs:mapSourceURI:\$l->\$g"
+      CrossVersion.partialVersion(scalaVersion.value) match {
+        case Some((2, _)) =>
+          s"-P:scalajs:mapSourceURI:\$l->\$g"
+        case _ =>
+          s"-scalajs-mapSourceURI:\$l->\$g"
+      }
     },
     // Needed in order to publish for multiple Scala.js versions:
     // https://github.com/olafurpg/sbt-ci-release#how-do-i-publish-cross-built-scalajs-projects
-    skip.in(publish) := customScalaJSVersion.isEmpty,
+    publish / skip := customScalaJSVersion.isEmpty,
   )
 
   val sharedJVMSettings = Seq(
     // Needed in order to publish for multiple Scala.js versions:
     // https://github.com/olafurpg/sbt-ci-release#how-do-i-publish-cross-built-scalajs-projects
-    skip.in(publish) := customScalaJSVersion.isDefined,
+    publish / skip := customScalaJSVersion.isDefined,
   )
 
   pr.configure(defaultPlugins)
@@ -218,10 +217,8 @@ def defaultCrossProjectConfiguration(pr: CrossProject) = {
     .jvmSettings(doctestTestSettings(DoctestTestFramework.ScalaTest))
     .jvmSettings(sharedJVMSettings)
     .settings(crossVersionSharedSources)
-    .settings(requiredMacroCompatDeps(MacroParadiseVersion))
     .settings(filterOutMultipleDependenciesFromGeneratedPomXml(
       "groupId" -> "org.scoverage".r :: Nil,
-      "groupId" -> "org.typelevel".r :: "artifactId" -> "simulacrum".r :: Nil,
     ))
 }
 
@@ -235,6 +232,14 @@ lazy val root = project.in(file("."))
   .settings(
     // Try really hard to not execute tasks in parallel ffs
     Global / concurrentRestrictions := Tags.limitAll(1) :: Nil,
+    // Reloads build.sbt changes whenever detected
+    Global / onChangedBuildSource := ReloadOnSourceChanges,
+    // Deactivate sbt's linter for some temporarily unused keys
+    Global / excludeLintKeys ++= Set(
+      IntegrationTest / logBuffered,
+      coverageExcludedFiles,
+      githubRelativeRepositoryID,
+    )
   )
 
 lazy val site = project.in(file("site"))
@@ -269,15 +274,12 @@ lazy val site = project.in(file("site"))
         "gray-lighter" -> "#F4F3F4",
         "white-color" -> "#FFFFFF"
       ),
-      micrositeCompilingDocsTool := WithMdoc,
-      fork in mdoc := true,
-      scalacOptions.in(Tut) ~= filterConsoleScalacOptions,
       libraryDependencies += "com.47deg" %% "github4s" % GitHub4sVersion,
       micrositePushSiteWith := GitHub4s,
       micrositeGithubToken := sys.env.get("GITHUB_TOKEN"),
-      micrositeExtraMdFilesOutput := (resourceManaged in Compile).value / "jekyll",
+      micrositeExtraMdFilesOutput := (Compile / resourceManaged).value / "jekyll",
       micrositeConfigYaml := ConfigYml(
-        yamlPath = Some((resourceDirectory in Compile).value / "microsite" / "_config.yml")
+        yamlPath = Some((Compile / resourceDirectory).value / "microsite" / "_config.yml")
       ),
       micrositeExtraMdFiles := Map(
         file("README.md") -> ExtraMdFileConfig("index.md", "page", Map("title" -> "Home", "section" -> "home", "position" -> "100")),
@@ -287,21 +289,21 @@ lazy val site = project.in(file("site"))
         file("LICENSE.md") -> ExtraMdFileConfig("LICENSE.md", "page", Map("title" -> "License", "section" -> "license", "position" -> "104")),
       ),
       docsMappingsAPIDir := s"api",
-      addMappingsToSiteDir(mappings in (ScalaUnidoc, packageDoc) in root, docsMappingsAPIDir),
-      sourceDirectory in Compile := baseDirectory.value / "src",
-      sourceDirectory in Test := baseDirectory.value / "test",
-      mdocIn := (sourceDirectory in Compile).value / "mdoc",
+      addMappingsToSiteDir(root / ScalaUnidoc / packageDoc / mappings, docsMappingsAPIDir),
+      Compile / sourceDirectory := baseDirectory.value / "src",
+      Test / sourceDirectory := baseDirectory.value / "test",
+      mdocIn := (Compile / sourceDirectory).value / "mdoc",
 
-      run in Compile := {
+      Compile / run := {
         import scala.sys.process._
 
         val s: TaskStreams = streams.value
         val shell: Seq[String] = if (sys.props("os.name").contains("Windows")) Seq("cmd", "/c") else Seq("bash", "-c")
 
-        val jekyllServe: String = s"jekyll serve --open-url --baseurl \${(micrositeBaseUrl in Compile).value}"
+        val jekyllServe: String = s"jekyll serve --open-url --baseurl \${(Compile / micrositeBaseUrl).value}"
 
         s.log.info("Running Jekyll...")
-        Process(shell :+ jekyllServe, (micrositeExtraMdFilesOutput in Compile).value) !
+        Process(shell :+ jekyllServe, (Compile / micrositeExtraMdFilesOutput).value) !
       },
     )
   }
@@ -313,12 +315,11 @@ lazy val $sub_project_id$ = crossProject(JSPlatform, JVMPlatform)
   .settings(
     name := "$artifact_id$",
     libraryDependencies ++= Seq(
-      "org.typelevel"  %%% "simulacrum"       % SimulacrumVersion % Provided,
       "org.typelevel"  %%% "cats-core"        % CatsVersion,
       "org.typelevel"  %%% "cats-effect"      % CatsEffectVersion,
       // For testing
       "org.scalatest"     %%% "scalatest"        % ScalaTestVersion % Test,
-      "org.scalatestplus" %%% "scalacheck-1-14"  % ScalaTestPlusVersion % Test,
+      "org.scalatestplus" %%% "scalacheck-1-15"  % ScalaTestPlusVersion % Test,
       "org.scalacheck"    %%% "scalacheck"       % ScalaCheckVersion % Test,
       "org.typelevel"     %%% "cats-laws"        % CatsVersion % Test,
       "org.typelevel"     %%% "cats-effect-laws" % CatsEffectVersion % Test,
@@ -327,6 +328,3 @@ lazy val $sub_project_id$ = crossProject(JSPlatform, JVMPlatform)
 
 lazy val $sub_project_id$JVM = $sub_project_id$.jvm
 lazy val $sub_project_id$JS  = $sub_project_id$.js
-
-// Reloads build.sbt changes whenever detected
-Global / onChangedBuildSource := ReloadOnSourceChanges
