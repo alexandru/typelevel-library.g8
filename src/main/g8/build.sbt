@@ -84,7 +84,7 @@ lazy val sharedSettings = Seq(
   crossScalaVersions := Seq("2.12.12", "2.13.6", "3.0.1"),
 
   // Turning off fatal warnings for doc generation
-  scalacOptions.in(Compile, doc) ~= filterConsoleScalacOptions,
+  Compile / doc / scalacOptions ~= filterConsoleScalacOptions,
 
   // Compiler plugins that aren't necessarily compatible with Scala 3
   libraryDependencies ++= (CrossVersion.partialVersion(scalaVersion.value) match {
@@ -99,7 +99,7 @@ lazy val sharedSettings = Seq(
 
   // ScalaDoc settings
   autoAPIMappings := true,
-  scalacOptions in ThisBuild ++= Seq(
+  scalacOptions ++= Seq(
     // Note, this is used by the doc-source-url feature to determine the
     // relative path of a given source file. If it's not a prefix of a the
     // absolute path of the source file, the absolute path of that file
@@ -114,19 +114,19 @@ lazy val sharedSettings = Seq(
   // ---------------------------------------------------------------------------
   // Options for testing
 
-  logBuffered in Test := false,
-  logBuffered in IntegrationTest := false,
+  Test / logBuffered := false,
+  IntegrationTest / logBuffered := false,
 
   // ---------------------------------------------------------------------------
   // Options meant for publishing on Maven Central
 
-  publishArtifact in Test := false,
+  Test / publishArtifact := false,
   pomIncludeRepository := { _ => false }, // removes optional dependencies
 
   licenses := Seq("APL2" -> url("http://www.apache.org/licenses/LICENSE-2.0.txt")),
   homepage := Some(url(projectWebsiteFullURL.value)),
   headerLicense := Some(HeaderLicense.Custom(
-    s"""|Copyright (c) 2020 the \${projectTitle.value} contributors.
+    s"""|Copyright (c) 2021 the \${projectTitle.value} contributors.
         |See the project homepage at: \${projectWebsiteFullURL.value}
         |
         |Licensed under the Apache License, Version 2.0 (the "License");
@@ -177,17 +177,22 @@ def defaultCrossProjectConfiguration(pr: CrossProject) = {
       }
       val l = (baseDirectory in LocalRootProject).value.toURI.toString
       val g = s"https://raw.githubusercontent.com/\${githubFullRepositoryID.value}/\$tagOrHash/"
-      s"-P:scalajs:mapSourceURI:\$l->\$g"
+      CrossVersion.partialVersion(scalaVersion.value) match {
+        case Some((2, _)) =>
+          s"-P:scalajs:mapSourceURI:$l->$g"
+        case _ =>
+          s"-scalajs-mapSourceURI:$l->$g"
+      }
     },
     // Needed in order to publish for multiple Scala.js versions:
     // https://github.com/olafurpg/sbt-ci-release#how-do-i-publish-cross-built-scalajs-projects
-    skip.in(publish) := customScalaJSVersion.isEmpty,
+    publish / skip := customScalaJSVersion.isEmpty,
   )
 
   val sharedJVMSettings = Seq(
     // Needed in order to publish for multiple Scala.js versions:
     // https://github.com/olafurpg/sbt-ci-release#how-do-i-publish-cross-built-scalajs-projects
-    skip.in(publish) := customScalaJSVersion.isDefined,
+    publish / skip := customScalaJSVersion.isDefined,
   )
 
   pr.configure(defaultPlugins)
@@ -246,7 +251,7 @@ lazy val site = project.in(file("site"))
         "white-color" -> "#FFFFFF"
       ),
       fork in mdoc := true,
-      scalacOptions.in(mdoc) ~= filterConsoleScalacOptions,
+      mdoc / scalacOptions ~= filterConsoleScalacOptions,
       libraryDependencies += "com.47deg" %% "github4s" % GitHub4sVersion,
       micrositePushSiteWith := GitHub4s,
       micrositeGithubToken := sys.env.get("GITHUB_TOKEN"),
