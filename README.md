@@ -5,7 +5,6 @@
 This is a [Giter8][g8] template for creating libraries ready to be published.
 
 - [Usage](#usage)
-  - [Setting Up GitHub (with `main` instead of `master`)](#setting-up-github-with-main-instead-of-master)
   - [Configuration of Automatic Releases to Sonatype](#configuration-of-automatic-releases-to-sonatype)
 - [Sample Project](#sample-project)
 - [Features](#features)
@@ -16,41 +15,8 @@ This is a [Giter8][g8] template for creating libraries ready to be published.
 Using [sbt](https://www.scala-sbt.org/download.html) run the following in a terminal:
 
 ```sh
-sbt --sbt-version 1.3.13 new alexandru/typelevel-library.g8
+sbt --sbt-version 1.5.5 new alexandru/typelevel-library.g8
 ```
-
-### Setting Up GitHub (with `main` instead of `master`)
-
-**NOTE:** the template is set to use `main` as the default branch, instead of `master` and this is reflected in the README pixels.
-
-First initialize the local git repository, and do your first commit:
-
-```sh
-cd $project-folder/
-
-git init
-
-git branch -m master main
-
-git commit -am 'Initial commit'
-```
-
-Create a new repository on GitHub, see [github.com/new](https://github.com/new) and add it as your origin:
-
-```scala
-git remote add origin https://github.com/$GITHUB_USERNAME/$GITHUB_REPOSITORY
-
-git push -u origin main
-```
-
-Next in GitHub:
-
-- Navigate to your repository > Settings > Branches
-- Select main as your default branch
-- Update your branch protection rules
-- Navigate to Code > Branches and delete `master`
-
-(Hoping GitHub will soon make this easier)
 
 ### Configuration of Automatic Releases to Sonatype
 

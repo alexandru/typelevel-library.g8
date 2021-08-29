@@ -6,7 +6,7 @@ jobs:
     runs-on: ubuntu-20.04
 
     steps:
-      - uses: actions/checkout@master
+      - uses: actions/checkout@main
 
       - name: Set up Ruby 2.7 (for microsite)
         uses: actions/setup-ruby@v1
