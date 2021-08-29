@@ -179,9 +179,9 @@ def defaultCrossProjectConfiguration(pr: CrossProject) = {
       val g = s"https://raw.githubusercontent.com/\${githubFullRepositoryID.value}/\$tagOrHash/"
       CrossVersion.partialVersion(scalaVersion.value) match {
         case Some((2, _)) =>
-          s"-P:scalajs:mapSourceURI:$l->$g"
+          s"-P:scalajs:mapSourceURI:\$l->\$g"
         case _ =>
-          s"-scalajs-mapSourceURI:$l->$g"
+          s"-scalajs-mapSourceURI:\$l->\$g"
       }
     },
     // Needed in order to publish for multiple Scala.js versions:
