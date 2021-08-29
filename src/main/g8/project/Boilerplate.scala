@@ -97,7 +97,7 @@ object Boilerplate {
     * Skip publishing artifact for this project.
     */
   lazy val doNotPublishArtifact = Seq(
-    skip in publish := true,
+    publish / skip := true,
     publish := (()),
     publishLocal := (()),
     publishArtifact := false,
