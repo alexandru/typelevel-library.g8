@@ -28,7 +28,7 @@ val CatsVersion = "2.6.1"
 /** FP library for describing side-effects:
   * [[https://typelevel.org/cats-effect/]]
   */
-val CatsEffectVersion = "3.2.4"
+val CatsEffectVersion = "3.2.7"
 
 /** Library for unit-testing:
   * [[https://github.com/monix/minitest/]]
