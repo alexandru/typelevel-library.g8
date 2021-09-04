@@ -1,8 +1,8 @@
 val CatsVersion             = "2.6.1"
-val CatsEffectVersion       = "3.2.4"
+val CatsEffectVersion       = "3.2.7"
 val MacroParadiseVersion    = "2.1.1"
 val ScalaCheckVersion       = "1.15.4"
-val KindProjectorVersion    = "0.13.1"
+val KindProjectorVersion    = "0.13.2"
 val BetterMonadicForVersion = "0.3.1"
 val GitHub4sVersion         = "0.29.1"
 val ScalaTestVersion        = "3.2.9"
@@ -10,8 +10,8 @@ val ScalaTestPlusVersion    = "3.2.9.0"
 
 lazy val root = (project in file("."))
   .settings(
-    scalaVersion := "2.12.14",
-    crossScalaVersions := Seq("2.12.14", "2.13.6", "3.0.1"),
+    scalaVersion := "2.12.12",
+    crossScalaVersions := Seq("2.12.12", "2.13.6", "3.0.2"),
 
     Test / test := {
       val _ = (Test / g8Test).toTask("").value

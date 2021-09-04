@@ -28,7 +28,7 @@ val CatsVersion = "2.6.1"
 /** FP library for describing side-effects:
   * [[https://typelevel.org/cats-effect/]]
   */
-val CatsEffectVersion = "3.2.4"
+val CatsEffectVersion = "3.2.7"
 
 /** Library for unit-testing:
   * [[https://github.com/monix/minitest/]]
@@ -46,7 +46,7 @@ val ScalaCheckVersion = "1.15.4"
 /** Compiler plugin for working with partially applied types:
   * [[https://github.com/typelevel/kind-projector]]
   */
-val KindProjectorVersion = "0.13.1"
+val KindProjectorVersion = "0.13.2"
 
 /** Compiler plugin for fixing "for comprehensions" to do desugaring w/o `withFilter`:
   * [[https://github.com/typelevel/kind-projector]]
@@ -80,7 +80,7 @@ lazy val sharedSettings = Seq(
 
   organization := "$organization$",
   scalaVersion := "2.13.6",
-  crossScalaVersions := Seq("2.12.14", "2.13.6", "3.0.1"),
+  crossScalaVersions := Seq("2.12.12", "2.13.6", "3.0.2"),
 
   // Turning off fatal warnings for doc generation
   Compile / doc / scalacOptions ~= filterConsoleScalacOptions,
