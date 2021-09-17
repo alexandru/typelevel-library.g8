@@ -35,7 +35,7 @@ val CatsEffectVersion = "3.2.7"
   *  - [[https://github.com/scalatest/scalatest]]
   *  - [[https://github.com/scalatest/scalatestplus-scalacheck/]]
   */
-val ScalaTestVersion = "3.2.9"
+val ScalaTestVersion = "3.2.10"
 val ScalaTestPlusVersion = "3.2.9.0"
 
 /** Library for property-based testing:
