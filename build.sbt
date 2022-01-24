@@ -6,7 +6,7 @@ val KindProjectorVersion    = "0.13.2"
 val BetterMonadicForVersion = "0.3.1"
 val GitHub4sVersion         = "0.29.1"
 val ScalaTestVersion        = "3.2.9"
-val ScalaTestPlusVersion    = "3.2.9.0"
+val ScalaTestPlusVersion    = "3.2.11.0"
 
 lazy val root = (project in file("."))
   .settings(
