@@ -1,5 +1,5 @@
 /*
- * Copyright (c) $copyright_start_year$ the $name$ contributors.
+ * Copyright (c) $copyright_start_year$ $name$ Contributors.
  * See the project homepage at: https://$microsite_domain$$microsite_base_url$
  *
  * Licensed under the Apache License, Version 2.0 (the "License");
@@ -29,6 +29,7 @@ object Example {
     *   import cats.implicits._
     *
     *   Example.sumAll(List(1, 2, 3, 4))
+    *   ()
     * }}}
     */
   def sumAll[F[_]: Traverse, A: Monoid](list: F[A]): A =

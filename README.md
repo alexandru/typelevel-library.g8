@@ -15,7 +15,7 @@ This is a [Giter8][g8] template for creating libraries ready to be published.
 Using [sbt](https://www.scala-sbt.org/download.html) run the following in a terminal:
 
 ```sh
-sbt --sbt-version 1.5.5 new alexandru/typelevel-library.g8
+sbt --sbt-version 1.6.2 new alexandru/typelevel-library.g8
 ```
 
 ### Configuration of Automatic Releases to Sonatype

@@ -23,40 +23,30 @@ addCommandAlias("release",    ";+clean ;ci-release ;unidoc ;site/publishMicrosit
 /** Standard FP library for Scala:
   * [[https://typelevel.org/cats/]]
   */
-val CatsVersion = "2.6.1"
-
-/** FP library for describing side-effects:
-  * [[https://typelevel.org/cats-effect/]]
-  */
-val CatsEffectVersion = "3.2.7"
+val CatsVersion = "2.7.0"
 
 /** Library for unit-testing:
   * [[https://github.com/monix/minitest/]]
   *  - [[https://github.com/scalatest/scalatest]]
   *  - [[https://github.com/scalatest/scalatestplus-scalacheck/]]
   */
-val ScalaTestVersion = "3.2.9"
-val ScalaTestPlusVersion = "3.2.9.0"
+val ScalaTestVersion = "3.2.12"
+val ScalaTestPlusVersion = "3.2.12.0"
 
 /** Library for property-based testing:
   * [[https://www.scalacheck.org/]]
   */
-val ScalaCheckVersion = "1.15.4"
+val ScalaCheckVersion = "1.16.0"
 
 /** Compiler plugin for working with partially applied types:
   * [[https://github.com/typelevel/kind-projector]]
   */
 val KindProjectorVersion = "0.13.2"
 
-/** Compiler plugin for fixing "for comprehensions" to do desugaring w/o `withFilter`:
-  * [[https://github.com/typelevel/kind-projector]]
-  */
-val BetterMonadicForVersion = "0.3.1"
-
 /** Used for publishing the microsite:
   * [[https://github.com/47degrees/github4s]]
   */
-val GitHub4sVersion = "0.29.1"
+val GitHub4sVersion = "0.31.0"
 
 /**
   * Defines common plugins between all projects.
@@ -79,25 +69,13 @@ lazy val sharedSettings = Seq(
   githubRelativeRepositoryID := "$github_repository_name$",
 
   organization := "$organization$",
-  scalaVersion := "2.13.6",
-  crossScalaVersions := Seq("2.12.14", "2.13.6", "3.0.2"),
-
-  // Turning off fatal warnings for doc generation
-  Compile / doc / scalacOptions ~= filterConsoleScalacOptions,
-
-  // Turning off fatal warnings and certain annoyances during testing
-  Test / scalacOptions ~= (_ filterNot (Set( 
-    "-Xfatal-warnings",
-    "-Werror",
-    "-Ywarn-value-discard",
-    "-Wvalue-discard",
-  ))),
+  scalaVersion := "2.13.8",
+  crossScalaVersions := Seq("2.12.15", "2.13.8", "3.1.2"),
 
   // Compiler plugins that aren't necessarily compatible with Scala 3
   libraryDependencies ++= (CrossVersion.partialVersion(scalaVersion.value) match {
     case Some((2, _)) =>
       Seq(
-        compilerPlugin("com.olegpy" %% "better-monadic-for" % BetterMonadicForVersion),
         compilerPlugin("org.typelevel" % "kind-projector" % KindProjectorVersion cross CrossVersion.full),
       )
     case _ =>
@@ -140,7 +118,7 @@ lazy val sharedSettings = Seq(
       else start
     }
     HeaderLicense.Custom(
-      s"""|Copyright (c) \$years the \${projectTitle.value} contributors.
+      s"""|Copyright (c) \$years \${projectTitle.value} Contributors.
           |See the project homepage at: \${projectWebsiteFullURL.value}
           |
           |Licensed under the Apache License, Version 2.0 (the "License");
@@ -316,13 +294,11 @@ lazy val $sub_project_id$ = crossProject(JSPlatform, JVMPlatform)
     name := "$artifact_id$",
     libraryDependencies ++= Seq(
       "org.typelevel"  %%% "cats-core"        % CatsVersion,
-      "org.typelevel"  %%% "cats-effect"      % CatsEffectVersion,
       // For testing
       "org.scalatest"     %%% "scalatest"        % ScalaTestVersion % Test,
-      "org.scalatestplus" %%% "scalacheck-1-15"  % ScalaTestPlusVersion % Test,
+      "org.scalatestplus" %%% "scalacheck-1-16"  % ScalaTestPlusVersion % Test,
       "org.scalacheck"    %%% "scalacheck"       % ScalaCheckVersion % Test,
       "org.typelevel"     %%% "cats-laws"        % CatsVersion % Test,
-      "org.typelevel"     %%% "cats-effect-laws" % CatsEffectVersion % Test,
     ),
   )
 
