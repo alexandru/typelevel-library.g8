@@ -28,9 +28,8 @@ object Example {
     * {{{
     *   import cats.implicits._
     *
-    *   assert(
-    *     Example.sumAll(List(1, 2, 3, 4)) == 1 + 2 + 3 + 4
-    *   )
+    *   Example.sumAll(List(1, 2, 3, 4))
+    *   ()
     * }}}
     */
   def sumAll[F[_]: Traverse, A: Monoid](list: F[A]): A =
