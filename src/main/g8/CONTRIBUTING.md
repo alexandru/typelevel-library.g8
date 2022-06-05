@@ -39,7 +39,7 @@ We hope that our community will be respectful, helpful, and kind. If you find yo
 All code must be licensed under the Apache 2.0 license and all files must include the following copyright header:
 
 ```
-Copyright (c) \$today.year the $name$ contributors.
+Copyright (c) \$today.year $name$ Contributors.
 See the project homepage at: https://$microsite_domain$$microsite_base_url$
 
 Licensed under the Apache License, Version 2.0 (the "License");
