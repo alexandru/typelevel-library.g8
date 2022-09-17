@@ -41,7 +41,7 @@ val ScalaTestPlusVersion = "3.2.9.0"
 /** Library for property-based testing:
   * [[https://www.scalacheck.org/]]
   */
-val ScalaCheckVersion = "1.15.4"
+val ScalaCheckVersion = "1.17.0"
 
 /** Compiler plugin for working with partially applied types:
   * [[https://github.com/typelevel/kind-projector]]
