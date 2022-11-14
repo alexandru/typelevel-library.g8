@@ -1,4 +1,4 @@
-val CatsVersion             = "2.6.1"
+val CatsVersion             = "2.9.0"
 val CatsEffectVersion       = "3.2.7"
 val MacroParadiseVersion    = "2.1.1"
 val ScalaCheckVersion       = "1.15.4"
