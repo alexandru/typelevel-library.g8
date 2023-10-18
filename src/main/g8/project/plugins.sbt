@@ -11,7 +11,7 @@ addSbtPlugin("io.github.davidgregory084" % "sbt-tpolecat"                  % "0.
 addSbtPlugin("org.portable-scala"        % "sbt-scala-native-crossproject" % "1.1.0")
 addSbtPlugin("org.portable-scala"        % "sbt-scalajs-crossproject"      % "1.1.0")
 addSbtPlugin("org.scala-js"              % "sbt-scalajs"                   % ScalaJSVersion)
-addSbtPlugin("org.scalameta"             % "sbt-mdoc"                      % "2.2.23")
+addSbtPlugin("org.scalameta"             % "sbt-mdoc"                      % "2.4.0")
 addSbtPlugin("org.scalameta"             % "sbt-scalafmt"                  % "2.4.3")
 addSbtPlugin("org.scoverage"             % "sbt-scoverage"                 % "1.8.2")
 addSbtPlugin("pl.project13.scala"        % "sbt-jmh"                       % "0.4.3")
