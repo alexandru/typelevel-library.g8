@@ -41,7 +41,7 @@ jobs:
         os: [ubuntu-20.04]
         java: [11]
         scala: [2.12.14, 2.13.6, 3.0.2]
-        scalajs: [1.7.0]
+        scalajs: [1.16.0]
         command: [ci-js]
 
     runs-on: \${{ matrix.os }}
@@ -68,7 +68,7 @@ jobs:
         os: [ubuntu-20.04]
         java: [11]
         scala: [2.12.14, 2.13.6, 3.0.2]
-        scalajs: [1.7.0]
+        scalajs: [1.16.0]
         command: [ci-package]
 
     runs-on: \${{ matrix.os }}
@@ -95,7 +95,7 @@ jobs:
         os: [ubuntu-20.04]
         java: [11]
         scala: [2.13.6]
-        scalajs: [1.7.0]
+        scalajs: [1.16.0]
         command: ["ci-doc"]
 
     runs-on: \${{ matrix.os }}
@@ -135,7 +135,7 @@ jobs:
       fail-fast: true      
       max-parallel: 1
       matrix:
-        scalajs: ["", 1.7.0]
+        scalajs: ["", 1.16.0]
         command: [ci-release]
 
     runs-on: ubuntu-20.04
